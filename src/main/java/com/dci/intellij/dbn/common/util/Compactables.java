@@ -3,12 +3,14 @@ package com.dci.intellij.dbn.common.util;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
+@UtilityClass
 public class Compactables {
     public static <T extends Compactable> void compact(@Nullable T compactable) {
         if (compactable != null) {

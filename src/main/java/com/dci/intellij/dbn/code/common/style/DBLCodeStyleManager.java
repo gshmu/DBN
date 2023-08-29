@@ -17,7 +17,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.util.Documents.getEditors;
 
 @State(
     name = DBLCodeStyleManager.COMPONENT_NAME,
@@ -49,15 +49,15 @@ public class DBLCodeStyleManager extends ProjectComponentBase implements Persist
 
     public void formatCase(@NotNull PsiFile file) {
         Document document = Documents.getDocument(file);
-        if (document != null && document.isWritable()) {
-            Editor[] editors = EditorFactory.getInstance().getEditors(document);
-            if (editors.length == 1) {
-                Editor editor = editors[0];
-                SelectionModel selectionModel = editor.getSelectionModel();
-                int selectionStart = selectionModel.getSelectionStart();
-                int selectionEnd = selectionModel.getSelectionEnd();
-                format(document, file, selectionStart, selectionEnd);
-            }
+        if (document == null || !document.isWritable()) return;
+
+        Editor[] editors = getEditors(document);
+        if (editors.length == 1) {
+            Editor editor = editors[0];
+            SelectionModel selectionModel = editor.getSelectionModel();
+            int selectionStart = selectionModel.getSelectionStart();
+            int selectionEnd = selectionModel.getSelectionEnd();
+            format(document, file, selectionStart, selectionEnd);
         }
     }
 
@@ -67,48 +67,48 @@ public class DBLCodeStyleManager extends ProjectComponentBase implements Persist
 
     private void format(Document document, PsiElement psiElement, int startOffset, int endOffset){
         Language language = PsiUtil.getLanguage(psiElement);
-        if (language instanceof DBLanguage) {
-            CodeStyleCaseSettings styleCaseSettings = getCodeStyleCaseSettings((DBLanguage) language);
-            PsiElement child = psiElement.getFirstChild();
-            while (child != null) {
-                if (child instanceof LeafPsiElement) {
-                    TextRange textRange = child.getTextRange();
-                    boolean isInRange =
-                            startOffset == endOffset || (
-                                    textRange.getStartOffset() >= startOffset &&
-                                            textRange.getEndOffset() <= endOffset);
-                    if (isInRange) {
-                        CodeStyleCaseOption caseOption = null;
-                        if (child instanceof IdentifierPsiElement) {
-                            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) child;
-                            if (identifierPsiElement.isObject() && !identifierPsiElement.isQuoted()) {
-                                caseOption = styleCaseSettings.getObjectCaseOption();
-                            }
-                        }
-                        else if (child instanceof TokenPsiElement) {
-                            TokenPsiElement tokenPsiElement = (TokenPsiElement) child;
-                            TokenType tokenType = tokenPsiElement.getTokenType();
-                            caseOption =
-                                    tokenType.isKeyword() ? styleCaseSettings.getKeywordCaseOption() :
-                                            tokenType.isFunction() ? styleCaseSettings.getFunctionCaseOption() :
-                                                    tokenType.isParameter() ? styleCaseSettings.getParameterCaseOption() :
-                                                            tokenType.isDataType() ? styleCaseSettings.getDatatypeCaseOption() : null;
-                        }
+        if (!(language instanceof DBLanguage)) return;
 
-                        if (caseOption != null) {
-                            String text = child.getText();
-                            String newText = caseOption.format(text);
-
-                            if (newText != null && !Objects.equals(newText, text))
-                                document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), newText);
-
+        CodeStyleCaseSettings styleCaseSettings = getCodeStyleCaseSettings((DBLanguage) language);
+        PsiElement child = psiElement.getFirstChild();
+        while (child != null) {
+            if (child instanceof LeafPsiElement) {
+                TextRange textRange = child.getTextRange();
+                boolean isInRange =
+                        startOffset == endOffset || (
+                                textRange.getStartOffset() >= startOffset &&
+                                        textRange.getEndOffset() <= endOffset);
+                if (isInRange) {
+                    CodeStyleCaseOption caseOption = null;
+                    if (child instanceof IdentifierPsiElement) {
+                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) child;
+                        if (identifierPsiElement.isObject() && !identifierPsiElement.isQuoted()) {
+                            caseOption = styleCaseSettings.getObjectCaseOption();
                         }
                     }
-                } else {
-                    format(document, child, startOffset, endOffset);
+                    else if (child instanceof TokenPsiElement) {
+                        TokenPsiElement tokenPsiElement = (TokenPsiElement) child;
+                        TokenType tokenType = tokenPsiElement.getTokenType();
+                        caseOption =
+                                tokenType.isKeyword() ? styleCaseSettings.getKeywordCaseOption() :
+                                        tokenType.isFunction() ? styleCaseSettings.getFunctionCaseOption() :
+                                                tokenType.isParameter() ? styleCaseSettings.getParameterCaseOption() :
+                                                        tokenType.isDataType() ? styleCaseSettings.getDatatypeCaseOption() : null;
+                    }
+
+                    if (caseOption != null) {
+                        String text = child.getText();
+                        String newText = caseOption.format(text);
+
+                        if (newText != null && !Objects.equals(newText, text))
+                            document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), newText);
+
+                    }
                 }
-                child = child.getNextSibling();
+            } else {
+                format(document, child, startOffset, endOffset);
             }
+            child = child.getNextSibling();
         }
     }
 

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.style.formatting;
 import com.intellij.formatting.Indent;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
 
 public enum IndentDefinition implements FormattingAttribute<Indent> {
     NORMAL       (new Loader(){

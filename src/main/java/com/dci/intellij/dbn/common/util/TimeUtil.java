@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.common.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.concurrent.TimeUnit;
 
+@UtilityClass
 public class TimeUtil {
     public interface Millis{
         long ONE_SECOND = 1000;

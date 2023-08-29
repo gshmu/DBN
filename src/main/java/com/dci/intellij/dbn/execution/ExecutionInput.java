@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
@@ -98,14 +98,14 @@ public abstract class ExecutionInput extends StatefulDisposableBase implements S
 
     @Override
     public void readConfiguration(Element element) {
-        executionTimeout.set(SettingsSupport.integerAttribute(element, "execution-timeout", executionTimeout.get()));
-        debugExecutionTimeout.set(SettingsSupport.integerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get()));
+        executionTimeout.set(Settings.integerAttribute(element, "execution-timeout", executionTimeout.get()));
+        debugExecutionTimeout.set(Settings.integerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get()));
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setIntegerAttribute(element, "execution-timeout", executionTimeout.get());
-        SettingsSupport.setIntegerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get());
+        Settings.setIntegerAttribute(element, "execution-timeout", executionTimeout.get());
+        Settings.setIntegerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get());
     }
 
     @NotNull

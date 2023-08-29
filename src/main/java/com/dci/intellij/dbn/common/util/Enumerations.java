@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Enumerations {
 
     @SafeVarargs

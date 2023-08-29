@@ -42,15 +42,22 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         super(connection);
     }
 
-    private static int findFreePort(int minPortNumber, int maxPortNumber) throws ExecutionException {
+    private static int findFreePort(String host, int minPortNumber, int maxPortNumber) throws ExecutionException {
+        InetAddress inetAddress;
+        try {
+            inetAddress = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            throw new ExecutionException("Failed to resolve host '" + host + "'", e);
+        }
+
         for (int portNumber = minPortNumber; portNumber < maxPortNumber; portNumber++) {
-            try (ServerSocket ignored = new ServerSocket(portNumber)) {
+            try (ServerSocket ignored = new ServerSocket(portNumber, 50, inetAddress)) {
                 return portNumber;
             } catch (Exception e) {
                 conditionallyLog(e);
             }
         }
-        throw new ExecutionException("Could not find free port in the range " + minPortNumber + " - " + maxPortNumber);
+        throw new ExecutionException("Could not find any free port on host '" + host + "' in the range " + minPortNumber + " - " + maxPortNumber);
     }
 
     @NotNull
@@ -67,8 +74,8 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         ExecutionEnvironment environment = ExecutionEnvironmentBuilder.create(session.getProject(), executor, runProfile).build();
         DBJdwpRunConfig jdwpRunConfig = (DBJdwpRunConfig) runProfile;
         Range<Integer> portRange = jdwpRunConfig.getTcpPortRange();
-        int tcpPort = findFreePort(portRange.getFrom(), portRange.getTo());
         String tcpHost = resolveTcpHost(jdwpRunConfig);
+        int tcpPort = findFreePort(tcpHost, portRange.getFrom(), portRange.getTo());
 
 
         RemoteConnection remoteConnection = new RemoteConnection(true, tcpHost, Integer.toString(tcpPort), true);

@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ReflectionUtil;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
@@ -26,8 +27,8 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.util.Unsafe.silent;
 
 @Slf4j
+@UtilityClass
 public final class Nullifier {
-    private Nullifier() {}
 
     private static final Map<Class<?>, List<Field>> NULLIFIABLE_FIELDS = new ConcurrentHashMap<>(100);
     private static final Class[] NULLIFIABLE_CLASSES = new Class[] {

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.editor.data.options.ui.DatatEditorValueListPopupSettingsForm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,15 +47,15 @@ public class DataEditorValueListPopupSettings extends BasicConfiguration<DataEdi
 
     @Override
     public void readConfiguration(Element element) {
-        showPopupButton = SettingsSupport.getBoolean(element, "show-popup-button", showPopupButton);
-        elementCountThreshold = SettingsSupport.getInteger(element, "element-count-threshold", elementCountThreshold);
-        dataLengthThreshold = SettingsSupport.getInteger(element, "data-length-threshold", dataLengthThreshold);
+        showPopupButton = Settings.getBoolean(element, "show-popup-button", showPopupButton);
+        elementCountThreshold = Settings.getInteger(element, "element-count-threshold", elementCountThreshold);
+        dataLengthThreshold = Settings.getInteger(element, "data-length-threshold", dataLengthThreshold);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setBoolean(element, "show-popup-button", showPopupButton);
-        SettingsSupport.setInteger(element, "element-count-threshold", elementCountThreshold);
-        SettingsSupport.setInteger(element, "data-length-threshold", dataLengthThreshold);
+        Settings.setBoolean(element, "show-popup-button", showPopupButton);
+        Settings.setInteger(element, "element-count-threshold", elementCountThreshold);
+        Settings.setInteger(element, "data-length-threshold", dataLengthThreshold);
     }
 }

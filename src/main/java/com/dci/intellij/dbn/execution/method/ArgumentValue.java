@@ -51,10 +51,21 @@ public class ArgumentValue {
 
     public boolean isLargeObject() {
         DBArgument argument = getArgument();
-        if (argument != null) {
-            DBDataType dataType = argument.getDataType();
-            return dataType.isNative() && dataType.getNativeType().isLargeObject();
+        if (argument == null) return false;
+
+        DBDataType dataType = argument.getDataType();
+        return dataType.isNative() && dataType.getNativeType().isLargeObject();
+    }
+
+    public  boolean isLargeValue() {
+        Object value = valueHolder.getValue();
+        if (value == null) return false;
+
+        if (value instanceof String) {
+            String stringValue = (String) value;
+            return stringValue.length() > 200 || stringValue.contains("\n");
         }
+
         return false;
     }
 

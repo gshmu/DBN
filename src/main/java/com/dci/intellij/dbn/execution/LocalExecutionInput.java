@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.execution.ExecutionOption.COMMIT_AFTER_EXECUTION;
 import static com.dci.intellij.dbn.execution.ExecutionOption.ENABLE_LOGGING;
 

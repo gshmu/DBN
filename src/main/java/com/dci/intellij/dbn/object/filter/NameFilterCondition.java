@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setEnumAttribute;
 
 @Getter
 @Setter

@@ -1,11 +1,14 @@
 package com.dci.intellij.dbn.common.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@UtilityClass
 public class ResultSetLister {
 
     public static String list(String name, ResultSet resultSet) {

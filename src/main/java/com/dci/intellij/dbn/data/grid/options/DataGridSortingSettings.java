@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.grid.options;
 
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridSortingSettingsForm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,14 +36,14 @@ public class DataGridSortingSettings extends BasicProjectConfiguration<DataGridS
 
     @Override
     public void readConfiguration(Element element) {
-        nullsFirst = SettingsSupport.getBoolean(element, "nulls-first", nullsFirst);
-        maxSortingColumns = SettingsSupport.getInteger(element, "max-sorting-columns", maxSortingColumns);
+        nullsFirst = Settings.getBoolean(element, "nulls-first", nullsFirst);
+        maxSortingColumns = Settings.getInteger(element, "max-sorting-columns", maxSortingColumns);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setBoolean(element, "nulls-first", nullsFirst);
-        SettingsSupport.setInteger(element, "max-sorting-columns", maxSortingColumns);
+        Settings.setBoolean(element, "nulls-first", nullsFirst);
+        Settings.setInteger(element, "max-sorting-columns", maxSortingColumns);
     }
 
 }

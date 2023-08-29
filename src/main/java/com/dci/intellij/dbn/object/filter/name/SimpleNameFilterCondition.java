@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
 
 @Getter
 @Setter

@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Data;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Data
 class ObjectQuickFilterKey implements PersistentStateElement {

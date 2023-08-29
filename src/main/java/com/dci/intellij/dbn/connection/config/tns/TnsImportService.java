@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnum;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnum;
+import static com.dci.intellij.dbn.common.options.setting.Settings.getEnum;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setEnum;
 import static com.dci.intellij.dbn.connection.config.tns.TnsImportService.COMPONENT_NAME;
 
 @Getter

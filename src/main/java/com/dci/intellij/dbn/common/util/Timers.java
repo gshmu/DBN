@@ -1,12 +1,15 @@
 package com.dci.intellij.dbn.common.util;
 
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+@UtilityClass
 public class Timers {
+
     @NotNull
     public static Timer createNamedTimer(@NonNls @NotNull String name, int delay, @NotNull ActionListener listener) {
         return new Timer(delay, listener) {

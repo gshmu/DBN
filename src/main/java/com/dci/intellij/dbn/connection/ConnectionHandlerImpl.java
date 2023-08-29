@@ -600,6 +600,11 @@ public class ConnectionHandlerImpl extends StatefulDisposableBase implements Con
     }
 
     @Override
+    public void updateLastAccess() {
+        getConnectionPool().updateLastAccess();
+    }
+
+    @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
         DatabaseInterfaces interfaces = getInterfaces();
         DatabaseType databaseType = interfaces.getDatabaseType();

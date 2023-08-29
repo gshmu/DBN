@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,8 +9,8 @@ import java.util.stream.Collectors;
 
 import static java.lang.Character.isWhitespace;
 
+@UtilityClass
 public class Strings extends com.intellij.openapi.util.text.StringUtil {
-    private Strings() {}
 
     @NotNull
     public static List<String> tokenize(@NotNull String string, @NotNull String separator) {

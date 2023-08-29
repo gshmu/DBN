@@ -7,12 +7,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
+@UtilityClass
 public final class Projects {
-    private Projects() {}
 
     public static void closeProject(@NotNull Project project) {
         Dispatch.run(() -> {

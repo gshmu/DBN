@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database.common.statement;
 import com.dci.intellij.dbn.common.thread.Threads;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.connection.Resources;
+import lombok.experimental.UtilityClass;
 
 import java.sql.SQLException;
 import java.util.concurrent.*;
@@ -10,8 +11,8 @@ import java.util.concurrent.*;
 import static com.dci.intellij.dbn.common.exception.Exceptions.*;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@UtilityClass
 public final class StatementExecutor {
-    private StatementExecutor() {}
 
     public static <T> T execute(StatementExecutorContext context, Callable<T> callable) throws SQLException {
         long start = System.currentTimeMillis();

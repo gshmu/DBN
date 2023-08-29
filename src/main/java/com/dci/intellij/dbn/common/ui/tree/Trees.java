@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
+@UtilityClass
 public final class Trees {
     public static void applySpeedSearchHighlighting(
             @NotNull JComponent tree,

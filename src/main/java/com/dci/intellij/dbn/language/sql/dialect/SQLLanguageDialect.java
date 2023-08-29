@@ -15,7 +15,7 @@ public abstract class SQLLanguageDialect extends DBLanguageDialect {
     private final Latent<ChameleonElementType> psqlChameleonElementType = Latent.basic(() -> {
         DBLanguageDialectIdentifier chameleonDialectIdentifier = getChameleonDialectIdentifier();
         if (chameleonDialectIdentifier != null) {
-            DBLanguageDialect plsqlDialect = DBLanguageDialect.getLanguageDialect(chameleonDialectIdentifier);
+            DBLanguageDialect plsqlDialect = DBLanguageDialect.get(chameleonDialectIdentifier);
             return new ChameleonElementType(plsqlDialect, SQLLanguageDialect.this);
         }
         return null;

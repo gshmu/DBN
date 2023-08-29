@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.ui.tabs.JBTabs;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,13 +20,12 @@ import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isDispatchThread;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
+@UtilityClass
 public final class Disposer {
     private static final List<Class<?>> DISPATCH_CANDIDATES = Arrays.asList(
             JBPopup.class,
             JBTabs.class
             /*, ...*/);
-
-    private Disposer() {}
 
     public static void register(@Nullable Disposable parent, @NotNull Object object) {
         if (object instanceof Disposable) {

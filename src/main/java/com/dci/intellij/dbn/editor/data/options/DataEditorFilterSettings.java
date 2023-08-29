@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorFilterSettingsForm;
 import lombok.EqualsAndHashCode;
@@ -47,13 +47,13 @@ public class DataEditorFilterSettings extends BasicConfiguration<DataEditorSetti
 
     @Override
     public void readConfiguration(Element element) {
-        promptFilterDialog = SettingsSupport.getBoolean(element, "prompt-filter-dialog", promptFilterDialog);
-        defaultFilterType = DatasetFilterType.get(SettingsSupport.getString(element, "default-filter-type", defaultFilterType.name()));
+        promptFilterDialog = Settings.getBoolean(element, "prompt-filter-dialog", promptFilterDialog);
+        defaultFilterType = DatasetFilterType.get(Settings.getString(element, "default-filter-type", defaultFilterType.name()));
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setBoolean(element, "prompt-filter-dialog", promptFilterDialog);
-        SettingsSupport.setString(element, "default-filter-type", defaultFilterType.name());
+        Settings.setBoolean(element, "prompt-filter-dialog", promptFilterDialog);
+        Settings.setString(element, "default-filter-type", defaultFilterType.name());
     }
 }

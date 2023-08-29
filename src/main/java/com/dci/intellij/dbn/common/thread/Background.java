@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
@@ -13,10 +14,10 @@ import static com.dci.intellij.dbn.common.thread.ThreadProperty.BACKGROUND;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
+@UtilityClass
 public final class Background {
     private static final Object lock = new Object();
 
-    private Background() {}
 
     public static void run(Project project, ThrowableRunnable<Throwable> runnable) {
         try {

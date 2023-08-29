@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.common.util;
 
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@UtilityClass
 public final class Safe {
-    private Safe() {}
-
 
     public static <R, S> R call(@Nullable S target, Function<S, R> supplier, R defaultValue) {
         if (target == null) {

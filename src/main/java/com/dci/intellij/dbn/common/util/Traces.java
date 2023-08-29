@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.common.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@UtilityClass
 public final class Traces {
-    private Traces() {}
 
     public static boolean isCalledThrough(Class clazz) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();

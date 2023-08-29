@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.common.search;
 
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@UtilityClass
 public final class Search {
-    private Search() {}
 
     public static <T> T binarySearch(@Nullable List<T> list, SearchAdapter<T> adapter) {
         if (list == null || list.isEmpty()) return null;

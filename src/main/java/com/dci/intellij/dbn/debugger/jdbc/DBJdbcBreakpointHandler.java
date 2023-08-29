@@ -125,34 +125,34 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
     @Override
     public void registerDefaultBreakpoint(DBMethod method) {
         DBEditableObjectVirtualFile mainDatabaseFile = DBDebugUtil.getMainDatabaseFile(method);
-        if (mainDatabaseFile != null) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) mainDatabaseFile.getMainContentFile();
-            PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
-            if (psqlFile != null) {
-                BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
-                if (basePsiElement != null) {
-                    BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                    int offset = subject.getTextOffset();
-                    Document document = Documents.getDocument(psqlFile);
-                    if (document != null) {
-                        int line = document.getLineNumber(offset);
 
-                        DBSchemaObject schemaObject = DBDebugUtil.getMainDatabaseObject(method);
-                        if (schemaObject != null) {
-                            try {
-                                defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
-                                        method.getSchema().getName(),
-                                        schemaObject.getName(),
-                                        schemaObject.getObjectType().getName().toUpperCase(),
-                                        line,
-                                        getDebugConnection());
-                            } catch (SQLException e) {
-                                conditionallyLog(e);
-                            }
-                        }
-                    }
-                }
-            }
+        if (mainDatabaseFile == null) return;
+
+        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) mainDatabaseFile.getMainContentFile();
+        PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
+        if (psqlFile == null) return;
+
+        BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
+        if (basePsiElement == null) return;
+
+        BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        int offset = subject.getTextOffset();
+        Document document = Documents.getDocument(psqlFile);
+        if (document == null) return;
+
+        int line = document.getLineNumber(offset);
+        DBSchemaObject schemaObject = DBDebugUtil.getMainDatabaseObject(method);
+        if (schemaObject == null) return;
+
+        try {
+            defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
+                    method.getSchema().getName(),
+                    schemaObject.getName(),
+                    schemaObject.getObjectType().getName().toUpperCase(),
+                    line,
+                    getDebugConnection());
+        } catch (SQLException e) {
+            conditionallyLog(e);
         }
     }
 

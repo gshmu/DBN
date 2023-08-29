@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.path.NodeBase;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -34,7 +33,6 @@ import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -58,6 +56,8 @@ import java.util.concurrent.TimeUnit;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
+import static com.dci.intellij.dbn.common.util.Documents.getDocument;
+import static com.dci.intellij.dbn.common.util.Documents.getEditors;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareName;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareType;
 
@@ -429,22 +429,21 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     @Override
     public void navigate(boolean requestFocus) {
         PsiFile containingFile = getContainingFile();
-        if (containingFile != null) {
-            VirtualFile virtualFile = containingFile.getVirtualFile();
-            BasePsiElement relevantPsiElement = getRelevantPsiElement();
-            if(virtualFile instanceof DBContentVirtualFile) {
-                Document document = Documents.getDocument(containingFile);
-                if (document != null) {
-                    Editor[] editors =  EditorFactory.getInstance().getEditors(document);
-                    OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(relevantPsiElement);
-                    if (descriptor != null) {
-                        descriptor.navigateIn(editors[0]);
-                    }
-                }
+        if (containingFile == null) return;
 
-            } else{
-                relevantPsiElement.navigate(requestFocus);
-            }
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        BasePsiElement relevantPsiElement = getRelevantPsiElement();
+        if (virtualFile instanceof DBContentVirtualFile) {
+            Document document = getDocument(containingFile);
+            if (document == null) return;
+
+            Editor[] editors = getEditors(document);
+            OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(relevantPsiElement);
+            if (descriptor == null) return;
+
+            descriptor.navigateIn(editors[0]);
+        } else {
+            relevantPsiElement.navigate(requestFocus);
         }
     }
     

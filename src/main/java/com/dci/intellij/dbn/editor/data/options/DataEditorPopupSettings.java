@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorPopupSettingsForm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,18 +43,18 @@ public class DataEditorPopupSettings extends BasicConfiguration<DataEditorSettin
 
     @Override
     public void readConfiguration(Element element) {
-        active = SettingsSupport.getBoolean(element, "active", active);
-        activeIfEmpty = SettingsSupport.getBoolean(element, "active-if-empty", activeIfEmpty);
-        dataLengthThreshold = SettingsSupport.getInteger(element, "data-length-threshold", dataLengthThreshold);
-        delay = SettingsSupport.getInteger(element, "popup-delay", delay);
+        active = Settings.getBoolean(element, "active", active);
+        activeIfEmpty = Settings.getBoolean(element, "active-if-empty", activeIfEmpty);
+        dataLengthThreshold = Settings.getInteger(element, "data-length-threshold", dataLengthThreshold);
+        delay = Settings.getInteger(element, "popup-delay", delay);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setBoolean(element, "active", active);
-        SettingsSupport.setBoolean(element, "active-if-empty", activeIfEmpty);
-        SettingsSupport.setInteger(element, "data-length-threshold", dataLengthThreshold);
-        SettingsSupport.setInteger(element, "popup-delay", delay);
+        Settings.setBoolean(element, "active", active);
+        Settings.setBoolean(element, "active-if-empty", activeIfEmpty);
+        Settings.setInteger(element, "data-length-threshold", dataLengthThreshold);
+        Settings.setInteger(element, "popup-delay", delay);
     }
 
 }

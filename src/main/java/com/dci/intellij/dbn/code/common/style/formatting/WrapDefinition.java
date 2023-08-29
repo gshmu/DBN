@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.intellij.formatting.Wrap;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
 
 public enum WrapDefinition implements FormattingAttribute<Wrap>{
     NONE    (new Loader(){

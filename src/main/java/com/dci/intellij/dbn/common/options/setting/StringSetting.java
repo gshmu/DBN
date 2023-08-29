@@ -14,12 +14,12 @@ public class StringSetting extends Setting<String, JTextComponent> implements Pe
     
     @Override
     public void readConfiguration(Element parent) {
-        setValue(SettingsSupport.getString(parent, getName(), this.value()));
+        setValue(Settings.getString(parent, getName(), this.value()));
     }
 
     @Override
     public void writeConfiguration(Element parent) {
-        SettingsSupport.setString(parent, getName(), this.value());
+        Settings.setString(parent, getName(), this.value());
     }
 
     @Override

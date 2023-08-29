@@ -11,7 +11,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.common.notification.NotificationGroup.DIAGNOSTICS;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @Setter

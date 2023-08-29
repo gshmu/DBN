@@ -21,8 +21,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setBooleanAttribute;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Getter

@@ -5,11 +5,12 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
+import lombok.experimental.UtilityClass;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
+@UtilityClass
 public final class Write {
-    private Write() {}
 
     public static void run(Runnable runnable) {
         Dispatch.run(() -> {

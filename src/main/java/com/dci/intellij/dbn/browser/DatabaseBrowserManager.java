@@ -49,8 +49,8 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @State(
     name = DatabaseBrowserManager.COMPONENT_NAME,

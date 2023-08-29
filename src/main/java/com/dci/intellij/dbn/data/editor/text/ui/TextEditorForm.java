@@ -10,10 +10,10 @@ import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.FileType;
@@ -33,6 +33,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class TextEditorForm extends DBNFormBase {
@@ -71,7 +73,7 @@ public class TextEditorForm extends DBNFormBase {
                 new TextContentTypeComboBoxAction(this));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 
-        text = Strings.removeCharacter(Commons.nvl(readUserValue(), ""), '\r');
+        text = Strings.removeCharacter(nvl(readUserValue(), ""), '\r');
         initEditor();
     }
 
@@ -86,12 +88,22 @@ public class TextEditorForm extends DBNFormBase {
         }
 
         Project project = ensureProject();
+        VirtualFile virtualFile = null;
         FileType fileType = userValueHolder.getContentType().getFileType();
         if (fileType instanceof LanguageFileType) {
             LanguageFileType languageFileType = (LanguageFileType) fileType;
 
-            VirtualFile virtualFile = new LightVirtualFile("text_editor_file." + fileType.getDefaultExtension(), fileType, text);
+            virtualFile = new LightVirtualFile("text_editor_file." + fileType.getDefaultExtension(), fileType, text);
             virtualFile.putUserData(UserDataKeys.HAS_CONNECTIVITY_CONTEXT, false);
+
+            if (fileType instanceof DBLanguageFileType) {
+                DBLanguageFileType dbLanguageFileType = (DBLanguageFileType) fileType;
+                DBLanguage dbLanguage = cast(dbLanguageFileType.getLanguage());
+
+                ConnectionHandler connection = userValueHolder.getConnection();
+                DBLanguageDialect languageDialect = DBLanguageDialect.get(dbLanguage, connection);
+                virtualFile.putUserData(UserDataKeys.LANGUAGE_DIALECT, languageDialect);
+            }
 
             FileManager fileManager = ((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
             FileViewProvider viewProvider = fileManager.createFileViewProvider(virtualFile, true);
@@ -99,13 +111,10 @@ public class TextEditorForm extends DBNFormBase {
             document = psiFile == null ? null : Documents.getDocument(psiFile);
         }
 
-        EditorFactory editorFactory = EditorFactory.getInstance();
-        if (document == null) {
-            document = editorFactory.createDocument(text);
-        }
+        document = nvl(document, () -> Documents.createDocument(text));
 
         document.addDocumentListener(documentListener);
-        editor = (EditorEx) editorFactory.createEditor(document, project, fileType, false);
+        editor = Editors.createEditor(document, project, virtualFile, fileType);
         editor.setEmbeddedIntoDialogWrapper(true);
         editor.getContentComponent().setFocusTraversalKeysEnabled(false);
 

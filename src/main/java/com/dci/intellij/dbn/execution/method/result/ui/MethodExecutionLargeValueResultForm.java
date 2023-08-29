@@ -4,16 +4,12 @@ import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.Actions;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.Messages;
-import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
-import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -21,16 +17,17 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class MethodExecutionLargeValueResultForm extends DBNFormBase {
@@ -38,30 +35,38 @@ public class MethodExecutionLargeValueResultForm extends DBNFormBase {
     private JPanel mainPanel;
     private JPanel largeValuePanel;
 
-    private final DBObjectRef<DBArgument> argumentRef;
+    private final DBObjectRef<DBArgument> argument;
     private EditorEx editor;
     private TextContentType contentType;
 
-    MethodExecutionLargeValueResultForm(MethodExecutionResultForm parent, MethodExecutionResult executionResult, DBArgument argument) {
+    MethodExecutionLargeValueResultForm(MethodExecutionResultForm parent, DBArgument argument, ArgumentValue argumentValue) {
         super(parent);
-        argumentRef = DBObjectRef.of(argument);
+        this.argument = DBObjectRef.of(argument);
 
-        ArgumentValue argumentValue = executionResult.getArgumentValue(argumentRef);
-        LargeObjectValue value = (LargeObjectValue) argumentValue.getValue();
-        String text = null;
+        String text = "";
         Project project = getProject();
-        try {
-            text = value.read();
-        } catch (SQLException e) {
-            conditionallyLog(e);
-            Messages.showWarningDialog(project, "Load error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
+        Object value = argumentValue.getValue();
+        if (value instanceof LargeObjectValue) {
+            LargeObjectValue largeObjectValue = (LargeObjectValue) value;
+            try {
+                text = largeObjectValue.read();
+            } catch (SQLException e) {
+                conditionallyLog(e);
+                Messages.showWarningDialog(project, "Load error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
+            }
+        } else if (value instanceof String) {
+            text = (String) value;
         }
 
-        Document document = EditorFactory.getInstance().createDocument(text == null ? "" : Strings.removeCharacter(text, '\r'));
-        contentType = TextContentType.get(project, argument.getDataType().getContentTypeName());
+        text = Strings.removeCharacter(nvl(text, ""), '\r');
+        Document document = Documents.createDocument(text);
+
+        String contentTypeName = argument.getDataType().getContentTypeName();
+        contentType = TextContentType.get(project, contentTypeName);
+
         if (contentType == null) contentType = TextContentType.getPlainText(project);
 
-        editor = (EditorEx) EditorFactory.getInstance().createEditor(document, project, contentType.getFileType(), false);
+        editor = Editors.createEditor(document, project, null, contentType.getFileType());
         editor.getContentComponent().setFocusTraversalKeysEnabled(false);
 
         largeValuePanel.add(editor.getComponent(), BorderLayout.CENTER);
@@ -91,7 +96,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormBase {
     }
 
     public DBArgument getArgument() {
-        return argumentRef.get();
+        return argument.get();
     }
 
     @NotNull
@@ -132,16 +137,13 @@ public class MethodExecutionLargeValueResultForm extends DBNFormBase {
         }
     }
 
+    @Getter
     public class ContentTypeSelectAction extends ProjectAction {
         private final TextContentType contentType;
 
         ContentTypeSelectAction(TextContentType contentType) {
             super(contentType.getName(), null, contentType.getIcon());
             this.contentType = contentType;
-        }
-
-        public TextContentType getContentType() {
-            return contentType;
         }
 
         @Override

@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public interface UserValueHolder<T> {
     void setUserValue(T userValue);
@@ -16,4 +18,9 @@ public interface UserValueHolder<T> {
     DBDataType getDataType();
     DBObjectType getObjectType();
     Project getProject();
+
+    @NotNull
+    default ConnectionHandler getConnection() {
+        throw new UnsupportedOperationException();
+    }
 }

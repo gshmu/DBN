@@ -1,11 +1,9 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -15,36 +13,32 @@ import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.DocumentBulkUpdateListener;
-import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
-import com.intellij.util.Range;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.action.UserDataKeys.LAST_ANNOTATION_REFRESH;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
+import static com.dci.intellij.dbn.common.util.GuardedBlocks.createGuardedBlock;
+import static com.dci.intellij.dbn.common.util.GuardedBlocks.removeGuardedBlocks;
 import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@UtilityClass
 public class Documents {
-    private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
-    private static final Key<Long> LAST_ANNOTATION_REFRESH_KEY = Key.create("LAST_ANNOTATION_REFRESH");
 
     public static void touchDocument(Editor editor, boolean reparse) {
         Document document = editor.getDocument();
@@ -86,10 +80,10 @@ public class Documents {
     public static void refreshEditorAnnotations(@Nullable PsiFile psiFile) {
         if (psiFile == null) return;
 
-        Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
+        Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH);
         if (lastRefresh != null && !isOlderThan(lastRefresh, 1, SECONDS)) return;
 
-        psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
+        psiFile.putUserData(LAST_ANNOTATION_REFRESH, System.currentTimeMillis());
         Read.run(() -> {
             if (psiFile.isValid()) {
                 Project project = psiFile.getProject();
@@ -97,6 +91,11 @@ public class Documents {
                 daemonCodeAnalyzer.restart(psiFile);
             }
         });
+    }
+
+    public static Document createDocument(CharSequence text) {
+        EditorFactory editorFactory = EditorFactory.getInstance();
+        return editorFactory.createDocument(text);
     }
 
     @NotNull
@@ -115,54 +114,14 @@ public class Documents {
         });
     }
 
+    public static Editor[] getEditors(Document document) {
+        return EditorFactory.getInstance().getEditors(document);
+    }
+
     @Nullable
     public static PsiFile getFile(@Nullable Editor editor) {
         Project project = editor == null ? null : editor.getProject();
         return project == null ? null : PsiUtil.getPsiFile(project, editor.getDocument());
-    }
-
-    public static void createGuardedBlock(Document document, GuardedBlockType type, String reason, boolean highlight) {
-        createGuardedBlock(document, type, 0, document.getTextLength(), reason);
-
-        if (!highlight) {
-            Editor[] editors = EditorFactory.getInstance().getEditors(document);
-            for (Editor editor : editors) {
-                EditorColorsScheme scheme = editor.getColorsScheme();
-                scheme.setColor(EditorColors.READONLY_FRAGMENT_BACKGROUND_COLOR, scheme.getDefaultBackground());
-            }
-        }
-    }
-
-    public static void createGuardedBlocks(Document document, GuardedBlockType type, GuardedBlockMarkers ranges, String reason) {
-        for (Range<Integer> range : ranges.getRanges()) {
-            createGuardedBlock(document, type, range.getFrom(), range.getTo(), reason);
-        }
-    }
-
-    public static void createGuardedBlock(Document document, GuardedBlockType type, int startOffset, int endOffset, String reason) {
-        if (startOffset != endOffset) {
-            int textLength = document.getTextLength();
-            if (endOffset <= textLength) {
-                RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-                rangeMarker.setGreedyToLeft(startOffset == 0);
-                rangeMarker.setGreedyToRight(endOffset == textLength);
-                rangeMarker.putUserData(GuardedBlockType.KEY, type);
-                document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
-            }
-        }
-    }
-
-    public static void removeGuardedBlocks(Document document, GuardedBlockType type) {
-        if (document instanceof DocumentEx) {
-            DocumentEx documentEx = (DocumentEx) document;
-            List<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
-            for (RangeMarker block : guardedBlocks) {
-                if (block.getUserData(GuardedBlockType.KEY) == type) {
-                    document.removeGuardedBlock(block);
-                }
-            }
-            document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
-        }
     }
 
     @Nullable
@@ -171,8 +130,14 @@ public class Documents {
             EditorEx editorEx = (EditorEx) editor;
             return editorEx.getVirtualFile();
         }
+        Document document = editor.getDocument();
+        return getVirtualFile(document);
+    }
+
+    @Nullable
+    private static VirtualFile getVirtualFile(Document document) {
         FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-        return fileDocumentManager.getFile(editor.getDocument());
+        return fileDocumentManager.getFile(document);
     }
 
     @Nullable
@@ -197,10 +162,8 @@ public class Documents {
     public static void setReadonly(Document document, Project project, boolean readonly) {
         Write.run(() -> {
             //document.setReadOnly(readonly);
-            Documents.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
-            if (readonly) {
-                Documents.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
-            }
+            removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
+            if (readonly) createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
         });
     }
 

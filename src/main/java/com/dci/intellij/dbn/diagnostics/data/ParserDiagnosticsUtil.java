@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.diagnostics.data;
 
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@UtilityClass
 public final class ParserDiagnosticsUtil {
-    private ParserDiagnosticsUtil() {}
 
     @NotNull
     public static StateTransition computeStateTransition(

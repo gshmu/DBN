@@ -19,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+import static com.dci.intellij.dbn.common.options.setting.Settings.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setBoolean;
 
 @State(
     name = DatabaseNavigator.COMPONENT_NAME,

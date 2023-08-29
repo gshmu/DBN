@@ -58,10 +58,10 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
             }
         } else {
             BasePsiElement basePsiElement = findPsiElement(psiFile, line);
-            if (basePsiElement != null) {
-                BasePsiElement debuggablePsiElement = basePsiElement.findEnclosingElement(ElementTypeAttribute.DEBUGGABLE);
-                return debuggablePsiElement != null;
-            }
+            if (basePsiElement == null) return false;
+
+            BasePsiElement debuggablePsiElement = basePsiElement.findEnclosingElement(ElementTypeAttribute.DEBUGGABLE);
+            return debuggablePsiElement != null;
         }
         return false;
     }
@@ -69,27 +69,27 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
     @Nullable
     private BasePsiElement findPsiElement(PsiFile psiFile, int line) {
         Document document = Documents.getDocument(psiFile);
-        if (document != null && line > -1 && document.getLineCount() > line) {
-            int lineOffset = document.getLineStartOffset(line);
-            PsiElement element = psiFile.findElementAt(lineOffset);
-            while (element != null && !(element instanceof BasePsiElement)) {
-                PsiElement nextSibling = element.getNextSibling();
-                if (nextSibling == null) {
-                    element = element.getParent();
-                    break;
-                } else {
-                    element = nextSibling;
-                }
-            }
+        if (document == null || line < 0 || document.getLineCount() <= line) return null;
 
-            if (element instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) element;
-                int textOffset = basePsiElement.getTextOffset();
-                if (textOffset< document.getTextLength()) {
-                    int elementLine = document.getLineNumber(textOffset);
-                    if (elementLine == line) {
-                        return basePsiElement;
-                    }
+        int lineOffset = document.getLineStartOffset(line);
+        PsiElement element = psiFile.findElementAt(lineOffset);
+        while (element != null && !(element instanceof BasePsiElement)) {
+            PsiElement nextSibling = element.getNextSibling();
+            if (nextSibling == null) {
+                element = element.getParent();
+                break;
+            } else {
+                element = nextSibling;
+            }
+        }
+
+        if (element instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) element;
+            int textOffset = basePsiElement.getTextOffset();
+            if (textOffset< document.getTextLength()) {
+                int elementLine = document.getLineNumber(textOffset);
+                if (elementLine == line) {
+                    return basePsiElement;
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.intellij.openapi.util.JDOMUtil;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -9,8 +10,8 @@ import org.jdom.input.SAXBuilder;
 import java.io.InputStream;
 
 @Slf4j
+@UtilityClass
 public final class XmlContents {
-    private XmlContents() {}
 
     public static Element fileToElement(Class clazz, String fileName) throws Exception {
         try (InputStream inputStream = clazz.getResourceAsStream(fileName)){

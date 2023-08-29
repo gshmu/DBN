@@ -24,7 +24,7 @@ public class OracleSQLLanguageDialect extends SQLLanguageDialect {
     @Override
     protected Set<ChameleonTokenType> createChameleonTokenTypes() {
         Set<ChameleonTokenType> tokenTypes = new HashSet<>();
-        DBLanguageDialect plsql = DBLanguageDialect.getLanguageDialect(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+        DBLanguageDialect plsql = DBLanguageDialect.get(DBLanguageDialectIdentifier.ORACLE_PLSQL);
         tokenTypes.add(new ChameleonTokenType(this, plsql));
         return tokenTypes;
     }

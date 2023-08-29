@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui.util;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.JBUI;
+import lombok.experimental.UtilityClass;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -13,8 +14,8 @@ import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@UtilityClass
 public final class Borders {
-    private Borders() {}
 
     public static final Insets EMPTY_INSETS = JBUI.emptyInsets();
     public static final Border EMPTY_BORDER = new EmptyBorder(EMPTY_INSETS);

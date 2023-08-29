@@ -32,6 +32,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,10 +40,13 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import static com.dci.intellij.dbn.common.util.GuardedBlocks.createGuardedBlocks;
+import static com.dci.intellij.dbn.common.util.GuardedBlocks.removeGuardedBlocks;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 @Slf4j
+@Getter
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, BackedVirtualFile {
 
     private SourceCodeContent originalContent = new SourceCodeContent();
@@ -237,8 +241,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                 SourceCodeOffsets offsets = localContent.getOffsets();
                 GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
                 if (!guardedBlocks.isEmpty()) {
-                    Documents.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                    Documents.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
+                    removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                    createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
                 }
             }
         });
@@ -257,10 +261,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Override
     public long getLength() {
         return localContent.length();
-    }
-
-    public String getSourceLoadError() {
-        return sourceLoadError;
     }
 
     public void setSourceLoadError(String sourceLoadError) {

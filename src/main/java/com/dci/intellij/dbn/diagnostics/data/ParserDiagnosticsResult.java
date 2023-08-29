@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.Timestamp;
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setIntegerAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.integerAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setIntegerAttribute;
 
 
 @Getter

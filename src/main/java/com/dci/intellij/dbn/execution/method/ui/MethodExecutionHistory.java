@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -152,7 +152,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Connectio
         executionInputs.clear();
         Element historyElement = element.getChild("execution-history");
         if (historyElement != null) {
-            groupEntries = SettingsSupport.getBoolean(historyElement, "group-entries", groupEntries);
+            groupEntries = Settings.getBoolean(historyElement, "group-entries", groupEntries);
 
             Element executionInputsElement = historyElement.getChild("execution-inputs");
             for (Element child : executionInputsElement.getChildren()) {
@@ -179,7 +179,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Connectio
         Element historyElement = new Element("execution-history");
         element.addContent(historyElement);
 
-        SettingsSupport.setBoolean(historyElement, "group-entries", groupEntries);
+        Settings.setBoolean(historyElement, "group-entries", groupEntries);
 
         Element configsElement = new Element("execution-inputs");
         historyElement.addContent(configsElement);

@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.xdebugger.XDebuggerManager;
@@ -26,21 +25,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.action.UserDataKeys.BREAKPOINT_FILE;
+import static com.dci.intellij.dbn.common.action.UserDataKeys.BREAKPOINT_ID;
+
 public class DBBreakpointUtil {
-    private static final Key<Integer> BREAKPOINT_ID_KEY = new Key<>("BREAKPOINT_ID");
-    private static final Key<VirtualFile> BREAKPOINT_FILE_KEY = Key.create("DBNavigator.BreakpointFile");
 
     public static Integer getBreakpointId(@NotNull XLineBreakpoint breakpoint) {
-        return breakpoint.getUserData(DBBreakpointUtil.BREAKPOINT_ID_KEY);
+        return breakpoint.getUserData(BREAKPOINT_ID);
     }
 
     public static void setBreakpointId(@NotNull XLineBreakpoint breakpoint, Integer id) {
-        breakpoint.putUserData(BREAKPOINT_ID_KEY, id);
+        breakpoint.putUserData(BREAKPOINT_ID, id);
     }
 
     @Nullable
     public static VirtualFile getVirtualFile(@NotNull XLineBreakpoint breakpoint) {
-        VirtualFile breakpointFile = breakpoint.getUserData(BREAKPOINT_FILE_KEY);
+        VirtualFile breakpointFile = breakpoint.getUserData(BREAKPOINT_FILE);
         if (breakpointFile == null) {
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
             String fileUrl = breakpoint.getFileUrl();
@@ -49,10 +49,10 @@ public class DBBreakpointUtil {
                 if (virtualFile instanceof DBContentVirtualFile) {
                     DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) virtualFile;
                     breakpointFile = contentVirtualFile.getMainDatabaseFile();
-                    breakpoint.putUserData(BREAKPOINT_FILE_KEY, breakpointFile);
+                    breakpoint.putUserData(BREAKPOINT_FILE, breakpointFile);
                 } else if (virtualFile instanceof DBConsoleVirtualFile) {
                     breakpointFile = virtualFile;
-                    breakpoint.putUserData(BREAKPOINT_FILE_KEY, breakpointFile);
+                    breakpoint.putUserData(BREAKPOINT_FILE, breakpointFile);
                 }
             } else {
                 return VirtualFileManager.getInstance().findFileByUrl(fileUrl);

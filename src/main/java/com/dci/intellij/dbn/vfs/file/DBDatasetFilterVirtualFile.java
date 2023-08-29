@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
@@ -24,6 +25,8 @@ import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import static com.dci.intellij.dbn.common.action.UserDataKeys.LANGUAGE_DIALECT;
+
 @Getter
 @Setter
 public class DBDatasetFilterVirtualFile extends DBVirtualFileBase implements DBParseableVirtualFile {
@@ -37,6 +40,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileBase implements DBP
         ConnectionHandler connection = Failsafe.nn(getConnection());
         setCharset(connection.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
+        putUserData(LANGUAGE_DIALECT, DBLanguageDialect.get(SQLLanguage.INSTANCE, connection));
     }
 
     @Override
