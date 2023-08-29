@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common;
 
 import com.intellij.openapi.util.ScalableIcon;
 import com.intellij.ui.RowIcon;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.util.Map;
 import static com.intellij.openapi.util.IconLoader.findIcon;
 
 @Slf4j
+@UtilityClass
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new HashMap<>();
 

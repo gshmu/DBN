@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.file.FileTypeService;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
@@ -159,6 +160,6 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
 
     @Override
     public void initializeComponent() {
-        registerExtensions(getExtensionSettings());
+        Background.run(getProject(), () -> registerExtensions(getExtensionSettings()));
     }
 }
