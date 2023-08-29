@@ -37,8 +37,8 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+import static com.dci.intellij.dbn.common.options.setting.Settings.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setBoolean;
 
 @State(
     name = ExecutionManager.COMPONENT_NAME,

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
@@ -179,17 +179,17 @@ public class DatasetEditorManager extends ProjectComponentBase implements Persis
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        SettingsSupport.setEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
-        SettingsSupport.setBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
-        SettingsSupport.setBoolean(element, "value-preview-pinned", valuePreviewPinned);
+        Settings.setEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
+        Settings.setBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
+        Settings.setBoolean(element, "value-preview-pinned", valuePreviewPinned);
         return element;
     }
 
     @Override
     public void loadComponentState(@NotNull Element element) {
-        recordViewColumnSortingType = SettingsSupport.getEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
-        valuePreviewTextWrapping = SettingsSupport.getBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
-        valuePreviewTextWrapping = SettingsSupport.getBoolean(element, "value-preview-pinned", valuePreviewPinned);
+        recordViewColumnSortingType = Settings.getEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
+        valuePreviewTextWrapping = Settings.getBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
+        valuePreviewTextWrapping = Settings.getBoolean(element, "value-preview-pinned", valuePreviewPinned);
     }
 
 }

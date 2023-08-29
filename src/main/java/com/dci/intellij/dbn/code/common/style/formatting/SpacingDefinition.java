@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.intellij.formatting.Spacing;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
 
 public enum SpacingDefinition implements FormattingAttribute<Spacing>{
     NO_SPACE  (new Loader(){

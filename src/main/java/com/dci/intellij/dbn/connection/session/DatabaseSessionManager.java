@@ -23,8 +23,8 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @State(
     name = DatabaseSessionManager.COMPONENT_NAME,

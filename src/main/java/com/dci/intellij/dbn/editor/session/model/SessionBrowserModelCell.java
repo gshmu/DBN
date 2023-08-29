@@ -36,7 +36,8 @@ public class SessionBrowserModelCell
         return (ResultSetColumnInfo) super.getColumnInfo();
     }
 
-    public ConnectionHandler getConnectionHandler() {
+    @NotNull
+    public ConnectionHandler getConnection() {
         return getRow().getModel().getConnection();
     }
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.BlockElementTypeLookupCache;
@@ -40,7 +40,7 @@ public final class BlockElementType extends SequenceElementType {
     @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
-        String indentString = SettingsSupport.stringAttribute(def, "indent");
+        String indentString = Settings.stringAttribute(def, "indent");
         if (indentString != null) {
             indent = Objects.equals(indentString, "NORMAL") ? INDENT_NORMAL : INDENT_NONE;
         }

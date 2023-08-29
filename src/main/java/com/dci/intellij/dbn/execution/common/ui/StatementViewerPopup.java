@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Viewers;
 import com.dci.intellij.dbn.execution.ExecutionResult;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
+
 public class StatementViewerPopup implements Disposable {
     private final String resultName;
     private EditorEx viewer;
@@ -28,9 +30,9 @@ public class StatementViewerPopup implements Disposable {
         this.resultName = executionResult.getName();
         Project project = executionResult.getProject();
 
-        PsiFile previewFile = Failsafe.nn(executionResult.createPreviewFile());
+        PsiFile previewFile = nn(executionResult.createPreviewFile());
         Document document = Documents.ensureDocument(previewFile);
-        viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
+        viewer = Viewers.createViewer(document, project, null, SQLFileType.INSTANCE);
         viewer.setEmbeddedIntoDialogWrapper(true);
         Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, executionResult.getConnection());
         viewer.setBackgroundColor(Colors.getEditorCaretRowBackground());

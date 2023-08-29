@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.filter.Filter;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +11,7 @@ import java.util.function.Predicate;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
+@UtilityClass
 public class Lists {
     public static <T> boolean isLast(@NotNull List<T> list, @NotNull T element) {
         return !list.isEmpty() && list.indexOf(element) == list.size() - 1;

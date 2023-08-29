@@ -10,8 +10,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnum;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnum;
+import static com.dci.intellij.dbn.common.options.setting.Settings.getEnum;
+import static com.dci.intellij.dbn.common.options.setting.Settings.setEnum;
 
 @Getter
 @Setter

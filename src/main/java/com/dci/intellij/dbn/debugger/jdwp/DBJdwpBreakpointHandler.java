@@ -24,7 +24,6 @@ import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
@@ -41,14 +40,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.action.UserDataKeys.LINE_BREAKPOINT;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getDatabaseObject;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getProgramIdentifier;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
-    private static final Key<LineBreakpoint> LINE_BREAKPOINT_KEY = Key.create("DBNavigator.LineBreakpoint");
-    private static final ClassPrepareRequestor GENERIC_CLASS_PREPARE_REQUESTOR = (p, r) -> System.out.println();
+    private static final ClassPrepareRequestor GENERIC_CLASS_PREPARE_REQUESTER = (p, r) -> System.out.println();
 
     public DBJdwpBreakpointHandler(XDebugSession session, DBJdwpDebugProcess debugProcess) {
         super(session, debugProcess);
@@ -187,7 +186,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         RequestManagerImpl requestsManager = getRequestsManager();
         String programIdentifier = getProgramIdentifier(getConnection(), object, contentType);
 
-        ClassPrepareRequest request = requestsManager.createClassPrepareRequest(GENERIC_CLASS_PREPARE_REQUESTOR, programIdentifier);
+        ClassPrepareRequest request = requestsManager.createClassPrepareRequest(GENERIC_CLASS_PREPARE_REQUESTER, programIdentifier);
         if (request != null) {
             requestsManager.enableRequest(request);
         }
@@ -212,10 +211,10 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
 
     @Nullable
     private static LineBreakpoint getLineBreakpoint(Project project, @NotNull XLineBreakpoint breakpoint) {
-        LineBreakpoint lineBreakpoint = breakpoint.getUserData(LINE_BREAKPOINT_KEY);
+        LineBreakpoint lineBreakpoint = breakpoint.getUserData(LINE_BREAKPOINT);
         if (lineBreakpoint == null) {
             lineBreakpoint = LineBreakpoint.create(project, breakpoint);
-            breakpoint.putUserData(LINE_BREAKPOINT_KEY, lineBreakpoint);
+            breakpoint.putUserData(LINE_BREAKPOINT, lineBreakpoint);
         }
         return lineBreakpoint;
     }

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
 @Getter

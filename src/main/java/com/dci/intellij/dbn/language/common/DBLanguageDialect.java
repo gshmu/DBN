@@ -1,20 +1,31 @@
 package com.dci.intellij.dbn.language.common;
 
+import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IFileElementType;
+import lombok.Getter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+
+@Getter
 public abstract class DBLanguageDialect extends Language implements DBFileElementTypeProvider {
+
     private static final Map<DBLanguageDialectIdentifier, DBLanguageDialect> REGISTRY = new EnumMap<>(DBLanguageDialectIdentifier.class);
     private static final TokenPairTemplate[] TOKEN_PAIR_TEMPLATES = new TokenPairTemplate[] {TokenPairTemplate.PARENTHESES};
 
@@ -39,14 +50,6 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
 
     public ChameleonElementType getChameleonTokenType(DBLanguageDialectIdentifier dialectIdentifier) {
         throw new IllegalArgumentException("Language " + getID() + " does not support chameleons of type " + dialectIdentifier.getValue() );
-    }
-
-    public static DBLanguageDialect getLanguageDialect(DBLanguageDialectIdentifier identifier) {
-        return REGISTRY.get(identifier);
-    }
-
-    public DBLanguageDialectIdentifier getIdentifier() {
-        return identifier;
     }
 
     public boolean isReservedWord(String identifier) {
@@ -100,5 +103,32 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
 
     public TokenPairTemplate[] getTokenPairTemplates() {
         return TOKEN_PAIR_TEMPLATES;
+    }
+
+
+    public static DBLanguageDialect get(DBLanguageDialectIdentifier identifier) {
+        return REGISTRY.get(identifier);
+    }
+
+    @Nullable
+    public static DBLanguageDialect get(DBLanguage language, @Nullable ConnectionHandler connection) {
+        if (connection == null) return null;
+        return connection.getLanguageDialect(language);
+
+    }
+
+    @Nullable
+    public static DBLanguageDialect get(@NotNull DBLanguage language, @Nullable VirtualFile file, @Nullable Project project) {
+        if (isNotValid(project)) return null;
+        if (isNotValid(file)) return null;
+
+        DBLanguageDialect languageDialect = file.getUserData(UserDataKeys.LANGUAGE_DIALECT);
+        if (languageDialect != null) return languageDialect;
+
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        ConnectionHandler connection = contextManager.getConnection(file);
+        if (connection == null) return null;
+
+        return connection.getLanguageDialect(language);
     }
 }

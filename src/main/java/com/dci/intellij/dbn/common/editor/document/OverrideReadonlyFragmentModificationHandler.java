@@ -10,16 +10,15 @@ import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.actionSystem.ReadonlyFragmentModificationHandler;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
+
+import static com.dci.intellij.dbn.common.action.UserDataKeys.GUARDED_BLOCK_REASON;
 
 public class OverrideReadonlyFragmentModificationHandler implements
         ReadonlyFragmentModificationHandler {
 
-    public static final Key<String> GUARDED_BLOCK_REASON = Key.create("GUARDED_BLOCK_REASON");
-
-    private static ReadonlyFragmentModificationHandler originalHandler = EditorActionManager.getInstance().getReadonlyFragmentModificationHandler();
+    private static final ReadonlyFragmentModificationHandler originalHandler = EditorActionManager.getInstance().getReadonlyFragmentModificationHandler();
     public static final ReadonlyFragmentModificationHandler INSTANCE = new OverrideReadonlyFragmentModificationHandler();
     private OverrideReadonlyFragmentModificationHandler() {
 

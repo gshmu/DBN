@@ -1,18 +1,16 @@
 package com.dci.intellij.dbn.common.ui.util;
 
 import com.intellij.util.ui.UIUtil;
+import lombok.Getter;
+import lombok.experimental.UtilityClass;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 import java.util.Objects;
 
+@UtilityClass
 public final class LookAndFeel {
-    private LookAndFeel() {}
-
+    @Getter
     static boolean darkMode = UIUtil.isUnderDarcula();
-
-    public static boolean isDarkMode() {
-        return darkMode;
-    }
 
     static {
         UIManager.addPropertyChangeListener(evt -> {

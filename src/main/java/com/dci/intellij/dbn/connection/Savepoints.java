@@ -4,13 +4,14 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Runnable;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+@UtilityClass
 public final class Savepoints{
-    private Savepoints() {}
 
     public static <T> T call(@NotNull DBNResultSet resultSet, Callable<T> callable) throws SQLException {
         DBNConnection c = resultSet.getConnection();

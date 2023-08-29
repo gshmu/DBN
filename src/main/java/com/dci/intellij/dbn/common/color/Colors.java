@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +24,8 @@ import static com.dci.intellij.dbn.common.color.ColorSchemes.background;
 import static com.dci.intellij.dbn.common.color.ColorSchemes.foreground;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
+@UtilityClass
 public final class Colors {
-    private Colors() {}
 
     public static Color LIGHT_BLUE = new JBColor(new Color(235, 244, 254), new Color(0x2D3548));
     public static Color HINT_COLOR = new JBColor(new Color(-12029286), new Color(-10058060));

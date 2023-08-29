@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.color.Colors;
-import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
@@ -39,7 +38,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiFile;
@@ -48,6 +46,7 @@ import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,14 +57,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.action.UserDataKeys.TEXT_EDITOR_KEY;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
-import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
+@UtilityClass
 public class Editors {
-    @Compatibility
-    public static final Key<TextEditor> TEXT_EDITOR_KEY = nvl(cast(Key.findKeyByName("textEditor")), () -> Key.create("textEditor"));
 
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstructions instructions) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -495,5 +493,13 @@ public class Editors {
             TextEditor thisTextEditor = (TextEditor) fileEditor;
             editor.putUserData(TEXT_EDITOR_KEY, thisTextEditor);
         }
+    }
+
+    public static EditorEx createEditor(Document document, Project project, @Nullable VirtualFile file, @NotNull FileType fileType) {
+        EditorFactory editorFactory = EditorFactory.getInstance();
+
+        return  file == null ?
+                cast(editorFactory.createEditor(document, project, fileType, false)) :
+                cast(editorFactory.createEditor(document, project, file, false));
     }
 }

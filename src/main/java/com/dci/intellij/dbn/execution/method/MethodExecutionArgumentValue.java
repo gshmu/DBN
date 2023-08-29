@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.common.list.MostRecentStack;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Commons;
@@ -13,7 +13,7 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Data
 public class MethodExecutionArgumentValue implements PersistentStateElement, Cloneable<MethodExecutionArgumentValue>, ArgumentValueHolder<String> {
@@ -57,7 +57,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement, Clo
         }
 
         for (Element child : element.getChildren()) {
-            value = SettingsSupport.readCdata(child);
+            value = Settings.readCdata(child);
             if (Strings.isNotEmpty(value)) {
                 values.add(value);
             }

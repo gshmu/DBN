@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Getter
 @Setter

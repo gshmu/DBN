@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.common.util.TextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -18,9 +17,9 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.util.List;
 
@@ -34,8 +33,9 @@ class ArgumentValuesTree extends DBNTree{
         Color bgColor = TextAttributes.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
         setBackground(bgColor == null ? Colors.getTableBackground() : bgColor);
 
-        addMouseListener(mouseAdapter);
+        addTreeSelectionListener(createTreeSelectionListener());
     }
+
 
     @NotNull
     public MethodExecutionResultForm getParentForm() {
@@ -47,25 +47,25 @@ class ArgumentValuesTree extends DBNTree{
         return new ArgumentValuesTreeModel(parentForm.getMethod(), inputArgumentValues, outputArgumentValues);
     }
 
-    private final MouseListener mouseAdapter = Mouse.listener().onClick(e -> {
-        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-            ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) getLastSelectedPathComponent();
-            if (treeNode != null) {
-                Object userValue = treeNode.getUserValue();
-                if (userValue instanceof ArgumentValue) {
-                    ArgumentValue argumentValue = (ArgumentValue) userValue;
-                    DBArgument argument = argumentValue.getArgument();
-                    if (argument != null && argument.isOutput()) {
-                        Object value = argumentValue.getValue();
-                        if (value instanceof ResultSet || argumentValue.isLargeObject()) {
-                            getParentForm().selectArgumentOutputTab(argument);
-                        }
-                    }
+    private TreeSelectionListener createTreeSelectionListener() {
+        return e -> {
+            TreePath path = e.getPath();
+            ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) path.getLastPathComponent();
+            if (treeNode == null) return;
+
+            Object userValue = treeNode.getUserValue();
+            if (userValue instanceof ArgumentValue) {
+                ArgumentValue argumentValue = (ArgumentValue) userValue;
+                DBArgument argument = argumentValue.getArgument();
+                if (argument == null || !argument.isOutput()) return;
+
+                Object value = argumentValue.getValue();
+                if (value instanceof ResultSet || argumentValue.isLargeObject() || argumentValue.isLargeValue()) {
+                    getParentForm().selectArgumentOutputTab(argument);
                 }
             }
-        }
-    });
-
+        };
+    }
 
     static class CellRenderer extends ColoredTreeCellRenderer {
         @Override
@@ -97,7 +97,7 @@ class ArgumentValuesTree extends DBNTree{
                     DBArgument argument = argumentValue.getArgument();
                     DBTypeAttribute attribute = argumentValue.getAttribute();
                     Object originalValue = argumentValue.getValue();
-                    String displayValue = originalValue instanceof ResultSet || argumentValue.isLargeObject() ? "" : String.valueOf(originalValue);
+                    String displayValue = originalValue instanceof ResultSet || argumentValue.isLargeObject() || argumentValue.isLargeValue() ? "" : String.valueOf(originalValue);
 
                     if (attribute == null) {
                         if (argument == null) {

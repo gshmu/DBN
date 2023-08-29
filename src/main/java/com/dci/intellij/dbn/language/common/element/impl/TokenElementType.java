@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 public final class TokenElementType extends LeafElementType implements LookupItemBuilderProvider {
     public static final String SEPARATOR = "SEPARATOR";

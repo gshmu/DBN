@@ -9,14 +9,15 @@ import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.util.Borders;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Viewers;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
@@ -87,36 +88,35 @@ public class PendingTransactionDialogForm extends DBNFormBase {
         DBLanguageDialect languageDialect = connection.getLanguageDialect(SQLLanguage.INSTANCE);
         DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(
                 project,
-                "preview",
+                "preview.sql",
                 languageDialect,
                 previewText,
                 connection,
                 currentSchema);
 
-        if (selectStatementFile != null) {
-            Document previewDocument = Failsafe.nn(Documents.getDocument(selectStatementFile));
+        if (selectStatementFile == null) return;
 
-            viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
-            viewer.setEmbeddedIntoDialogWrapper(true);
-            JScrollPane viewerScrollPane = viewer.getScrollPane();
+        Document previewDocument = Documents.ensureDocument(selectStatementFile);
+        viewer = Viewers.createViewer(previewDocument, project, null, SQLFileType.INSTANCE);
+        viewer.setEmbeddedIntoDialogWrapper(true);
+        JScrollPane viewerScrollPane = viewer.getScrollPane();
 
-            Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connection);
-            viewer.setBackgroundColor(Colors.lafDarker(viewer.getBackgroundColor(), 1));
-            viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-            //viewerScrollPane.setBorder(null);
-            viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
+        Editors.initEditorHighlighter(viewer, SQLLanguage.INSTANCE, connection);
+        viewer.setBackgroundColor(Colors.lafDarker(viewer.getBackgroundColor(), 1));
+        viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //viewerScrollPane.setBorder(null);
+        viewerScrollPane.setViewportBorder(Borders.lineBorder(Colors.getEditorBackground(), 4));
 
-            EditorSettings settings = viewer.getSettings();
-            settings.setFoldingOutlineShown(false);
-            settings.setLineMarkerAreaShown(false);
-            settings.setLineNumbersShown(false);
-            settings.setVirtualSpace(false);
-            settings.setDndEnabled(false);
-            settings.setAdditionalLinesCount(2);
-            settings.setRightMarginShown(false);
-            previewPanel.add(viewer.getComponent(), BorderLayout.CENTER);
-        }
+        EditorSettings settings = viewer.getSettings();
+        settings.setFoldingOutlineShown(false);
+        settings.setLineMarkerAreaShown(false);
+        settings.setLineNumbersShown(false);
+        settings.setVirtualSpace(false);
+        settings.setDndEnabled(false);
+        settings.setAdditionalLinesCount(2);
+        settings.setRightMarginShown(false);
+        previewPanel.add(viewer.getComponent(), BorderLayout.CENTER);
     }
 
 

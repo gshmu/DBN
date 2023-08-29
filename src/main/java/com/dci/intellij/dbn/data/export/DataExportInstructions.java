@@ -8,7 +8,7 @@ import org.jdom.Element;
 import java.io.File;
 import java.nio.charset.Charset;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Data
 public class DataExportInstructions implements PersistentStateElement, Cloneable<DataExportInstructions> {

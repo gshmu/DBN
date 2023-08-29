@@ -2,11 +2,12 @@ package com.dci.intellij.dbn.common.data;
 
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.Unsafe;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
 
+@UtilityClass
 public final class Data {
-    private Data() {}
 
     public static <T> T cast(@Nullable Object object, Class<T> type) {
         if (object != null) {

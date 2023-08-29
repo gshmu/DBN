@@ -7,6 +7,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
@@ -17,9 +18,8 @@ import static com.dci.intellij.dbn.common.thread.ThreadProperty.PROGRESS;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.DEAF;
 
+@UtilityClass
 public final class Progress {
-
-    private Progress() {}
 
     public static void background(Project project, DatabaseContext context, boolean cancellable, String title, String text, ProgressRunnable runnable) {
         if (isNotValid(project)) return;

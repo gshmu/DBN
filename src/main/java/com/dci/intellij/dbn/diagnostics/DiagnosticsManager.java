@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.diagnostics.ui.ConnectionDiagnosticsForm;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
@@ -29,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.action.UserDataKeys.DIAGNOSTIC_CONTENT_CATEGORY;
+import static com.dci.intellij.dbn.common.action.UserDataKeys.DIAGNOSTIC_CONTENT_FORM;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 
 @State(
@@ -38,8 +39,6 @@ import static com.dci.intellij.dbn.common.component.Components.projectService;
 public class DiagnosticsManager extends ProjectComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
     public static final String TOOL_WINDOW_ID = "DB Diagnostics";
-    private static final Key<DiagnosticCategory> CONTENT_CATEGORY_KEY = Key.create("CONTENT_TYPE");
-    private static final Key<DBNForm> CONTENT_FORM_KEY = Key.create("CONTENT_FORM");
 
     private final Map<ConnectionId, DiagnosticBundle<String>> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
     private final Map<ConnectionId, DiagnosticBundle<SessionId>> connectivityDiagnostics = new ConcurrentHashMap<>();
@@ -85,8 +84,8 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
 
             ContentFactory contentFactory = contentManager.getFactory();
             Content content = contentFactory.createContent(form.getComponent(), category.getName(), false);
-            content.putUserData(CONTENT_CATEGORY_KEY, category);
-            content.putUserData(CONTENT_FORM_KEY, form);
+            content.putUserData(DIAGNOSTIC_CONTENT_CATEGORY, category);
+            content.putUserData(DIAGNOSTIC_CONTENT_FORM, form);
             content.setCloseable(true);
             contentManager.addContent(content);
             Disposer.register(content, form);
@@ -108,7 +107,7 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
     private  <T extends DBNForm> T getDiagnosticsForm(@NotNull DiagnosticCategory category) {
         Content content = getDiagnosticsContent(category);
         if (content != null) {
-            return (T) content.getUserData(CONTENT_FORM_KEY);
+            return (T) content.getUserData(DIAGNOSTIC_CONTENT_FORM);
         }
         return null;
     }
@@ -119,7 +118,7 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
         ContentManager contentManager = toolWindow.getContentManager();
         Content[] contents = contentManager.getContents();
         for (Content content : contents) {
-            if (content.getUserData(CONTENT_CATEGORY_KEY) == category) {
+            if (content.getUserData(DIAGNOSTIC_CONTENT_CATEGORY) == category) {
                 return content;
             }
         }
@@ -132,7 +131,7 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
         ContentManager contentManager = toolWindow.getContentManager();
         Content[] contents = contentManager.getContents();
         for (Content content : contents) {
-            if (content.getUserData(CONTENT_CATEGORY_KEY) == category) {
+            if (content.getUserData(DIAGNOSTIC_CONTENT_CATEGORY) == category) {
                 contentManager.removeContent(content, true);
             }
         }

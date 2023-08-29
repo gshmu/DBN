@@ -13,12 +13,12 @@ public class IntegerSetting extends Setting<Integer, JTextField> implements Pers
     
     @Override
     public void readConfiguration(Element parent) {
-        setValue(SettingsSupport.getInteger(parent, getName(), this.value()));
+        setValue(Settings.getInteger(parent, getName(), this.value()));
     }
 
     @Override
     public void writeConfiguration(Element parent) {
-        SettingsSupport.setInteger(parent, getName(), this.value());
+        Settings.setInteger(parent, getName(), this.value());
     }
 
     @Override

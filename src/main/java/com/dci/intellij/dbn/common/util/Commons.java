@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,8 +17,8 @@ import java.util.function.Supplier;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 @Slf4j
+@UtilityClass
 public final class Commons {
-    private Commons() {}
 
     @NotNull
     public static <T> T nvl(@Nullable T value, @NotNull Supplier<T> defaultValue) {

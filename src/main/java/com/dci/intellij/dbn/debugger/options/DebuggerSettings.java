@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.options;
 
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.ui.DebuggerSettingsForm;
@@ -62,12 +62,12 @@ public class DebuggerSettings extends BasicConfiguration<OperationSettings, Debu
     @Override
     public void readConfiguration(Element element) {
         debuggerType.readConfiguration(element);
-        useGenericRunners = SettingsSupport.getBoolean(element, "use-generic-runners", useGenericRunners);
+        useGenericRunners = Settings.getBoolean(element, "use-generic-runners", useGenericRunners);
     }
 
     @Override
     public void writeConfiguration(Element element) {
         debuggerType.writeConfiguration(element);
-        SettingsSupport.setBoolean(element, "use-generic-runners", useGenericRunners);
+        Settings.setBoolean(element, "use-generic-runners", useGenericRunners);
     }
 }

@@ -14,7 +14,7 @@ import org.jdom.Element;
 import javax.swing.*;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @Setter

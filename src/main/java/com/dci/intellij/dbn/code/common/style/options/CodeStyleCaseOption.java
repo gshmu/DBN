@@ -10,7 +10,7 @@ import org.jdom.Element;
 
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Getter
 @Setter

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Content;
 import org.jdom.Element;
@@ -14,8 +15,8 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
-public final class SettingsSupport {
-    private SettingsSupport() {}
+@UtilityClass
+public final class Settings {
 
     public static String getString(Element parent, String childName, String defaultValue) {
         Element element = parent.getChild(childName);

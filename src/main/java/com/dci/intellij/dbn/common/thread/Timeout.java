@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
@@ -16,10 +17,9 @@ import static com.dci.intellij.dbn.common.util.TimeUtil.secondsSince;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
+@UtilityClass
 public final class Timeout {
     private static final Object lock = new Object();
-
-    private Timeout() {}
 
     @SneakyThrows
     public static <T> T call(int seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {

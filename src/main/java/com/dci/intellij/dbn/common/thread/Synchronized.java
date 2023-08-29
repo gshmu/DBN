@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import lombok.experimental.UtilityClass;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +14,7 @@ import java.util.function.Predicate;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 
+@UtilityClass
 public class Synchronized {
 	static final Map<Object, SyncObject> LOCKS = new ConcurrentHashMap<>(100);
 

@@ -3,18 +3,19 @@ package com.dci.intellij.dbn.common.ui.util;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.util.ui.UIUtil;
+import lombok.experimental.UtilityClass;
 
-import java.awt.Font;
+import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@UtilityClass
 public final class Fonts {
+
     public static final Font REGULAR = UIUtil.getLabelFont();
     public static final Font BOLD = new Font(REGULAR.getName(), Font.BOLD, REGULAR.getSize());
     public static final Map<Font, Map<Float, Font>> SIZE_DERIVATIONS = new ConcurrentHashMap<>();
     public static final Map<Font, Map<Integer, Font>> STYLE_DERIVATIONS = new ConcurrentHashMap<>();
-
-    private Fonts() {}
 
     public static Font getLabelFont() {
         return REGULAR;

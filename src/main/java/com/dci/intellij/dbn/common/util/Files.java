@@ -12,17 +12,17 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Objects;
 
+@UtilityClass
 public final class Files {
     // keep in sync with file type definitions in  plugin.xml
     public static final String[] SQL_FILE_EXTENSIONS = {"sql", "ddl", "vw"};
     public static final String[] PSQL_FILE_EXTENSIONS = {"psql", "plsql", "trg", "prc", "fnc", "pkg", "pks", "pkb", "tpe", "tps", "tpb"};
-
-    private Files() {}
 
     public static File createFileByRelativePath(@NotNull final File absoluteBase, @NotNull final String relativeTail) {
         // assert absoluteBase.isAbsolute() && absoluteBase.isDirectory(); : assertion seem to be too costly

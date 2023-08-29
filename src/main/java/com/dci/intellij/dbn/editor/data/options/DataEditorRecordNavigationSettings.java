@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorRecordNavigationSettingsForm;
 import lombok.EqualsAndHashCode;
@@ -33,7 +33,7 @@ public class DataEditorRecordNavigationSettings extends BasicConfiguration<DataE
 
     @Override
     public void readConfiguration(Element element) {
-        navigationTarget = SettingsSupport.getEnum(element, "navigation-target", RecordNavigationTarget.VIEWER);
+        navigationTarget = Settings.getEnum(element, "navigation-target", RecordNavigationTarget.VIEWER);
         if (navigationTarget == RecordNavigationTarget.PROMPT) {
             navigationTarget = RecordNavigationTarget.ASK;
         }
@@ -41,6 +41,6 @@ public class DataEditorRecordNavigationSettings extends BasicConfiguration<DataE
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setEnum(element, "navigation-target", navigationTarget);
+        Settings.setEnum(element, "navigation-target", navigationTarget);
     }
 }

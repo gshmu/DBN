@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -83,7 +83,7 @@ public class ObjectQuickFilterManager extends ProjectComponentBase implements Pe
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        SettingsSupport.setEnum(element, "last-used-operator", lastUsedOperator);
+        Settings.setEnum(element, "last-used-operator", lastUsedOperator);
         Element filtersElement = new Element("filters");
         element.addContent(filtersElement);
 
@@ -106,7 +106,7 @@ public class ObjectQuickFilterManager extends ProjectComponentBase implements Pe
     @Override
     public void loadComponentState(@NotNull Element element) {
         Element filtersElement = element.getChild("filters");
-        lastUsedOperator = SettingsSupport.getEnum(element, "last-used-operator", lastUsedOperator);
+        lastUsedOperator = Settings.getEnum(element, "last-used-operator", lastUsedOperator);
         if (filtersElement != null) {
             for (Element child : filtersElement.getChildren()) {
                 ObjectQuickFilterKey key = new ObjectQuickFilterKey();
