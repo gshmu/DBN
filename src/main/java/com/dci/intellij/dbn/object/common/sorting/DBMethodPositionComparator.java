@@ -14,7 +14,7 @@ public abstract class DBMethodPositionComparator<T extends DBMethod> extends DBO
         DBProgram program1 = method1.getProgram();
         DBProgram program2 = method2.getProgram();
         if (program1 != null && program2 != null) {
-            int result = compareObject(program1, program2);
+            int result = compareRef(program1, program2);
             if (result == 0) {
                 return comparePosition(method1, method2);
             }
