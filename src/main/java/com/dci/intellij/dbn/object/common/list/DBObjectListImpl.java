@@ -31,7 +31,9 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
+import com.dci.intellij.dbn.object.common.sorting.DBObjectComparators;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
@@ -61,6 +63,7 @@ import static com.dci.intellij.dbn.common.search.Search.comboSearch;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.binary;
 import static com.dci.intellij.dbn.object.common.DBObjectSearchAdapters.linear;
+import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparators.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 import static java.util.Collections.emptyList;
 
@@ -269,18 +272,20 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentBase<T> 
     @Override
     protected void sortElements(List<T> elements) {
         if (is(VIRTUAL)) {
-            elements.sort(DBObjectComparator.classic());
+            elements.sort(classic());
 
         } else if (isInternal()) {
             if (is(GROUPED)) {
-                elements.sort(DBObjectComparator.grouped());
+                elements.sort(generic());
             } else {
-                elements.sort(DBObjectComparator.basic(objectType));
+                elements.sort(DBObjectComparators.basic(objectType));
                 set(SEARCHABLE, true);
             }
         } else {
-            DBObjectComparator<T> comparator = DBObjectComparator.classic();
-            if (objectType != ANY) {
+            DBObjectComparator<T> comparator = classic();
+            if (objectType == TYPE) {
+                comparator = detailed(objectType, DBObjectProperty.COLLECTION, SortingType.NAME);
+            } else if (objectType != ANY) {
                 DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
                 DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
                 comparator = nvl(sortingSettings.getComparator(objectType), comparator);

@@ -14,7 +14,7 @@ public abstract class DBMethodNameComparator<T extends DBMethod> extends DBObjec
         DBProgram program1 = method1.getProgram();
         DBProgram program2 = method2.getProgram();
 
-        int result = compareObject(program1, program2);
+        int result = compareRef(program1, program2);
         if (result == 0) {
             result = compareName(method1, method2);
             if (result == 0) {
