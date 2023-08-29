@@ -13,7 +13,7 @@ public class DBTypeAttributePositionComparator extends DBObjectComparator<DBType
     public int compare(DBTypeAttribute attribute1, DBTypeAttribute attribute2) {
         DBType type1 = attribute1.getType();
         DBType type2 = attribute2.getType();
-        int result = compareObject(type1, type2);
+        int result = compareRef(type1, type2);
         if (result == 0) {
             return comparePosition(attribute1, attribute2);
         }
