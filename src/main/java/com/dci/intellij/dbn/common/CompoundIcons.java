@@ -23,7 +23,7 @@ public class CompoundIcons {
             LayeredIcon layeredIcon = new LayeredIcon(2);
 
             layeredIcon.setIcon(i, 0);
-            layeredIcon.setIcon(modifiedIcon, 1, -(modifiedIcon.getIconWidth() / 2) - 2, -2);
+            layeredIcon.setIcon(modifiedIcon, 1, -(modifiedIcon.getIconWidth() / 2) - 3, 0);
 
             return JBUIScale.scaleIcon(layeredIcon);
         });
