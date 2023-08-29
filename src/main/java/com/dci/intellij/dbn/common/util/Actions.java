@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.event.InputEvent;
 import java.util.UUID;
 
 @UtilityClass
@@ -58,6 +59,10 @@ public class Actions {
         return place;
     }
 
-
+    public static boolean isConsumed(AnActionEvent event) {
+        InputEvent inputEvent = event.getInputEvent();
+        if (inputEvent == null) return false;
+        return inputEvent.isConsumed();
+    }
 
 }
