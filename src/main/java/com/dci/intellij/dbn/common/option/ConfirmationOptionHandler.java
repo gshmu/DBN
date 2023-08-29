@@ -57,14 +57,13 @@ public class ConfirmationOptionHandler implements DoNotAskOption, PersistentConf
     }
 
     public boolean resolve(Object ... messageArgs) {
-        if (confirm) {
-            int optionIndex = Messages.showDialog(
-                    MessageFormat.format(message, messageArgs),
-                    Titles.signed(title),
-                    new String[]{"Yes", "No"}, 0, Icons.DIALOG_QUESTION, this);
-            return optionIndex == 0;
-        }
-        return true;
+        if (!confirm) return true;
+
+        int optionIndex = Messages.showDialog(
+                MessageFormat.format(message, messageArgs),
+                Titles.signed(title),
+                new String[]{"Yes", "No"}, 0, Icons.DIALOG_QUESTION, this);
+        return optionIndex == 0;
     }
 
     /*******************************************************
