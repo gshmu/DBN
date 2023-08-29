@@ -13,13 +13,12 @@ import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 
 @Slf4j
-@Getter
 @UtilityClass
 public final class Diagnostics {
-    private static final DeveloperMode developerMode = new DeveloperMode();
-    private static final DebugLogging debugLogging = new DebugLogging();
-    private static final DatabaseLag databaseLag = new DatabaseLag();
-    private static final Miscellaneous miscellaneous = new Miscellaneous();
+    private static final @Getter DeveloperMode developerMode = new DeveloperMode();
+    private static final @Getter DebugLogging debugLogging = new DebugLogging();
+    private static final @Getter DatabaseLag databaseLag = new DatabaseLag();
+    private static final @Getter Miscellaneous miscellaneous = new Miscellaneous();
 
     public static boolean isDialogSizingReset() {
         return isDeveloperMode() && miscellaneous.dialogSizingReset;
