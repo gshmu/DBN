@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -198,7 +199,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         databaseContent = null;
         sourceLoadError = null;
         set(LATEST, true);
-        set(MODIFIED, false);
+        setModified(false);
     }
 
     public void saveSourceToDatabase() throws SQLException {
@@ -216,7 +217,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         databaseContent = null;
         sourceLoadError = null;
         set(LATEST, true);
-        set(MODIFIED, false);
+        setModified(false);
     }
 
     public void revertLocalChanges() {
@@ -224,7 +225,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         databaseContent = null;
         sourceLoadError = null;
         set(LATEST, true);
-        set(MODIFIED, false);
+        setModified(false);
     }
 
     private void updateFileContent(@Nullable SourceCodeContent newContent, @Nullable CharSequence newText) {
@@ -284,9 +285,15 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public void documentChanged(@NotNull DocumentEvent event) {
         CharSequence newContent = event.getDocument().getCharsSequence();
         if (isNot(MODIFIED) && !Strings.equals(originalContent.getText(), newContent)) {
-            set(MODIFIED, true);
+            setModified(true);
         }
         localContent.setText(newContent);
+    }
+
+    public void setModified(boolean modified) {
+        boolean changed = set(MODIFIED, modified);
+        // TODO implement as file modification listener
+        if (changed) Editors.markEditorsModified(getProject(), getMainDatabaseFile(), modified);
     }
 
     @Override
