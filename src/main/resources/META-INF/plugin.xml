@@ -318,6 +318,7 @@
         <projectService serviceImplementation="com.dci.intellij.dbn.vfs.DatabaseFileManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.connection.session.DatabaseSessionManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.connection.console.DatabaseConsoleManager"/>
+        <fileIconPatcher implementation="com.dci.intellij.dbn.vfs.DBFileIconPatcher"/>
     </extensions>
 
     <actions>
