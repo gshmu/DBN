@@ -3,34 +3,16 @@ package com.dci.intellij.dbn.common.environment.options;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
+import lombok.Getter;
 import org.jdom.Element;
 
+@Getter
 public class EnvironmentVisibilitySettings implements PersistentConfiguration {
-    private BooleanSetting connectionTabs = new BooleanSetting("connection-tabs", true);
-    private BooleanSetting objectEditorTabs = new BooleanSetting("object-editor-tabs", true);
-    private BooleanSetting scriptEditorTabs = new BooleanSetting("script-editor-tabs", false);
-    private BooleanSetting dialogHeaders = new BooleanSetting("dialog-headers", true);
-    private BooleanSetting executionResultTabs = new BooleanSetting("execution-result-tabs", true);
-
-    public BooleanSetting getConnectionTabs() {
-        return connectionTabs;
-    }
-
-    public BooleanSetting getObjectEditorTabs() {
-        return objectEditorTabs;
-    }
-
-    public BooleanSetting getScriptEditorTabs() {
-        return scriptEditorTabs;
-    }
-
-    public BooleanSetting getDialogHeaders() {
-        return dialogHeaders;
-    }
-
-    public BooleanSetting getExecutionResultTabs() {
-        return executionResultTabs;
-    }
+    private final BooleanSetting connectionTabs = new BooleanSetting("connection-tabs", true);
+    private final BooleanSetting objectEditorTabs = new BooleanSetting("object-editor-tabs", true);
+    private final BooleanSetting scriptEditorTabs = new BooleanSetting("script-editor-tabs", false);
+    private final BooleanSetting dialogHeaders = new BooleanSetting("dialog-headers", true);
+    private final BooleanSetting executionResultTabs = new BooleanSetting("execution-result-tabs", true);
 
     @Override
     public void readConfiguration(Element element) {
