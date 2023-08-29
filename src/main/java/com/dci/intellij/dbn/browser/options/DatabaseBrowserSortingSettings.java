@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSortingSettingsFor
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
+import com.dci.intellij.dbn.object.common.sorting.DBObjectComparators;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.EqualsAndHashCode;
@@ -29,11 +30,11 @@ public class DatabaseBrowserSortingSettings
 
     DatabaseBrowserSortingSettings(DatabaseBrowserSettings parent) {
         super(parent);
-        comparators.put(DBObjectType.COLUMN, DBObjectComparator.get(DBObjectType.COLUMN, SortingType.NAME));
-        comparators.put(DBObjectType.FUNCTION, DBObjectComparator.get(DBObjectType.FUNCTION, SortingType.NAME));
-        comparators.put(DBObjectType.PROCEDURE, DBObjectComparator.get(DBObjectType.PROCEDURE, SortingType.NAME));
-        comparators.put(DBObjectType.ARGUMENT, DBObjectComparator.get(DBObjectType.ARGUMENT, SortingType.POSITION));
-        comparators.put(DBObjectType.TYPE_ATTRIBUTE, DBObjectComparator.get(DBObjectType.TYPE_ATTRIBUTE, SortingType.POSITION));
+        comparators.put(DBObjectType.COLUMN, DBObjectComparators.predefined(DBObjectType.COLUMN, SortingType.NAME));
+        comparators.put(DBObjectType.FUNCTION, DBObjectComparators.predefined(DBObjectType.FUNCTION, SortingType.NAME));
+        comparators.put(DBObjectType.PROCEDURE, DBObjectComparators.predefined(DBObjectType.PROCEDURE, SortingType.NAME));
+        comparators.put(DBObjectType.ARGUMENT, DBObjectComparators.predefined(DBObjectType.ARGUMENT, SortingType.POSITION));
+        comparators.put(DBObjectType.TYPE_ATTRIBUTE, DBObjectComparators.predefined(DBObjectType.TYPE_ATTRIBUTE, SortingType.POSITION));
     }
 
     public <T extends DBObject> DBObjectComparator<T> getComparator(DBObjectType objectType) {
@@ -92,7 +93,7 @@ public class DatabaseBrowserSortingSettings
             String sortingTypeName = stringAttribute(child, "sorting-type");
             DBObjectType objectType = DBObjectType.get(objectTypeName);
             SortingType sortingType = SortingType.valueOf(sortingTypeName);
-            DBObjectComparator comparator = DBObjectComparator.get(objectType, sortingType);
+            DBObjectComparator comparator = DBObjectComparators.predefined(objectType, sortingType);
             if (comparator != null) {
                 newComparators.put(comparator.getObjectType(), comparator);
             }
