@@ -21,9 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import javax.swing.*;
 
 public class ProgramCompileAction extends AbstractCodeEditorAction {
     public ProgramCompileAction() {
@@ -60,15 +58,15 @@ public class ProgramCompileAction extends AbstractCodeEditorAction {
 
                 boolean isPresent = objectStatus.is(contentType, DBObjectStatus.PRESENT);
                 boolean isValid = objectStatus.is(contentType, DBObjectStatus.VALID);
-                boolean isModified = sourceCodeFile.is(MODIFIED);
+                boolean isModified = sourceCodeFile.isModified();
 
                 boolean isCompiling = objectStatus.is(contentType, DBObjectStatus.COMPILING);
                 boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.isAlwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
 
                 presentation.setEnabled(isEnabled);
                 String text =
-                        contentType == DBContentType.CODE_SPEC ? "Compile spec" :
-                                contentType == DBContentType.CODE_BODY ? "Compile body" : "Compile";
+                        contentType == DBContentType.CODE_SPEC ? "Compile Spec" :
+                        contentType == DBContentType.CODE_BODY ? "Compile Body" : "Compile";
 
                 if (isDebug) text = text + " (Debug)";
                 if (compileType == CompileType.ASK) text = text + "...";
