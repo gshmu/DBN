@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import java.util.Set;
 
 public class ElementLookupContext {
     public static double MAX_DB_VERSION = 9999;
-    private final Set<NamedElementType> scannedElements = new THashSet<>();
+    private final Set<NamedElementType> scannedElements = new HashSet<>();
     private final Set<ElementTypeAttribute> breakOnAttributes = new HashSet<>();
     private final Map<Branch, NamedElementType> branchMarkers = new HashMap<>();
     protected Set<Branch> branches;

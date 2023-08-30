@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.common.index;
 
 import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.common.util.Unsafe;
-import gnu.trove.TIntHashSet;
-import gnu.trove.TIntIterator;
+import org.jetbrains.coverage.gnu.trove.TIntHashSet;
+import org.jetbrains.coverage.gnu.trove.TIntIterator;
 
 import java.util.Collection;
 import java.util.Collections;

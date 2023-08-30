@@ -11,11 +11,11 @@ import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
 import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -26,7 +26,7 @@ public final class NamedElementType extends SequenceElementType {
 
     public NamedElementType(ElementTypeBundle bundle, String id) {
         super(bundle, null, id);
-        parents = new THashSet<>();
+        parents = new HashSet<>();
     }
 
     @Override
