@@ -653,7 +653,7 @@
         <navbar order="last" implementation="com.dci.intellij.dbn.navigation.NavigationBarExtension"/>
         <editorTabColorProvider order="first" implementation="com.dci.intellij.dbn.editor.DBEditorTabColorProvider"/>
 
-        <errorHandler implementation="com.dci.intellij.dbn.error.JiraIssueReportSubmitter"/>
+        <errorHandler implementation="com.dci.intellij.dbn.error.jira.JiraIssueReportSubmitter"/>
         <liveTemplateContext implementation="com.dci.intellij.dbn.language.sql.template.SQLTemplateContextType"/>
         <liveTemplateContext implementation="com.dci.intellij.dbn.language.psql.template.PSQLTemplateContextType"/>
         <defaultLiveTemplatesProvider implementation="com.dci.intellij.dbn.language.sql.template.SQLTemplateProvider"/>
