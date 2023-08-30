@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.util.Files;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.THashSet;
 import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
     public Set<StatementExecutionVariable> getVariables(@Nullable VirtualFile virtualFile) {
         if (virtualFile != null) {
             String fileUrl = virtualFile.getUrl();
-            return fileVariablesMap.computeIfAbsent(fileUrl, u -> new THashSet<>());
+            return fileVariablesMap.computeIfAbsent(fileUrl, u -> new HashSet<>());
         }
         return Collections.emptySet();
     }

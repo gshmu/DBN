@@ -6,15 +6,15 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.cache.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.impl.*;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public final class NextTokenResolver {
     private final ElementType source;
-    private final Set<NamedElementType> visited = new THashSet<>();
+    private final Set<NamedElementType> visited = new HashSet<>();
     private IndexContainer<TokenType> bucket;
 
     private NextTokenResolver(ElementType source) {
