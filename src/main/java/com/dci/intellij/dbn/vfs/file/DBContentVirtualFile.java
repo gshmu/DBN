@@ -31,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+
 @Getter
 public abstract class DBContentVirtualFile extends DBVirtualFileBase implements PropertyHolder<VirtualFileStatus>  {
     private final WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
@@ -153,5 +155,9 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
     @Override
     public void refresh(boolean b, boolean b1, Runnable runnable) {
 
+    }
+
+    public boolean isModified() {
+        return is(MODIFIED);
     }
 }

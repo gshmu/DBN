@@ -15,15 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CompoundIcons {
 
     private static final Map<Icon, Icon> modifiedOverlayIcons = new ConcurrentHashMap<>();
-    private static final JBRectangle MODIFIED_OVERLAY_AREA = new JBRectangle(3, 3, 7, 7);
 
     public static Icon addModifiedOverlay(Icon icon) {
         return modifiedOverlayIcons.computeIfAbsent(icon, i -> {
-            Icon modifiedIcon = IconUtil.cropIcon(AllIcons.General.Modified, MODIFIED_OVERLAY_AREA);
+            JBRectangle area = new JBRectangle(3, 3, 7, 7);
+            Icon watermark = IconUtil.cropIcon(AllIcons.General.Modified, area);
             LayeredIcon layeredIcon = new LayeredIcon(2);
 
             layeredIcon.setIcon(i, 0);
-            layeredIcon.setIcon(modifiedIcon, 1, -(modifiedIcon.getIconWidth() / 2) - 3, 0);
+            layeredIcon.setIcon(watermark, 1, -(watermark.getIconWidth() / 2) - 3, 0);
 
             return JBUIScale.scaleIcon(layeredIcon);
         });

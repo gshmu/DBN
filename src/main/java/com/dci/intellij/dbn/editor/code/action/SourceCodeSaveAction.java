@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class SourceCodeSaveAction extends AbstractCodeEditorAction {
@@ -53,7 +52,7 @@ public class SourceCodeSaveAction extends AbstractCodeEditorAction {
                     contentType == DBContentType.CODE_SPEC ? "Save Spec" :
                     contentType == DBContentType.CODE_BODY ? "Save Body" : "Save";
 
-            presentation.setEnabled(sourceCodeFile.is(MODIFIED) && sourceCodeFile.isNot(SAVING));
+            presentation.setEnabled(sourceCodeFile.isModified() && sourceCodeFile.isNot(SAVING));
             presentation.setText(text);
         } else {
             presentation.setEnabled(false);

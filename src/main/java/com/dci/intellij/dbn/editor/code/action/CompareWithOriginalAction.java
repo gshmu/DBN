@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class CompareWithOriginalAction extends AbstractCodeEditorDiffAction {
     public CompareWithOriginalAction() {
@@ -32,7 +31,7 @@ public class CompareWithOriginalAction extends AbstractCodeEditorDiffAction {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean readonly = environmentManager.isReadonly(sourceCodeFile);
             presentation.setVisible(!readonly);
-            presentation.setEnabled(sourceCodeFile.is(MODIFIED));
+            presentation.setEnabled(sourceCodeFile.isModified());
         } else {
             presentation.setEnabled(false);
         }

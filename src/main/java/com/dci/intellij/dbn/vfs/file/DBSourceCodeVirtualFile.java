@@ -283,17 +283,17 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @Override
     public void documentChanged(@NotNull DocumentEvent event) {
+        CharSequence oldContent = originalContent.getText();
         CharSequence newContent = event.getDocument().getCharsSequence();
-        if (isNot(MODIFIED) && !Strings.equals(originalContent.getText(), newContent)) {
-            setModified(true);
-        }
+
+        setModified(!Strings.equals(oldContent, newContent));
         localContent.setText(newContent);
     }
 
     public void setModified(boolean modified) {
-        boolean changed = set(MODIFIED, modified);
+        boolean statusChanged = set(MODIFIED, modified);
         // TODO implement as file modification listener
-        if (changed) Editors.markEditorsModified(getProject(), getMainDatabaseFile(), modified);
+        if (statusChanged) Editors.markEditorsModified(getProject(), getMainDatabaseFile(), modified);
     }
 
     @Override

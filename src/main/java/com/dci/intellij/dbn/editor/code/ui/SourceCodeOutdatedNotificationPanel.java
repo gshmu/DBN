@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.text.DateFormatUtil;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotificationPanel{
     public SourceCodeOutdatedNotificationPanel(DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor sourceCodeEditor) {
@@ -28,7 +27,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
 
         String text = "Outdated version";
         boolean mergeRequired = sourceCodeFile.isMergeRequired();
-        if (sourceCodeFile.is(MODIFIED) && !mergeRequired) {
+        if (sourceCodeFile.isModified() && !mergeRequired) {
             text += " (MERGED)";
         }
         text += ". The " + editableObject.getQualifiedNameWithType() + " was changed in database by another user (" + presentableChangeTime + ")";
@@ -65,7 +64,7 @@ public class SourceCodeOutdatedNotificationPanel extends SourceCodeEditorNotific
             });
         }
 
-        createActionLabel(sourceCodeFile.is(MODIFIED) ? "Revert local changes" : "Reload", () -> {
+        createActionLabel(sourceCodeFile.isModified() ? "Revert local changes" : "Reload", () -> {
             if (!project.isDisposed()) {
                 SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                 sourceCodeManager.loadSourceCode(sourceCodeFile, true);
