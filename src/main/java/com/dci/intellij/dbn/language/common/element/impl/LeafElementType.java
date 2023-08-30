@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.language.common.element.path.LanguageNode;
 import com.dci.intellij.dbn.language.common.element.path.ParserNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
-import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -76,7 +76,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
     }
 
     public Set<LeafElementType> getNextPossibleLeafs(LanguageNode pathNode, @NotNull ElementLookupContext context) {
-        Set<LeafElementType> possibleLeafs = new THashSet<>();
+        Set<LeafElementType> possibleLeafs = new HashSet<>();
         int position = 1;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElement();
@@ -209,7 +209,7 @@ public abstract class LeafElementType extends ElementTypeBase implements Indexab
     }
 
     public Set<LeafElementType> getNextRequiredLeafs(LanguageNode pathNode, ParserContext context) {
-        Set<LeafElementType> requiredLeafs = new THashSet<>();
+        Set<LeafElementType> requiredLeafs = new HashSet<>();
         int position = 0;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElement();

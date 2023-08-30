@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributeHol
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -92,7 +92,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     Set<BranchCheck> parseBranchChecks(String definitions) {
         Set<BranchCheck> branches = null;
         if (definitions != null) {
-            branches = new THashSet<>();
+            branches = new HashSet<>();
             StringTokenizer tokenizer = new StringTokenizer(definitions, " ");
             while (tokenizer.hasMoreTokens()) {
                 String branchDef = tokenizer.nextToken().trim();

@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.util.XmlContents;
 import com.intellij.psi.tree.TokenSet;
-import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jdom.Document;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -66,7 +66,7 @@ public class SharedTokenTypeBundle extends TokenTypeBundleBase {
         commentTokens = getTokenSet("COMMENTS");
         stringTokens = getTokenSet("STRINGS");
 
-        identifierTokens = new THashSet<>(2);
+        identifierTokens = new HashSet<>(2);
         identifierTokens.add(identifier);
         identifierTokens.add(quotedIdentifier);
     }
