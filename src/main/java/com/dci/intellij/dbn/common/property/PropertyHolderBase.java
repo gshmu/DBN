@@ -6,6 +6,10 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
     protected abstract T[] properties();
     protected abstract void change(T property, boolean value);
 
+    protected void changed(T property, boolean value) {
+        // no action by default
+    }
+
     @SafeVarargs
     protected PropertyHolderBase(T ... properties) {
         for (T property : properties()) {
@@ -127,6 +131,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
             this.computed = value ?
                     this.computed | property.maskOn() :
                     this.computed & property.maskOff();
+            changed(property, value);
         }
 
         public void reset() {
@@ -155,6 +160,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
             this.computed = value ?
                     this.computed | property.maskOn() :
                     this.computed & property.maskOff();
+            changed(property, value);
         }
 
         public void reset() {

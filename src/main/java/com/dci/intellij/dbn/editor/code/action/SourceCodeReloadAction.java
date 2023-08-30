@@ -12,8 +12,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.MODIFIED;
 
 public class SourceCodeReloadAction extends AbstractCodeEditorAction {
     public SourceCodeReloadAction() {

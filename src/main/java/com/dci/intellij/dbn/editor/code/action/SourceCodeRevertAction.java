@@ -15,7 +15,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.LOADING;
 
 public class SourceCodeRevertAction extends AbstractCodeEditorAction {
     public SourceCodeRevertAction() {
