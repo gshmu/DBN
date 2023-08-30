@@ -1,9 +1,12 @@
-package com.dci.intellij.dbn.error;
+package com.dci.intellij.dbn.error.jira;
 
+import com.dci.intellij.dbn.error.TicketRequest;
 import com.google.gson.JsonObject;
+import lombok.Getter;
 
-class JiraTicketRequest {
-    private JsonObject jsonObject = new JsonObject();
+@Getter
+class JiraTicketRequest implements TicketRequest {
+    private final JsonObject jsonObject = new JsonObject();
 
     JiraTicketRequest(String summary, String description) {
         summary = summary.replace("\r\n", " ").replace("\t", " ");
@@ -24,9 +27,5 @@ class JiraTicketRequest {
         fields.addProperty("description", description);
         fields.add("issuetype", issueType);
         jsonObject.add("fields", fields);
-    }
-
-    JsonObject getJsonObject() {
-        return jsonObject;
     }
 }
