@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.CompoundIcons;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -131,15 +130,6 @@ public class Editors {
         }
 
         return fileEditor;
-    }
-
-    public static void markEditorsModified(@NotNull Project project, @NotNull DBObjectVirtualFile file, boolean modified) {
-        Collection<TabInfo> tabInfos = getEditorTabInfos(project, file);
-        for (TabInfo tabInfo : tabInfos) {
-            Icon icon = file.getIcon();
-            if (modified) icon = CompoundIcons.addModifiedOverlay(icon);
-            tabInfo.setIcon(icon);
-        }
     }
 
     public static Collection<TabInfo> getEditorTabInfos(Project project, VirtualFile file) {

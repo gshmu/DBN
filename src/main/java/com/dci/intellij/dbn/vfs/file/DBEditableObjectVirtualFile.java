@@ -32,7 +32,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.SAVING;
 
 @Getter
 @Setter

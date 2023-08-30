@@ -2,7 +2,9 @@ package com.dci.intellij.dbn.editor;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
+import com.dci.intellij.dbn.common.CompoundIcons;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -30,6 +32,9 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBFileOpenHandle;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.file.status.DBFileStatus;
+import com.dci.intellij.dbn.vfs.file.status.DBFileStatusListener;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -37,9 +42,12 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.tabs.TabInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.util.Collection;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
@@ -47,6 +55,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
+import static com.dci.intellij.dbn.common.util.Editors.getEditorTabInfos;
 import static com.dci.intellij.dbn.editor.DatabaseFileEditorManager.COMPONENT_NAME;
 
 @State(
@@ -62,6 +71,27 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
     public DatabaseFileEditorManager(Project project) {
         super(project, COMPONENT_NAME);
+
+        ProjectEvents.subscribe(project, this,
+                DBFileStatusListener.TOPIC,
+                createFileStatusListener());
+    }
+
+    @NotNull
+    private DBFileStatusListener createFileStatusListener() {
+        return (file, status, value) -> {
+            if (status != DBFileStatus.MODIFIED) return;
+            markEditorsModified(getProject(), file.getMainDatabaseFile(), value);
+        };
+    }
+
+    private static void markEditorsModified(@NotNull Project project, @NotNull DBObjectVirtualFile file, boolean modified) {
+        Collection<TabInfo> tabInfos = getEditorTabInfos(project, file);
+        for (TabInfo tabInfo : tabInfos) {
+            Icon icon = file.getIcon();
+            if (modified) icon = CompoundIcons.addModifiedOverlay(icon);
+            tabInfo.setIcon(icon);
+        }
     }
 
     public boolean isFileOpen(DBEditableObjectVirtualFile databaseFile) {
