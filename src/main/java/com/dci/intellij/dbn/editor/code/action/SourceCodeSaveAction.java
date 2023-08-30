@@ -30,14 +30,18 @@ public class SourceCodeSaveAction extends AbstractCodeEditorAction {
     }
 
     private static void performSave(@NotNull Project project, @NotNull SourceCodeEditor fileEditor, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+        if (!sourceCodeFile.isModified()) return;
+
         CodeEditorSettings editorSettings = CodeEditorSettings.getInstance(project);
         CodeEditorConfirmationSettings confirmationSettings = editorSettings.getConfirmationSettings();
         ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
-        boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());
-        if (canContinue) {
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.saveSourceCode(sourceCodeFile, fileEditor, null);
-        }
+
+        String objectName = fileEditor.getObject().getQualifiedNameWithType();
+        boolean canContinue = optionHandler.resolve(objectName);
+        if (!canContinue) return;
+
+        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+        sourceCodeManager.saveSourceCode(sourceCodeFile, fileEditor, null);
     }
 
     @Override
