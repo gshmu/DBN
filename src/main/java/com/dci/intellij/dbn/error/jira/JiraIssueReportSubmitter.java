@@ -1,9 +1,11 @@
-package com.dci.intellij.dbn.error;
+package com.dci.intellij.dbn.error.jira;
 
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.error.IssueReportBuilder;
+import com.dci.intellij.dbn.error.IssueReportSubmitter;
+import com.dci.intellij.dbn.error.TicketResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -18,12 +20,8 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 public class JiraIssueReportSubmitter extends IssueReportSubmitter {
     private static final HttpClientBuilder HTTP_CLIENT_BUILDER = HttpClientBuilder.create();
     private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
+    private static final JiraIssueReportBuilder REPORT_BUILDER = new JiraIssueReportBuilder();
     private static final String URL = "https://database-navigator.atlassian.net/";
-
-    @Override
-    public String getTicketUrlStub() {
-        return URL + "browse/";
-    }
 
     @Override
     public String getTicketUrl(String ticketId) {
@@ -31,20 +29,13 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
     }
 
     @Override
-    public String getMarkupElement(MarkupElement element, String title) {
-        switch (element) {
-            case BOLD: return "*";
-            case ITALIC: return "_";
-            case TABLE: return "|";
-            case CODE: return title == null ? "{code}" : "{code:title=" + title + "}";
-            case PANEL: return title == null ? "{panel}" : "{panel:title=" + title + "}";
-        }
-        return "";
+    protected IssueReportBuilder getBuilder() {
+        return REPORT_BUILDER;
     }
 
     @NotNull
     @Override
-    public TicketResponse submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception {
+    public TicketResponse submit(String summary, String description) throws Exception {
         JiraTicketRequest ticketRequest = new JiraTicketRequest(summary, description);
         try {
             Gson gson = GSON_BUILDER.create();
