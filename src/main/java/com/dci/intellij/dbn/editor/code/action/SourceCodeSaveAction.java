@@ -17,7 +17,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.SAVING;
 
 public class SourceCodeSaveAction extends AbstractCodeEditorAction {
     public SourceCodeSaveAction() {

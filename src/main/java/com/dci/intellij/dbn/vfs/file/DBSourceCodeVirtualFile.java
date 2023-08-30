@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.Documents;
-import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -44,7 +43,7 @@ import java.sql.Timestamp;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.createGuardedBlocks;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.removeGuardedBlocks;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.*;
 
 @Slf4j
 @Getter
@@ -288,12 +287,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
         setModified(!Strings.equals(oldContent, newContent));
         localContent.setText(newContent);
-    }
-
-    public void setModified(boolean modified) {
-        boolean statusChanged = set(MODIFIED, modified);
-        // TODO implement as file modification listener
-        if (statusChanged) Editors.markEditorsModified(getProject(), getMainDatabaseFile(), modified);
     }
 
     @Override

@@ -74,8 +74,8 @@ import static com.dci.intellij.dbn.common.util.Messages.*;
 import static com.dci.intellij.dbn.common.util.Naming.unquote;
 import static com.dci.intellij.dbn.database.DatabaseFeature.OBJECT_CHANGE_MONITORING;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.SAVING;
 import static com.intellij.openapi.fileEditor.FileEditorManagerListener.FILE_EDITOR_MANAGER;
 
 @State(

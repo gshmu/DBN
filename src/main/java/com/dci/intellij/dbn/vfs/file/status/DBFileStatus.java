@@ -1,9 +1,9 @@
-package com.dci.intellij.dbn.vfs;
+package com.dci.intellij.dbn.vfs.file.status;
 
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyGroup;
 
-public enum VirtualFileStatus implements Property.IntBase {
+public enum DBFileStatus implements Property.IntBase {
     LATEST(Group.CODE, true),
     MERGED(Group.CODE, false),
     OUTDATED(Group.CODE, false),
@@ -14,18 +14,18 @@ public enum VirtualFileStatus implements Property.IntBase {
     SAVING,
     REFRESHING;
 
-    public static final VirtualFileStatus[] VALUES = values();
+    public static final DBFileStatus[] VALUES = values();
 
     private final IntMasks masks = new IntMasks(this);
     private final boolean implicit;
     private final PropertyGroup group;
 
-    VirtualFileStatus(PropertyGroup group, boolean implicit) {
+    DBFileStatus(PropertyGroup group, boolean implicit) {
         this.implicit = implicit;
         this.group = group;
     }
 
-    VirtualFileStatus() {
+    DBFileStatus() {
         this(null, false);
     }
 
