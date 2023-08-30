@@ -45,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.dci.intellij.dbn.common.util.Commons.list;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 @State(
     name = DatabaseFileManager.COMPONENT_NAME,
@@ -141,7 +140,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                                 case SHOW: {
                                     List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                                     for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                        if (sourceCodeFile.is(MODIFIED)) {
+                                        if (sourceCodeFile.isModified()) {
                                             SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
                                             diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                         }
