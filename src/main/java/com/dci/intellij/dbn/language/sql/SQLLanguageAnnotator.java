@@ -1,90 +1,59 @@
 package com.dci.intellij.dbn.language.sql;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.language.common.TokenTypeCategory;
+import com.dci.intellij.dbn.language.common.DBLanguageAnnotator;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.*;
-import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager.hasConnectivityContext;
-import static com.dci.intellij.dbn.debugger.DatabaseDebuggerManager.isDebugConsole;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
+import static com.intellij.lang.annotation.HighlightSeverity.ERROR;
+import static com.intellij.lang.annotation.HighlightSeverity.WARNING;
 
-public class SQLLanguageAnnotator implements Annotator {
+public class SQLLanguageAnnotator extends DBLanguageAnnotator {
 
-    @Override
-    public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
-        if (!isSupported(psiElement)) return;
+    protected void annotateElement(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
+        if (psiElement instanceof ExecutablePsiElement) {
+            annotateExecutable((ExecutablePsiElement) psiElement, holder);
 
-        Project project = psiElement.getProject();
-        ThreadMonitor.surround(project, null,
-                ThreadProperty.CODE_ANNOTATING,
-                () -> {
-                    if (psiElement instanceof ExecutablePsiElement) {
-                        annotateExecutable((ExecutablePsiElement) psiElement, holder);
+        } else if (psiElement instanceof ChameleonPsiElement) {
+            annotateChameleon(psiElement, holder);
 
-                    } else if (psiElement instanceof ChameleonPsiElement) {
-                        annotateChameleon(psiElement, holder);
+        } else if (psiElement instanceof TokenPsiElement) {
+            annotateFlavoredToken(cast(psiElement), holder);
 
-                    } else if (psiElement instanceof TokenPsiElement) {
-                        annotateToken((TokenPsiElement) psiElement, holder);
+        } else if (psiElement instanceof IdentifierPsiElement) {
+            annotateIdentifier(cast(psiElement), holder);
+        }
 
-                    } else if (psiElement instanceof IdentifierPsiElement) {
-                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                        ConnectionHandler connection = identifierPsiElement.getConnection();
-                        if (connection != null && !connection.isVirtual()) {
-                            annotateIdentifier(identifierPsiElement, holder);
-                        }
-                    }
-
-
-                    if (psiElement instanceof NamedPsiElement) {
-                        NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
-                        if (namedPsiElement.hasErrors()) {
-                            String message = "Invalid " + namedPsiElement.getElementType().getDescription();
-                            holder.newAnnotation(HighlightSeverity.ERROR, message).needsUpdateOnTyping(true).create();
-                        }
-                    }
-                });
+        if (psiElement instanceof NamedPsiElement) {
+            NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
+            if (namedPsiElement.hasErrors()) {
+                String message = "Invalid " + namedPsiElement.getElementType().getDescription();
+                createAnnotation(holder, ERROR, null, message);
+            }
+        }
     }
 
-    private boolean isSupported(PsiElement psiElement) {
+    protected boolean isSupported(PsiElement psiElement) {
         return psiElement instanceof ChameleonPsiElement ||
                 psiElement instanceof TokenPsiElement ||
                 psiElement instanceof IdentifierPsiElement ||
                 psiElement instanceof NamedPsiElement;
     }
 
-    private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
-        TokenTypeCategory flavor = tokenPsiElement.getElementType().getFlavor();
-        if (flavor != null) {
-            AnnotationBuilder builder = holder.newSilentAnnotation(HighlightSeverity.INFORMATION);
-            switch (flavor) {
-                case DATATYPE: builder = builder.textAttributes(SQLTextAttributesKeys.DATA_TYPE); break;
-                case FUNCTION: builder = builder.textAttributes(SQLTextAttributesKeys.FUNCTION); break;
-                case KEYWORD: builder = builder.textAttributes(SQLTextAttributesKeys.KEYWORD); break;
-                case IDENTIFIER: builder = builder.textAttributes(SQLTextAttributesKeys.IDENTIFIER); break;
-            }
-            builder.create();
-        }
-    }
+    private static void annotateIdentifier(@NotNull IdentifierPsiElement identifierPsiElement, final AnnotationHolder holder) {
+        ConnectionHandler connection = identifierPsiElement.getConnection();
+        if (connection == null) return;
+        if (connection.isVirtual()) return;
 
-    private void annotateIdentifier(@NotNull IdentifierPsiElement identifierPsiElement, final AnnotationHolder holder) {
-        if (identifierPsiElement.getLanguageDialect().isReservedWord(identifierPsiElement.getText())) {
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                    .textAttributes(SQLTextAttributesKeys.IDENTIFIER)
-                    .create();
+        DBLanguageDialect languageDialect = identifierPsiElement.getLanguageDialect();
+        if (languageDialect.isReservedWord(identifierPsiElement.getText())) {
+            createSilentAnnotation(holder, SQLTextAttributesKeys.IDENTIFIER);
         }
         if (identifierPsiElement.isObject()) {
             annotateObject(identifierPsiElement, holder);
@@ -96,18 +65,14 @@ public class SQLLanguageAnnotator implements Annotator {
     }
 
     private static void annotateAliasRef(@NotNull IdentifierPsiElement aliasReference, AnnotationHolder holder) {
-        if (aliasReference.resolve() == null &&  aliasReference.getResolveAttempts() > 3) {
-            holder.newAnnotation(HighlightSeverity.WARNING, "Unknown identifier")
-                    .textAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER)
-                    .create();
+        if (aliasReference.resolve() == null && aliasReference.getResolveAttempts() > 3) {
+            createAnnotation(holder, WARNING, SQLTextAttributesKeys.UNKNOWN_IDENTIFIER, "Unknown identifier");
         } else {
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                    .textAttributes(SQLTextAttributesKeys.ALIAS)
-                    .create();
+            createSilentAnnotation(holder, SQLTextAttributesKeys.ALIAS);
         }
     }
 
-    private void annotateAliasDef(IdentifierPsiElement aliasDefinition, @NotNull AnnotationHolder holder) {
+    private static void annotateAliasDef(IdentifierPsiElement aliasDefinition, @NotNull AnnotationHolder holder) {
         /*Set<BasePsiElement> aliasDefinitions = new HashSet<BasePsiElement>();
         BasePsiElement scope = aliasDefinition.getEnclosingScopePsiElement();
         scope.collectAliasDefinitionPsiElements(aliasDefinitions, aliasDefinition.getUnquotedText(), DBObjectType.ANY);
@@ -115,9 +80,7 @@ public class SQLLanguageAnnotator implements Annotator {
             holder.createWarningAnnotation(aliasDefinition, "Duplicate alias definition: " + aliasDefinition.getUnquotedText());
         }*/
 
-        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                .textAttributes(SQLTextAttributesKeys.ALIAS)
-                .create();
+        createSilentAnnotation(holder, SQLTextAttributesKeys.ALIAS);
     }
 
     private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
@@ -125,9 +88,7 @@ public class SQLLanguageAnnotator implements Annotator {
             PsiElement reference = objectReference.resolve();
             if (reference == null && objectReference.getResolveAttempts() > 3 && checkConnection(objectReference)) {
                 if (!objectReference.getLanguageDialect().getParserTokenTypes().isFunction(objectReference.getText())) {
-                    holder.newAnnotation(HighlightSeverity.WARNING, "Unknown identifier")
-                            .textAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER)
-                            .create();
+                    createAnnotation(holder, WARNING, SQLTextAttributesKeys.UNKNOWN_IDENTIFIER, "Unknown identifier");
                 }
             }
         }
@@ -140,23 +101,6 @@ public class SQLLanguageAnnotator implements Annotator {
                 connection.canConnect() &&
                 connection.isValid() &&
                 !connection.getConnectionStatus().is(ConnectionHandlerStatus.LOADING);
-    }
-
-    private static void annotateExecutable(@NotNull ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
-        if (executablePsiElement.isInjectedContext()) return;
-
-        if (executablePsiElement.isNestedExecutable()) return;
-        if (!executablePsiElement.isValid()) return;
-
-        DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-        VirtualFile file = psiFile.getVirtualFile();
-        if (file instanceof LightVirtualFile) return;
-        if (isDebugConsole(file)) return;
-        if (!hasConnectivityContext(file)) return;
-
-        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                .gutterIconRenderer(executablePsiElement.getStatementGutterRenderer())
-                .create();
     }
 
     private static void annotateChameleon(PsiElement psiElement, AnnotationHolder holder) {
