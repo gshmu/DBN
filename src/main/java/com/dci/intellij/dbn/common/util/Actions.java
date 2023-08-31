@@ -65,4 +65,10 @@ public class Actions {
         return inputEvent.isConsumed();
     }
 
+    public static void consume(AnActionEvent event) {
+        InputEvent inputEvent = event.getInputEvent();
+        if (inputEvent == null) return;
+        inputEvent.consume();
+    }
+
 }
