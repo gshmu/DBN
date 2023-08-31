@@ -3,11 +3,13 @@ package com.dci.intellij.dbn.execution.statement.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.action.ProjectAction;
+import com.dci.intellij.dbn.common.ui.shortcut.OverridingShortcutInterceptor;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -16,6 +18,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
 public class ExecuteStatementEditorAction extends ProjectAction {
 
@@ -42,17 +46,36 @@ public class ExecuteStatementEditorAction extends ProjectAction {
 
     private static boolean isEnabled(AnActionEvent e) {
         Project project = Lookups.getProject(e);
+        if (isNotValid(project)) return false;
+
         Editor editor = Lookups.getEditor(e);
-        if (project == null || editor == null) {
-            return false;
-        } else {
-            PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
-            return psiFile instanceof DBLanguagePsiFile;
-        }
+        if (isNotValid(editor)) return false;
+
+        PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
+        if (!(psiFile instanceof DBLanguagePsiFile)) return false;
+
+        VirtualFile virtualFile = psiFile.getVirtualFile();
+        if (virtualFile instanceof DBSourceCodeVirtualFile) return false;
+
+        return true;
     }
 
     public static boolean isVisible(AnActionEvent e) {
         VirtualFile virtualFile = Lookups.getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
+    }
+
+    /**
+     * Ctrl-S override
+     */
+    public static class ShortcutInterceptor extends OverridingShortcutInterceptor {
+        public ShortcutInterceptor() {
+            super("DBNavigator.Actions.Execute");
+        }
+
+        @Override
+        protected boolean canDelegateExecute(AnActionEvent e) {
+            return isEnabled(e);
+        }
     }
 }

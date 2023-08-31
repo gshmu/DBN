@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
-import com.dci.intellij.dbn.common.ui.util.DelegatingShortcutInterceptor;
+import com.dci.intellij.dbn.common.ui.shortcut.ComplementaryShortcutInterceptor;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.vfs.file.status.DBFileStatus.SAVING;
 
 public class SourceCodeSaveAction extends AbstractCodeEditorAction {
@@ -30,8 +31,6 @@ public class SourceCodeSaveAction extends AbstractCodeEditorAction {
     }
 
     private static void performSave(@NotNull Project project, @NotNull SourceCodeEditor fileEditor, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
-        if (!sourceCodeFile.isModified()) return;
-
         CodeEditorSettings editorSettings = CodeEditorSettings.getInstance(project);
         CodeEditorConfirmationSettings confirmationSettings = editorSettings.getConfirmationSettings();
         ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
@@ -66,9 +65,17 @@ public class SourceCodeSaveAction extends AbstractCodeEditorAction {
     /**
      * Ctrl-S override
      */
-    public static class ShortcutInterceptor extends DelegatingShortcutInterceptor {
+    public static class ShortcutInterceptor extends ComplementaryShortcutInterceptor {
         public ShortcutInterceptor() {
             super("DBNavigator.Actions.SourceEditor.Save");
+        }
+
+        @Override
+        protected boolean canDelegateExecute(AnActionEvent e) {
+            DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+            if (isNotValid(sourcecodeFile)) return false;
+            if (!sourcecodeFile.isModified()) return false;
+            return true;
         }
     }
 }
