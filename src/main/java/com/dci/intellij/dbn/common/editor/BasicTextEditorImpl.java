@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common.editor;
 
+import com.dci.intellij.dbn.common.compatibility.Workaround;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ref.WeakRef;
-import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.DatabaseOpenFileDescriptor;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
@@ -48,8 +48,6 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
         TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();
         textEditor = (TextEditor) textEditorProvider.createEditor(project, virtualFile);
 
-        // double gutter actions (register this editor as TextEditor)
-        Editors.registerTextEditor(getEditor(), this);
         Disposer.register(this, textEditor);
     }
 
@@ -205,6 +203,23 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
     public void disposeInner() {
         // TODO cleanup - happens as part of text editor disposal
         // EditorUtil.releaseEditor(textEditor.getEditor());
+    }
+
+
+    /*******************************************************************
+     *  WORKAROUND: double gutter issue (delegated equals and hashcode)
+     *******************************************************************/
+
+    @Override
+    @Workaround
+    public boolean equals(Object o) {
+        return o == this || o.equals(textEditor);
+    }
+
+    @Override
+    @Workaround
+    public int hashCode() {
+        return textEditor.hashCode();
     }
 
 }

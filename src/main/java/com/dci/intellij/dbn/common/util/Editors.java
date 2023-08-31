@@ -57,7 +57,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.action.UserDataKeys.TEXT_EDITOR_KEY;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
@@ -510,12 +509,6 @@ public class Editors {
         });
     }
 
-    public static void registerTextEditor(Editor editor, FileEditor fileEditor) {
-        if (fileEditor instanceof TextEditor) {
-            TextEditor thisTextEditor = (TextEditor) fileEditor;
-            editor.putUserData(TEXT_EDITOR_KEY, thisTextEditor);
-        }
-    }
 
     public static EditorEx createEditor(Document document, Project project, @Nullable VirtualFile file, @NotNull FileType fileType) {
         EditorFactory editorFactory = EditorFactory.getInstance();
