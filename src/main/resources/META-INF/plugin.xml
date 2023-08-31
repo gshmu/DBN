@@ -560,6 +560,7 @@
         <listener topic="com.intellij.openapi.fileEditor.FileEditorManagerListener" class="com.dci.intellij.dbn.editor.console.SQLConsoleEditorListener"/>
         <listener topic="com.intellij.openapi.fileEditor.FileEditorManagerListener" class="com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener"/>
         <listener topic="com.intellij.openapi.actionSystem.ex.AnActionListener" class="com.dci.intellij.dbn.editor.code.action.SourceCodeSaveAction$ShortcutInterceptor"/>
+        <listener topic="com.intellij.openapi.actionSystem.ex.AnActionListener" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementEditorAction$ShortcutInterceptor"/>
     </projectListeners>
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="DBNavigator.NotificationGroup" displayType="BALLOON" key="DBNavigator"/>
