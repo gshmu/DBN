@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
-import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -119,17 +118,11 @@ public class ConnectionUtil {
                 attachmentHandler,
                 autoCommit);
 
-        int connectTimeout = connectionSettings.getDetailSettings().getConnectivityTimeoutSeconds();
-        DBNConnection connection = Timeout.call(connectTimeout, null, true, () -> connector.connect());
+        DBNConnection connection = connector.connect();
 
         SQLException exception = connector.getException();
-        if (exception != null) {
-            throw exception;
-        }
-
-        if (connection == null) {
-            throw new SQLTimeoutException("Could not connect to database. Communication timeout");
-        }
+        if (exception != null) throw exception;
+        if (connection == null) throw new SQLTimeoutException("Could not connect to database. Communication timeout");
 
         return connection;
     }
@@ -156,8 +149,8 @@ public class ConnectionUtil {
         }
 
         if (drivers == null || drivers.isEmpty()) return null;
-        ConnectionId connectionId = databaseSettings.getConnectionId();
 
+        ConnectionId connectionId = databaseSettings.getConnectionId();
         return drivers.getDriver(driverClassName, connectionId);
     }
 

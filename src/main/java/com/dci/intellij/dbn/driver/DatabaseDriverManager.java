@@ -91,6 +91,14 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
         return new File(new URL(path).toURI());
     }
 
+    public boolean driversLoaded(DatabaseType databaseType) {
+        return bundledDriversCache.containsKey(databaseType);
+    }
+
+    public boolean driversLoaded(File libraryFile) {
+        return driversCache.containsKey(libraryFile);
+    }
+
     @SneakyThrows
     public DriverBundle getBundledDrivers(DatabaseType databaseType) {
         return bundledDriversCache.computeIfAbsent(databaseType, dt -> loadBundledDrivers(databaseType));
