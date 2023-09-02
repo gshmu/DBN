@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.Classes;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -16,6 +17,7 @@ import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
@@ -31,6 +33,7 @@ import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.diagnostics.data.Activity.CONNECT;
 
+@Getter
 class Connector {
     private interface Property {
         String APPLICATION_NAME = "ApplicationName";
@@ -50,6 +53,7 @@ class Connector {
     private final ConnectionHandlerStatusHolder connectionStatus;
     private final DatabaseAttachmentHandler databaseAttachmentHandler;
     private final boolean autoCommit;
+    private SQLException exception;
 
     Connector(
             SessionId sessionId,
@@ -66,14 +70,24 @@ class Connector {
         this.autoCommit = autoCommit;
     }
 
-    private SQLException exception;
 
-    public SQLException getException() {
-        return exception;
+    private int getConnectTimeout() {
+        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        boolean driversLoaded = databaseSettings.driversLoaded();
+        int connectTimeoutExtension = driversLoaded ? 0 : 20; // allow 20 seconds for drivers to load
+        int connectTimeout = connectTimeoutExtension + connectionSettings.getDetailSettings().getConnectivityTimeoutSeconds();
+        return connectTimeout;
     }
+
+
 
     @Nullable
     public DBNConnection connect() {
+        int connectTimeout = getConnectTimeout();
+        return Timeout.call(connectTimeout, null, true, () -> doConnect());
+    }
+
+    private DBNConnection doConnect() {
         //trace(this);
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         try {

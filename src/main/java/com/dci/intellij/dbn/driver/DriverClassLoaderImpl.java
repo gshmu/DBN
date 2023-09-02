@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.driver;
 
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.util.Measured;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Driver;
@@ -44,7 +46,8 @@ class DriverClassLoaderImpl extends URLClassLoader implements DriverClassLoader 
         ProgressMonitor.setProgressText("Loading jdbc drivers from " + library);
         URL[] urls = getURLs();
         for (URL url : urls) {
-            load(new File(url.toURI()));
+            URI uri = url.toURI();
+            Measured.run("loading library " + uri, () -> load(new File(uri)));
         }
     }
 
@@ -73,7 +76,7 @@ class DriverClassLoaderImpl extends URLClassLoader implements DriverClassLoader 
             }
         } catch (Throwable e) {
             conditionallyLog(e);
-            log.debug("Failed to load drivers from library " + jar, e);
+            log.debug("Failed to load drivers from library {}", jar, e);
         }
     }
 
