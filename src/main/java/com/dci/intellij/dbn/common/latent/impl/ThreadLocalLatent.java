@@ -18,7 +18,7 @@ public final class ThreadLocalLatent<T> implements Latent<T> {
 
     @Override
     public void reset() {
-        this.value.set(null);
+        this.value.remove();
     }
 
     @Override

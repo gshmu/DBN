@@ -96,7 +96,7 @@ public class ConnectionContext {
 
         static void release(boolean initialized) {
             if (!initialized) return;
-            LOCAL.set(null);
+            LOCAL.remove();
         }
     }
 }
