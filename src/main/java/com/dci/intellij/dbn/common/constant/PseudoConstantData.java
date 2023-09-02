@@ -30,7 +30,7 @@ class PseudoConstantData<T extends PseudoConstant<T>> {
             LOCAL.set(this);
             createConstant(null);
         } finally {
-            LOCAL.set(null);
+            LOCAL.remove();
             lock.unlock();
         }
     }

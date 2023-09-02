@@ -43,7 +43,7 @@ public final class ConfigurationHandle {
     public static void notifyChanges() {
         List<SettingsChangeNotifier> changeNotifiers = SETTINGS_CHANGE_NOTIFIERS.get();
         if (changeNotifiers != null) {
-            SETTINGS_CHANGE_NOTIFIERS.set(null);
+            SETTINGS_CHANGE_NOTIFIERS.remove();
             for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
                 try {
                     Failsafe.guarded(() -> changeNotifier.notifyChanges());
