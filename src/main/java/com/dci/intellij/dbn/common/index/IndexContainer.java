@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.index;
 
 import com.dci.intellij.dbn.common.util.Compactable;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import org.jetbrains.coverage.gnu.trove.TIntHashSet;
 import org.jetbrains.coverage.gnu.trove.TIntIterator;
 
@@ -10,6 +9,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
+
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class IndexContainer<T extends Indexable> implements Compactable {
     private final TIntHashSet INDEX = new TIntHashSet();
@@ -23,8 +24,13 @@ public class IndexContainer<T extends Indexable> implements Compactable {
     }
 
     public boolean contains(T indexable) {
-        // TODO workaround - IOOBE, NPE happens in parser lookup caches (probably due to latent background initialization)
-        return Unsafe.silent(false, indexable, p -> INDEX.contains(p.index()));
+        try {
+            return INDEX.contains(indexable.index());
+        } catch (Throwable e) {
+            // TODO workaround - IOOBE, NPE happens in parser lookup caches (probably due to latent background initialization)
+            conditionallyLog(e);
+            return false;
+        }
     }
 
     public Set<T> elements(Function<Integer, T> resolver) {
