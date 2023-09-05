@@ -84,6 +84,16 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
         this.elementType = elementType;
     }
 
+    @Nullable
+    public static BasePsiElement from(PsiElement element) {
+        while (element != null) {
+            if (element instanceof PsiFile) return null;
+            if (element instanceof BasePsiElement) return (BasePsiElement) element;
+            element = element.getParent();
+        }
+        return null;
+    }
+
     @Override
     public PsiElement getParent() {
         ASTNode parentNode = getNode().getTreeParent();
