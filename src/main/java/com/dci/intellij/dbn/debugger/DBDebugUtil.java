@@ -10,31 +10,32 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
+@UtilityClass
 public class DBDebugUtil {
 
     public static @Nullable DBSchemaObject getObject(@Nullable XSourcePosition sourcePosition) {
-        if (sourcePosition != null) {
-            VirtualFile virtualFile = sourcePosition.getFile();
-            if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-                return databaseFile.getObject();
-            }
+        if (sourcePosition == null) return null;
 
-            if (virtualFile instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-                return sourceCodeFile.getObject();
-            }
+        VirtualFile virtualFile = sourcePosition.getFile();
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+            return databaseFile.getObject();
+        }
+
+        if (virtualFile instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+            return sourceCodeFile.getObject();
         }
         return null;
     }
 
     public static VirtualFile getSourceCodeFile(XSourcePosition sourcePosition) {
-        if (sourcePosition != null) {
-            return sourcePosition.getFile();
-        }
-        return null;
+        if (sourcePosition == null) return null;
+
+        return sourcePosition.getFile();
     }
 
 

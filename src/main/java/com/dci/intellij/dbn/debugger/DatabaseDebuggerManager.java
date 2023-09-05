@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.config.*;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
@@ -24,8 +23,6 @@ import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBStatementJdwpRunner;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -38,7 +35,6 @@ import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -50,6 +46,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -127,62 +124,31 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
     public void startMethodDebugger(@NotNull DBMethod method) {
         startDebugger((debuggerType) -> {
             Project project = getProject();
-            ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
-            DBMethodRunConfigType configurationType = executionConfigManager.getMethodConfigurationType();
-            RunnerAndConfigurationSettings runConfigurationSetting = null;
-            if (getDebuggerSettings().isUseGenericRunners()) {
-
-                runConfigurationSetting = executionConfigManager.getDefaultConfig(configurationType, debuggerType);
-                MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-                DBMethodRunConfig runConfiguration = (DBMethodRunConfig) runConfigurationSetting.getConfiguration();
-
-                MethodExecutionInput executionInput = executionManager.getExecutionInput(method);
-                runConfiguration.setExecutionInput(executionInput);
-
-            } else {
-                RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(project);
-                List<RunnerAndConfigurationSettings> configurationSettings = runManager.getConfigurationSettingsList(configurationType);
-                for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
-                    DBMethodRunConfig availableRunConfiguration = (DBMethodRunConfig) configurationSetting.getConfiguration();
-                    if (availableRunConfiguration.getCategory() == DBRunConfigCategory.CUSTOM && method.equals(availableRunConfiguration.getMethod())) {
-                        runConfigurationSetting = configurationSetting;
-                        break;
-                    }
-                }
-
-                // check whether a configuration already exists for the given method
-                if (runConfigurationSetting == null) {
-                    DBMethodRunConfigFactory configurationFactory = configurationType.getConfigurationFactory(debuggerType);
-                    DBMethodRunConfig runConfiguration = configurationFactory.createConfiguration(method);
-                    runConfigurationSetting = runManager.createConfiguration(runConfiguration, configurationFactory);
-                    runManager.addConfiguration(runConfigurationSetting, false);
-                    runManager.setTemporaryConfiguration(runConfigurationSetting);
-
-                }
-                runManager.setSelectedConfiguration(runConfigurationSetting);
-            }
+            ExecutionConfigManager configManager = ExecutionConfigManager.getInstance(project);
+            RunnerAndConfigurationSettings settings = configManager.createConfiguration(method, debuggerType);
 
             String runnerId =
                     debuggerType == DBDebuggerType.JDBC ? DBMethodJdbcRunner.RUNNER_ID :
                     debuggerType == DBDebuggerType.JDWP ? DBMethodJdwpRunner.RUNNER_ID : null;
-            if (runnerId != null) {
-                ProgramRunner programRunner = ProgramRunner.findRunnerById(runnerId);
-                if (programRunner != null) {
-                    try {
-                        Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
-                        if (executorInstance == null) {
-                            throw new ExecutionException("Could not resolve debug executor");
-                        }
 
-                        ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, project);
-                        programRunner.execute(executionEnvironment);
-                    } catch (ExecutionException e) {
-                        conditionallyLog(e);
-                        Messages.showErrorDialog(
-                                project, "Could not start debugger for " + method.getQualifiedName() + ". \n" +
-                                        "Cause: " + e.getMessage());
-                    }
+            if (runnerId == null) return;
+
+            ProgramRunner programRunner = ProgramRunner.findRunnerById(runnerId);
+            if (programRunner == null) return;
+
+            try {
+                Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
+                if (executorInstance == null) {
+                    throw new ExecutionException("Could not resolve debug executor");
                 }
+
+                ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, settings, project);
+                programRunner.execute(executionEnvironment);
+            } catch (ExecutionException e) {
+                conditionallyLog(e);
+                Messages.showErrorDialog(
+                        project, "Could not start debugger for " + method.getQualifiedName() + ". \n" +
+                                "Cause: " + e.getMessage());
             }
         });
     }
@@ -190,62 +156,54 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
     public void startStatementDebugger(@NotNull StatementExecutionProcessor executionProcessor) {
         startDebugger(debuggerType -> {
             Project project = getProject();
-            ExecutionConfigManager executionConfigManager = ExecutionConfigManager.getInstance(project);
-
-            DBStatementRunConfigType configurationType = executionConfigManager.getStatementConfigurationType();
-            RunnerAndConfigurationSettings runConfigurationSetting;
-            runConfigurationSetting = executionConfigManager.getDefaultConfig(configurationType, debuggerType);
-            DBStatementRunConfig runConfiguration = (DBStatementRunConfig) runConfigurationSetting.getConfiguration();
-
-            runConfiguration.setExecutionInput(executionProcessor.getExecutionInput());
+            ExecutionConfigManager configManager = ExecutionConfigManager.getInstance(project);
+            RunnerAndConfigurationSettings settings = configManager.createConfiguration(executionProcessor, debuggerType);
 
             String runnerId =
                     debuggerType == DBDebuggerType.JDBC ? DBStatementJdbcRunner.RUNNER_ID :
-                            debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID :
+                    debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID :
                                     DBProgramRunner.INVALID_RUNNER_ID;
 
             ProgramRunner programRunner = ProgramRunner.findRunnerById(runnerId);
-            if (programRunner != null) {
-                try {
-                    Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
-                    if (executorInstance == null) {
-                        throw new ExecutionException("Could not resolve debug executor");
-                    }
+            if (programRunner == null) return;
 
-                    ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, project);
-                    programRunner.execute(executionEnvironment);
-                } catch (ExecutionException e) {
-                    conditionallyLog(e);
-                    Messages.showErrorDialog(
-                            project, "Could not start statement debugger. \n" +
-                                    "Cause: " + e.getMessage());
+            try {
+                Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
+                if (executorInstance == null) {
+                    throw new ExecutionException("Could not resolve debug executor");
                 }
+
+                ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, settings, project);
+                programRunner.execute(executionEnvironment);
+            } catch (ExecutionException e) {
+                conditionallyLog(e);
+                Messages.showErrorDialog(
+                        project, "Could not start statement debugger. \n" +
+                                "Cause: " + e.getMessage());
             }
         });
     }
 
-
     private void startDebugger(@NotNull Consumer<DBDebuggerType> debuggerStarter) {
+        val debuggerTypeOption = getDebuggerSettings().getDebuggerType();
+        debuggerTypeOption.resolve(list(), option -> {
+            DBDebuggerType debuggerType = option.getDebuggerType();
+            if (debuggerType == null) return;
 
-        getDebuggerSettings().getDebuggerType().resolve(list(),
-                debuggerTypeOption -> {
-                    DBDebuggerType debuggerType = debuggerTypeOption.getDebuggerType();
-                    if (debuggerType != null) {
-                        if (debuggerType.isSupported()) {
-                            debuggerStarter.accept(debuggerType);
-                        } else {
-                            ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
-                            Messages.showErrorDialog(
-                                    getProject(), "Unsupported debugger",
-                                    debuggerType.name() + " debugging is not supported in \"" +
-                                            applicationInfo.getVersionName() + " " +
-                                            applicationInfo.getFullVersion() + "\".\n" +
-                                            "Do you want to use classic debugger over JDBC instead?",
-                                    new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                                    option -> when(option == 0, () -> debuggerStarter.accept(debuggerType)));
-                        }
-                    }
-                });
+            if (debuggerType.isSupported()) {
+                debuggerStarter.accept(debuggerType);
+            } else {
+                ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+                Messages.showErrorDialog(
+                        getProject(), "Unsupported debugger",
+                        debuggerType.name() + " debugging is not supported in \"" +
+                                applicationInfo.getVersionName() + " " +
+                                applicationInfo.getFullVersion() + "\".\n" +
+                                "Do you want to use classic debugger over JDBC instead?",
+                        new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
+                        o -> when(o == 0, () -> debuggerStarter.accept(debuggerType)));
+            }
+        });
     }
 
     private DebuggerSettings getDebuggerSettings() {

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.common.config;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -10,12 +11,17 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Setter
 public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutionInput> {
     private StatementExecutionInput executionInput;
 
@@ -57,16 +63,6 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
     }
 
     @Override
-    public StatementExecutionInput getExecutionInput() {
-        return executionInput;
-    }
-
-    @Override
-    public void setExecutionInput(StatementExecutionInput executionInput) {
-        this.executionInput = executionInput;
-    }
-
-    @Override
     @Nullable
     public String suggestedName() {
         if (getCategory() == DBRunConfigCategory.GENERIC) {
@@ -82,5 +78,19 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
     @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
 
+    }
+
+    @Override
+    public @Nullable Icon getIcon() {
+        Icon defaultIcon = super.getIcon();
+        if (getCategory() != DBRunConfigCategory.CUSTOM) return defaultIcon;
+
+        StatementExecutionInput executionInput = getExecutionInput();
+        if (executionInput == null) return defaultIcon;
+
+        StatementExecutionProcessor executionProcessor = executionInput.getExecutionProcessor();
+        if (executionProcessor == null) return defaultIcon;
+
+        return executionProcessor.getIcon();
     }
 }
