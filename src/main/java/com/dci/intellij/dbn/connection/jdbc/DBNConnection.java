@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -269,10 +270,16 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     private void propagate(Consumer<ConnectionHandler> consumer) {
-        ConnectionHandler connection = ConnectionHandler.get(id);
+        ConnectionHandler connection = getConnectionHandler();
         if (isNotValid(connection)) return;
 
         consumer.accept(connection);
+    }
+
+    @Nullable
+    public ConnectionHandler getConnectionHandler() {
+        if (id == null) return null; // not yet initialised
+        return ConnectionHandler.get(id);
     }
 
     public int getIdleMinutes() {

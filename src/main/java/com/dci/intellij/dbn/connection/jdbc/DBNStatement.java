@@ -9,12 +9,10 @@ import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.dci.intellij.dbn.connection.Resources.markClosed;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
@@ -124,6 +122,10 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
             } finally {
                 executeDuration.set(System.currentTimeMillis() - init);
             }
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
+            markClosed(connection);
+            throw e;
         } catch (SQLException e) {
             conditionallyLog(e);
             Resources.close(DBNStatement.this);

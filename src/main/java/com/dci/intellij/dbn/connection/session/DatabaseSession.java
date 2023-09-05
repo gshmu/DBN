@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +17,8 @@ import javax.swing.*;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
+@Getter
+@Setter
 public class DatabaseSession implements Comparable<DatabaseSession>, Presentable, Identifiable<SessionId> {
     private final ConnectionRef connection;
     private final ConnectionType connectionType;
@@ -26,27 +30,6 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
         this.name = name;
         this.connectionType = connectionType;
         this.connection = connection.ref();
-    }
-
-    @NotNull
-    public SessionId getId() {
-        return id;
-    }
-
-    @Override
-    @NotNull
-    public String getName() {
-        return name;
-    }
-
-    public ConnectionType getConnectionType() {
-        return connectionType;
-    }
-
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
     }
 
     @Nullable
@@ -91,10 +74,6 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
 
     public boolean isCustom() {
         return !isMain() && !isPool() && !isDebug();
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @NotNull
