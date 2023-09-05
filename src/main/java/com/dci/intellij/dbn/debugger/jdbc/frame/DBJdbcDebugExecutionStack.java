@@ -17,7 +17,10 @@ public class DBJdbcDebugExecutionStack extends XExecutionStack {
     private final DBJdbcDebugProcess debugProcess;
 
     DBJdbcDebugExecutionStack(DBJdbcDebugProcess debugProcess) {
-        super(debugProcess.getName(), debugProcess.getIcon());
+        // WORKAROUND hide the single value "threads" dropdown
+        // super(debugProcess.getName(), debugProcess.getIcon());
+        super("", null);
+
         this.debugProcess = debugProcess;
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();
         int frameNumber = backtraceInfo == null ? 1 : backtraceInfo.getTopFrameIndex();

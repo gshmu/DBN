@@ -33,7 +33,9 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
     }
 
     DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext suspendContext) {
-        super(suspendContext.getDebugProcess().getName(), suspendContext.getDebugProcess().getIcon());
+        // WORKAROUND hide the single value "threads" dropdown
+        // super(suspendContext.getDebugProcess().getName(), suspendContext.getDebugProcess().getIcon());
+        super("", null);
         this.suspendContext = suspendContext;
     }
 

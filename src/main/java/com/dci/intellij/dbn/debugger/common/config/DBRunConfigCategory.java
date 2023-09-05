@@ -2,6 +2,6 @@ package com.dci.intellij.dbn.debugger.common.config;
 
 public enum DBRunConfigCategory {
     TEMPLATE,
-    GENERIC,
+    @Deprecated GENERIC, // stateless run configurations
     CUSTOM
 }

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.debugger.options;
 
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.ui.DebuggerSettingsForm;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class DebuggerSettings extends BasicConfiguration<OperationSettings, DebuggerSettingsForm> {
-    private boolean useGenericRunners = true;
     private final InteractiveOptionBroker<DebuggerTypeOption> debuggerType =
             new InteractiveOptionBroker<>(
                     "debugger-type",
@@ -41,10 +39,6 @@ public class DebuggerSettings extends BasicConfiguration<OperationSettings, Debu
         return "debugger";
     }
 
-    public InteractiveOptionBroker<DebuggerTypeOption> getDebuggerType() {
-        return debuggerType;
-    }
-
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
@@ -62,12 +56,10 @@ public class DebuggerSettings extends BasicConfiguration<OperationSettings, Debu
     @Override
     public void readConfiguration(Element element) {
         debuggerType.readConfiguration(element);
-        useGenericRunners = Settings.getBoolean(element, "use-generic-runners", useGenericRunners);
     }
 
     @Override
     public void writeConfiguration(Element element) {
         debuggerType.writeConfiguration(element);
-        Settings.setBoolean(element, "use-generic-runners", useGenericRunners);
     }
 }

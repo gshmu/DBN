@@ -18,7 +18,7 @@ public abstract class DBMethodRunConfigFactory<T extends DBMethodRunConfigType, 
     public Icon getIcon(@NotNull RunConfiguration configuration) {
         C runConfiguration = (C) configuration;
         MethodExecutionInput executionInput = runConfiguration.getExecutionInput();
-        if (runConfiguration.getCategory() != DBRunConfigCategory.CUSTOM || executionInput == null) {
+        if (executionInput == null || runConfiguration.getCategory() != DBRunConfigCategory.CUSTOM) {
             return getIcon();
         } else {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
@@ -27,5 +27,5 @@ public abstract class DBMethodRunConfigFactory<T extends DBMethodRunConfigType, 
         }
     }
 
-    public abstract DBMethodRunConfig createConfiguration(DBMethod method);
+    public abstract C createConfiguration(DBMethod method);
 }
