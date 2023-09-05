@@ -100,21 +100,20 @@ public class PsiUtil {
     @Nullable
     public static IdentifierPsiElement lookupObjectPriorTo(@NotNull BasePsiElement element, DBObjectType objectType) {
         SequencePsiElement scope = element.findEnclosingSequenceElement();
+        if (scope == null) return null;
 
-        if (scope != null) {
-            Iterator<PsiElement> children = PsiUtil.getChildrenIterator(scope);
-            while (children.hasNext()) {
-                PsiElement child = children.next();
-                if (child instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) child;
-                    ObjectLookupAdapter lookupInput = new ObjectLookupAdapter(null, objectType);
-                    BasePsiElement objectPsiElement = lookupInput.findInScope(basePsiElement);
-                    if (objectPsiElement instanceof IdentifierPsiElement) {
-                        return (IdentifierPsiElement) objectPsiElement;
-                    }
+        Iterator<PsiElement> children = PsiUtil.getChildrenIterator(scope);
+        while (children.hasNext()) {
+            PsiElement child = children.next();
+            if (child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
+                ObjectLookupAdapter lookupInput = new ObjectLookupAdapter(null, objectType);
+                BasePsiElement objectPsiElement = lookupInput.findInScope(basePsiElement);
+                if (objectPsiElement instanceof IdentifierPsiElement) {
+                    return (IdentifierPsiElement) objectPsiElement;
                 }
-                if (child == element) break;
             }
+            if (child == element) break;
         }
         return null;
     }
@@ -126,35 +125,31 @@ public class PsiUtil {
         int offset = editor.getCaretModel().getOffset();
 
         PsiFile file = Documents.getFile(editor);
-        if (file != null) {
-            PsiElement current;
+        if (file == null) return null;
 
-            if (lenient) {
-                int lineStart = editor.getCaretModel().getVisualLineStart();
-                int lineEnd = editor.getCaretModel().getVisualLineEnd();
-                current = file.findElementAt(lineStart);
-                while (ignore(current)) {
-                    offset = current.getTextOffset() + current.getTextLength();
-                    if (offset >= lineEnd) break;
-                    current = file.findElementAt(offset);
-                }
-            } else {
+        PsiElement current;
+        if (lenient) {
+            int lineStart = editor.getCaretModel().getVisualLineStart();
+            int lineEnd = editor.getCaretModel().getVisualLineEnd();
+            current = file.findElementAt(lineStart);
+            while (ignore(current)) {
+                offset = current.getTextOffset() + current.getTextLength();
+                if (offset >= lineEnd) break;
                 current = file.findElementAt(offset);
             }
+        } else {
+            current = file.findElementAt(offset);
+        }
 
-            if (current != null) {
-                PsiElement parent = current.getParent();
-                while (parent != null && !(parent instanceof PsiFile)) {
-                    if (parent instanceof ExecutablePsiElement){
-                        ExecutablePsiElement executable = (ExecutablePsiElement) parent;
-                        if (!executable.isNestedExecutable()) {
-                            return executable;
-                        }
+        if (current == null) return null;
 
-                    }
-                    parent = parent.getParent();
-                }
+        PsiElement parent = current.getParent();
+        while (parent != null && !(parent instanceof PsiFile)) {
+            if (parent instanceof ExecutablePsiElement){
+                ExecutablePsiElement executable = (ExecutablePsiElement) parent;
+                if (!executable.isNestedExecutable()) return executable;
             }
+            parent = parent.getParent();
         }
 
         return null;

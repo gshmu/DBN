@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Naming;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.cache.ElementLookupContext;
@@ -57,24 +58,36 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         if (originalFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile file = (DBLanguagePsiFile) originalFile;
 
-            CodeCompletionContext context = new CodeCompletionContext(file, parameters, result);
-            CodeCompletionLookupConsumer consumer = new CodeCompletionLookupConsumer(context);
-
             int caretOffset = parameters.getOffset();
-            if (file.findElementAt(caretOffset) instanceof PsiComment) return;
+            PsiElement elementAtCaret = file.findElementAt(caretOffset);
+            if (elementAtCaret instanceof PsiComment) return;
 
-            LeafPsiElement leafAtOffset = caretOffset == 0 ? null : PsiUtil.lookupLeafAtOffset(file, caretOffset-1);
-            LeafPsiElement leafBeforeCaret = leafAtOffset == null || leafAtOffset.isCharacterToken() ?
+            LeafPsiElement leafAtCaret = caretOffset == 0 ? null : PsiUtil.lookupLeafAtOffset(file, caretOffset-1);
+            LeafPsiElement leafBeforeCaret = leafAtCaret == null || leafAtCaret.isCharacterToken() ?
                     PsiUtil.lookupLeafBeforeOffset(file, caretOffset) :
-                    PsiUtil.lookupLeafBeforeOffset(file, leafAtOffset.getTextOffset());
+                    PsiUtil.lookupLeafBeforeOffset(file, leafAtCaret.getTextOffset());
+
+            if (!shouldAddCompletions(leafAtCaret, leafBeforeCaret)) return;
 
 
+            CodeCompletionContext context = new CodeCompletionContext(file, parameters, result);
             int invocationCount = parameters.getInvocationCount();
             if (invocationCount > 1) context.setExtended(true);
 
-            //Timeout.run(1, true, () -> collectCompletionVariants(consumer, leafBeforeCaret));
+            CodeCompletionLookupConsumer consumer = new CodeCompletionLookupConsumer(context);
             collectCompletionVariants(consumer, leafBeforeCaret);
         }
+    }
+
+    private boolean shouldAddCompletions(LeafPsiElement leafAtOffset, LeafPsiElement leafBeforeCaret) {
+        if (leafAtOffset instanceof TokenPsiElement) {
+            TokenPsiElement tokenPsiElement = (TokenPsiElement) leafAtOffset;
+            TokenType tokenType = tokenPsiElement.getTokenType();
+            if (tokenType.isNumeric()) return false;
+            if (tokenType.isLiteral()) return false;
+        }
+
+        return true;
     }
 
     private void collectCompletionVariants(CodeCompletionLookupConsumer consumer, LeafPsiElement leafBeforeCaret) {
