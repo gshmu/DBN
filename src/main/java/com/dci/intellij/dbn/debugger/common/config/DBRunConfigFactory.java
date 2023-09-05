@@ -4,10 +4,13 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public abstract class DBRunConfigFactory<T extends DBRunConfigType, C extends DBRunConfig> extends ConfigurationFactory {
     private final DBDebuggerType debuggerType;
+
     protected DBRunConfigFactory(T type, DBDebuggerType debuggerType) {
         super(type);
         this.debuggerType = debuggerType;
@@ -34,10 +37,6 @@ public abstract class DBRunConfigFactory<T extends DBRunConfigType, C extends DB
     }
 
     public abstract C createConfiguration(Project project, String name, DBRunConfigCategory category);
-
-    public DBDebuggerType getDebuggerType(){
-        return debuggerType;
-    }
 
     @NotNull
     @Override

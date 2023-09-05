@@ -2,16 +2,20 @@ package com.dci.intellij.dbn.debugger.jdbc.frame;
 
 import com.dci.intellij.dbn.debugger.jdbc.DBJdbcDebugProcess;
 import com.intellij.xdebugger.frame.XSuspendContext;
+import lombok.Getter;
 
 public class DBJdbcDebugSuspendContext extends XSuspendContext{
-    private DBJdbcDebugExecutionStack executionStack;
+    private final DBJdbcDebugProcess debugProcess;
+
+    @Getter(lazy = true)
+    private final DBJdbcDebugExecutionStack executionStack = new DBJdbcDebugExecutionStack(debugProcess);
 
     public DBJdbcDebugSuspendContext(DBJdbcDebugProcess debugProcess) {
-        this.executionStack = new DBJdbcDebugExecutionStack(debugProcess);
+        this.debugProcess = debugProcess;
     }
 
     @Override
     public DBJdbcDebugExecutionStack getActiveExecutionStack() {
-        return executionStack;
+        return getExecutionStack();
     }
 }

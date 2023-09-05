@@ -172,16 +172,15 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
 
     @Override
     public Icon getIcon() {
-        if (getCategory() == DBRunConfigCategory.CUSTOM) {
-            MethodExecutionInput executionInput = getExecutionInput();
-            if (executionInput != null) {
-                DBMethod method = executionInput.getMethod();
-                if (method != null) {
-                    return method.getIcon();
-                }
-            }
+        Icon defaultIcon = super.getIcon();
+        if (getCategory() != DBRunConfigCategory.CUSTOM) return defaultIcon;
 
-        }
-        return super.getIcon();
+        MethodExecutionInput executionInput = getExecutionInput();
+        if (executionInput == null) return defaultIcon;
+
+        DBMethod method = executionInput.getMethod();
+        if (method == null) return defaultIcon;
+
+        return method.getIcon();
     }
 }
