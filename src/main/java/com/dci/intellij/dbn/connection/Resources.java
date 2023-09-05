@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
+import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.*;
 import static com.dci.intellij.dbn.database.DatabaseFeature.READONLY_CONNECTIVITY;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
@@ -39,6 +40,15 @@ public final class Resources {
             return false;
         }
     }
+
+    public static void markClosed(DBNConnection connection) {
+        if (connection == null) return;
+
+        connection.set(VALID, false);
+        connection.set(ACTIVE, false);
+        connection.set(CLOSED, true);
+    }
+
     public static void cancel(DBNStatement statement) {
         try {
             if (statement == null || statement.isClosed()) return;
@@ -114,6 +124,7 @@ public final class Resources {
                     () -> "[DBN] Failed to commit " + connection);
         } catch (SQLRecoverableException e) {
             conditionallyLog(e);
+            markClosed(connection);
         } catch (SQLException e) {
             conditionallyLog(e);
             sentWarningNotification(
@@ -141,6 +152,7 @@ public final class Resources {
                     () -> "[DBN] Failed to roll-back " + connection);
         } catch (SQLRecoverableException e) {
             conditionallyLog(e);
+            markClosed(connection);
         } catch (SQLException e) {
             conditionallyLog(e);
             sentWarningNotification(
@@ -169,6 +181,7 @@ public final class Resources {
                     () -> "[DBN] Failed to roll-back savepoint '" + savepointId + "' on " + connection);
         } catch (SQLRecoverableException e) {
             conditionallyLog(e);
+            markClosed(connection);
         } catch (SQLException e) {
             conditionallyLog(e);
             sentWarningNotification(
@@ -194,6 +207,7 @@ public final class Resources {
             return savepoint.get();
         } catch (SQLRecoverableException e) {
             conditionallyLog(e);
+            markClosed(connection);
         } catch (SQLException e) {
             conditionallyLog(e);
             sentWarningNotification(
@@ -218,6 +232,7 @@ public final class Resources {
                     () -> "[DBN] Failed to release savepoint '" + savepointId + "' on " + connection);
         } catch (SQLRecoverableException e) {
             conditionallyLog(e);
+            markClosed(connection);
         } catch (SQLException e) {
             conditionallyLog(e);
             sentWarningNotification(
@@ -228,25 +243,26 @@ public final class Resources {
         }
     }
 
-    public static void setReadonly(ConnectionHandler connection, DBNConnection conn, boolean readonly) {
-        if (READONLY_CONNECTIVITY.isNotSupported(connection)) return;
+    public static void setReadonly(DBNConnection connection, boolean readonly) {
+        if (READONLY_CONNECTIVITY.isNotSupported(connection.getConnectionHandler())) return;
 
         try {
             invokeResourceAction(
-                    conn,
+                    connection,
                     ResourceStatus.CHANGING_READ_ONLY,
-                    () -> conn.setReadOnly(readonly),
-                    () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + conn,
-                    () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + conn,
-                    () -> "[DBN] Failed to apply status READ_ONLY=" + readonly + " on " + conn);
+                    () -> connection.setReadOnly(readonly),
+                    () -> "[DBN] Applying status READ_ONLY=" + readonly + " on " + connection,
+                    () -> "[DBN] Done applying status READ_ONLY=" + readonly + " on " + connection,
+                    () -> "[DBN] Failed to apply status READ_ONLY=" + readonly + " on " + connection);
         } catch (SQLRecoverableException e) {
             conditionallyLog(e);
+            markClosed(connection);
         } catch (SQLException e) {
             conditionallyLog(e);
             sentWarningNotification(
                     NotificationGroup.CONNECTION,
                     "Failed to initialize readonly status for",
-                    conn,
+                    connection,
                     e);
         }
     }
@@ -264,6 +280,7 @@ public final class Resources {
             connection.setAutoCommit(autoCommit);
         } catch (SQLRecoverableException e) {
             conditionallyLog(e);
+            markClosed(connection);
         } catch (Exception e) {
             conditionallyLog(e);
             sentWarningNotification(
