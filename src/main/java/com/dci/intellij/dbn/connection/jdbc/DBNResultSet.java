@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.exception.Exceptions;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
@@ -17,6 +16,8 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
+import static com.dci.intellij.dbn.connection.Resources.markClosed;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, CloseableResource {
@@ -1064,21 +1065,29 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
         return inner.isWrapperFor(iface);
     }
 
-    private static <T> T handled(ThrowableCallable<T, Throwable> callable) throws SQLException {
+    private <T> T handled(ThrowableCallable<T, Throwable> callable) throws SQLException {
         try {
             return callable.call();
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
+            markClosed(getConnection());
+            throw e;
         } catch (Throwable e) {
             conditionallyLog(e);
-            throw Exceptions.toSqlException(e);
+            throw toSqlException(e);
         }
     }
 
-    private static void handled(ThrowableRunnable<Throwable> runnable) throws SQLException {
+    private void handled(ThrowableRunnable<Throwable> runnable) throws SQLException {
         try {
             runnable.run();
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
+            markClosed(getConnection());
+            throw e;
         } catch (Throwable e) {
             conditionallyLog(e);
-            throw Exceptions.toSqlException(e);
+            throw toSqlException(e);
         }
     }
 }

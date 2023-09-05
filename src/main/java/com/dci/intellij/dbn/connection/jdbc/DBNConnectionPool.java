@@ -62,7 +62,7 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
         DBNConnection conn = acquire(30, TimeUnit.SECONDS);
 
         Resources.setAutoCommit(conn, readonly);
-        Resources.setReadonly(getConnection(), conn, readonly);
+        Resources.setReadonly(conn, readonly);
         return conn;
     }
 
@@ -74,7 +74,7 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
         DBNConnection conn = ConnectionUtil.connect(connection, SessionId.POOL);
 
         Resources.setAutoCommit(conn, true);
-        Resources.setReadonly(connection, conn, true);
+        Resources.setReadonly(conn, true);
 
         if (size() == 0) {
             // Notify first pool connection
@@ -135,7 +135,7 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
     protected DBNConnection whenReleased(DBNConnection conn) throws SQLException {
         Resources.rollback(conn);
         Resources.setAutoCommit(conn, true);
-        Resources.setReadonly(getConnection(), conn, true);
+        Resources.setReadonly(conn, true);
 
         conn.set(ResourceStatus.RESERVED, false);
         updateLastAccess();
