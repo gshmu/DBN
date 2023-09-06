@@ -45,7 +45,7 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRu
 
     @Override
     public boolean canRun() {
-        return DBDebuggerType.JDWP.isSupported() && super.canRun();
+        return super.canRun() && DBDebuggerType.JDWP.isSupported();
     }
 
     @Override

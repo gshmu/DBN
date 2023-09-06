@@ -45,7 +45,7 @@ public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DB
 
     @Override
     public boolean canRun() {
-        return DBDebuggerType.JDWP.isSupported() && super.canRun();
+        return super.canRun() && DBDebuggerType.JDWP.isSupported();
     }
 
     @Override
