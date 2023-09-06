@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
-import com.intellij.execution.configurations.RunProfile;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,11 +16,6 @@ public class DBStatementJdbcRunner extends DBProgramRunner<StatementExecutionInp
     @NotNull
     public String getRunnerId() {
         return RUNNER_ID;
-    }
-
-    @Override
-    public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        return false;
     }
 
     @Override

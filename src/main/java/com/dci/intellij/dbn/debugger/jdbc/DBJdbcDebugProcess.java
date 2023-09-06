@@ -335,10 +335,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         set(PROCESS_TERMINATED, true);
                         releaseDebugConnection();
                         releaseTargetConnection();
-                        DBRunConfig<T> runProfile = (DBRunConfig<T>) getSession().getRunProfile();
-                        if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
-                            runProfile.setCanRun(false);
-                        }
+
                         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
                         debuggerManager.unregisterDebugSession(connection);
                         console.system("Debugger stopped");
