@@ -24,10 +24,16 @@ public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedVa
     protected List<String> childVariableNames;
 
     private final T stackFrame;
-    private final DBDebugValue parentValue;
+    private final DBDebugValue<T> parentValue;
 
-    protected DBDebugValue(T stackFrame, @NotNull String variableName, @Nullable List<String> childVariableNames, @Nullable DBDebugValue parentValue, @Nullable Icon icon) {
-        super(variableName);
+    public DBDebugValue(T stackFrame, String name) {
+        super(name);
+        this.stackFrame = stackFrame;
+        this.parentValue = null;
+    }
+
+    protected DBDebugValue(T stackFrame, @NotNull String name, @Nullable List<String> childVariableNames, @Nullable DBDebugValue<T>parentValue, @Nullable Icon icon) {
+        super(name);
         this.stackFrame = stackFrame;
         this.parentValue = parentValue;
         if (icon == null) {

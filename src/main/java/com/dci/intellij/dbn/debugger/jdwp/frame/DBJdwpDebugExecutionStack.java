@@ -7,16 +7,20 @@ import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.JavaStackFrame;
-import com.intellij.debugger.impl.PrioritizedTask;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import static com.intellij.debugger.impl.PrioritizedTask.Priority.LOW;
+
+@Getter
 public class DBJdwpDebugExecutionStack extends XExecutionStack {
     private final DBJdwpDebugSuspendContext suspendContext;
     private final List<DBJdwpDebugStackFrame> stackFrames = CollectionUtil.createConcurrentList();
@@ -27,11 +31,6 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
         return getFrame((JavaStackFrame) topFrame);
     });
 
-    @Nullable
-    private XExecutionStack getUnderlyingStack() {
-        return suspendContext.getUnderlyingContext().getActiveExecutionStack();
-    }
-
     DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext suspendContext) {
         // WORKAROUND hide the single value "threads" dropdown
         // super(suspendContext.getDebugProcess().getName(), suspendContext.getDebugProcess().getIcon());
@@ -39,8 +38,14 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
         this.suspendContext = suspendContext;
     }
 
-    private DBJdwpDebugSuspendContext getSuspendContext() {
-        return suspendContext;
+    @NotNull
+    private DebugProcessImpl getDebugProcess() {
+        return getSuspendContext().getDebugProcess().getDebuggerSession().getProcess();
+    }
+
+    @Nullable
+    private XExecutionStack getUnderlyingStack() {
+        return suspendContext.getUnderlyingContext().getActiveExecutionStack();
     }
 
     @Override
@@ -50,12 +55,12 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
 
     private DBJdwpDebugStackFrame getFrame(JavaStackFrame underlyingFrame) {
         for (DBJdwpDebugStackFrame stackFrame : stackFrames) {
-            if (stackFrame.getUnderlyingFrame().equals(underlyingFrame)) {
+            if (Objects.equals(stackFrame.getUnderlyingFrame(), underlyingFrame)) {
                 return stackFrame;
             }
         }
 
-        DBJdwpDebugProcess debugProcess = suspendContext.getDebugProcess();
+        DBJdwpDebugProcess<?> debugProcess = suspendContext.getDebugProcess();
         DBJdwpDebugStackFrame stackFrame = new DBJdwpDebugStackFrame(debugProcess, underlyingFrame, stackFrames.size());
         stackFrames.add(stackFrame);
         return stackFrame;
@@ -63,43 +68,43 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
 
     @Override
     public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
-        DebugProcessImpl debugProcess = getSuspendContext().getDebugProcess().getDebuggerSession().getProcess();
-        final XExecutionStack underlyingStack = getUnderlyingStack();
-        if (underlyingStack != null) {
-            ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
-                XStackFrameContainer fakeContainer = new XStackFrameContainer() {
-                    @Override
-                    public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
-                        if (stackFrames.size() > 0) {
-                            List<DBJdwpDebugStackFrame> frames = new ArrayList<>();
-                            for (XStackFrame underlyingFrame : stackFrames) {
-                                DBJdwpDebugStackFrame frame = getFrame((JavaStackFrame) underlyingFrame);
-                                if (frame != null) {
-                                    XSourcePosition sourcePosition = frame.getSourcePosition();
-                                    //VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
-                                    //DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
-                                    frames.add(frame);
-                                    last = last || DBDebugUtil.getObject(sourcePosition) == null;
-                                }
-                            }
-                            if (frames.size() > 0) {
-                                container.addStackFrames(frames, last) ;
-                            }
-                        }
-                    }
+        XExecutionStack underlyingStack = getUnderlyingStack();
+        if (underlyingStack == null) return;
 
-                    @Override
-                    public boolean isObsolete() {
-                        return container.isObsolete();
-                    }
+        ManagedThreadCommand.schedule(getDebugProcess(), LOW, () ->
+                computeStackFrames(firstFrameIndex, container, underlyingStack));
+    }
 
-                    @Override
-                    public void errorOccurred(@NotNull String errorMessage) {
+    private void computeStackFrames(int firstFrameIndex, XStackFrameContainer container, XExecutionStack underlyingStack) {
+        XStackFrameContainer fakeContainer = new XStackFrameContainer() {
+            @Override
+            public void addStackFrames(@NotNull List<? extends XStackFrame> stackFrames, boolean last) {
+                if (stackFrames.isEmpty()) return;
 
-                    }
-                };
-                underlyingStack.computeStackFrames(firstFrameIndex, fakeContainer);
-            });
-        }
+                List<DBJdwpDebugStackFrame> frames = new ArrayList<>();
+                for (XStackFrame underlyingFrame : stackFrames) {
+                    DBJdwpDebugStackFrame frame = getFrame((JavaStackFrame) underlyingFrame);
+                    XSourcePosition sourcePosition = frame.getSourcePosition();
+                    //VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);
+                    //DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
+                    frames.add(frame);
+                    last = last || DBDebugUtil.getObject(sourcePosition) == null;
+                }
+
+                container.addStackFrames(frames, last) ;
+            }
+
+            @Override
+            public boolean isObsolete() {
+                return container.isObsolete();
+            }
+
+            @Override
+            public void errorOccurred(@NotNull String errorMessage) {
+
+            }
+        };
+
+        underlyingStack.computeStackFrames(firstFrameIndex, fakeContainer);
     }
 }
