@@ -15,7 +15,7 @@ import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -34,12 +34,12 @@ public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExe
     @Override
     protected void registerDefaultBreakpoint() {
         DBStatementRunConfig runConfiguration = (DBStatementRunConfig) getSession().getRunProfile();
-        if (runConfiguration != null) {
-            List<DBMethod> methods = runConfiguration.getMethods();
-            if (methods.size() > 0) {
-                getBreakpointHandler().registerDefaultBreakpoint(methods.get(0));
-            }
-        }
+        if (runConfiguration == null) return;
+
+        List<DBMethod> methods = runConfiguration.getMethods();
+        if (methods.isEmpty()) return;
+
+        getBreakpointHandler().registerDefaultBreakpoint(methods.get(0));
     }
 
     @Nullable

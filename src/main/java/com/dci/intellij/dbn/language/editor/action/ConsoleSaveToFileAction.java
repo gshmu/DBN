@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.editor.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookups;
 import com.dci.intellij.dbn.common.action.ProjectAction;
-import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -34,36 +33,34 @@ public class ConsoleSaveToFileAction extends ProjectAction {
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         VirtualFile virtualFile = Lookups.getVirtualFile(e);
-        if (virtualFile instanceof DBConsoleVirtualFile) {
-            final DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+        if (!(virtualFile instanceof DBConsoleVirtualFile)) return;
 
-            FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
-                    Titles.signed("Save Console to File"),
-                    "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
+        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
 
-            FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);
-            Document document = Documents.getDocument(virtualFile);
-            VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save((VirtualFile) null, consoleVirtualFile.getName());
-            if (document != null && virtualFileWrapper != null) {
-                Write.run(() -> {
-                    try {
-                        VirtualFile newVirtualFile = virtualFileWrapper.getVirtualFile(true);
-                        if (newVirtualFile != null) {
-                            newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
-                            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-                            contextManager.setConnection(newVirtualFile, consoleVirtualFile.getConnection());
-                            contextManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
-                            contextManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getSession());
+        FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
+                Titles.signed("Save Console to File"),
+                "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
 
-                            Editors.openFile(project, newVirtualFile, true);
-                        }
-                    } catch (IOException e1) {
-                        conditionallyLog(e1);
-                        Messages.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
-                    }
+        FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);
+        Document document = Documents.getDocument(virtualFile);
+        VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save((VirtualFile) null, consoleVirtualFile.getName());
+        if (document == null) return;
+        if (virtualFileWrapper == null) return;
 
-                });
-            }
+        try {
+            VirtualFile newVirtualFile = virtualFileWrapper.getVirtualFile(true);
+            if (newVirtualFile == null) return;
+
+            newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
+            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+            contextManager.setConnection(newVirtualFile, consoleVirtualFile.getConnection());
+            contextManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
+            contextManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getSession());
+
+            Editors.openFile(project, newVirtualFile, true);
+        } catch (IOException e1) {
+            conditionallyLog(e1);
+            Messages.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
         }
     }
 

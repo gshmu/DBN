@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
@@ -8,6 +9,7 @@ import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.NotNull;
 
 public class DBLanguageFileElementType extends IFileElementType {
     public DBLanguageFileElementType(Language language) {
@@ -36,8 +38,16 @@ public class DBLanguageFileElementType extends IFileElementType {
             databaseVersion = connection.getDatabaseVersion();
         }
 
-        PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageDialect, text);
+        PsiBuilder builder = createBuilder(chameleon, project, lexer, languageDialect, text);
         ASTNode node = parser.parse(this, builder, file.getParseRootId(), databaseVersion);
         return node.getFirstChildNode();
+    }
+
+    @NotNull
+    private static PsiBuilder createBuilder(ASTNode chameleon, Project project, Lexer lexer, DBLanguageDialect languageDialect, String text) {
+        return Read.call(() -> {
+            PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
+            return factory.createBuilder(project, chameleon, lexer, languageDialect, text);
+        });
     }
 }

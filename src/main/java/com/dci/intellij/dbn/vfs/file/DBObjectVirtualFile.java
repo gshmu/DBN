@@ -30,7 +30,7 @@ import java.io.OutputStream;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
-    private static final WeakRefCache<DBObject, DBObjectVirtualFile> virtualFileCache = WeakRefCache.weakKey();
+    private static final WeakRefCache<DBObjectRef, DBObjectVirtualFile> virtualFileCache = WeakRefCache.weakKey();
 
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected DBObjectRef<T> object;
@@ -41,13 +41,18 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     }
 
     public static DBObjectVirtualFile<?> of(DBObject object) {
-        return virtualFileCache.get(object, o -> new DBObjectVirtualFile(o.getProject(), o.ref()));
+        return of(object.ref());
+    }
+
+    public static DBObjectVirtualFile<?> of(DBObjectRef objectRef) {
+        return virtualFileCache.get(objectRef, o -> new DBObjectVirtualFile(o.getProject(), o));
     }
 
     public DBObjectType getObjectType() {
         return object.getObjectType();
     }
 
+    @NotNull
     public DBObjectRef<T> getObjectRef() {
         return object;
     }
