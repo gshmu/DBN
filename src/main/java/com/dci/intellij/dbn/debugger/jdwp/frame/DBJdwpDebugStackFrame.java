@@ -16,14 +16,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.sun.jdi.Location;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import java.util.List;
 
-public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue> {
-    private long childrenComputed = 0;
+@Getter
+public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess<?>, DBJdwpDebugValue> {
     private JavaStackFrame underlyingFrame;
 
     private final Latent<DBJdwpDebuggerEvaluator> evaluator = Latent.basic(() -> new DBJdwpDebuggerEvaluator(DBJdwpDebugStackFrame.this));
@@ -37,14 +38,8 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
 
     @Override
     public void computeChildren(@NotNull XCompositeNode node) {
-        underlyingFrame.computeChildren(node);
-/*
-        if (System.currentTimeMillis() - childrenComputed > 0){
-            System.out.println(System.currentTimeMillis() - childrenComputed);
-            underlyingFrame.computeChildren(node);
-            childrenComputed = System.currentTimeMillis();
-        }
-*/
+        DBJdwpCompositeNode wrapper = new DBJdwpCompositeNode(node);
+        underlyingFrame.computeChildren(wrapper);
     }
 
     @Override
@@ -70,10 +65,6 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
 
     }
 
-    public JavaStackFrame getUnderlyingFrame() {
-        return underlyingFrame;
-    }
-
     @Override
     @NotNull
     public DBJdwpDebuggerEvaluator getEvaluator() {
@@ -95,7 +86,8 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     @NotNull
     @Override
     public DBJdwpDebugValue createDebugValue(String variableName, DBJdwpDebugValue parentValue, List<String> childVariableNames, Icon icon) {
-        return new DBJdwpDebugValue(this, parentValue, variableName, childVariableNames, icon);
+        //return new DBJdwpDebugValue(this, parentValue, variableName, childVariableNames, icon);
+        throw new UnsupportedOperationException();
     }
 
         @Nullable

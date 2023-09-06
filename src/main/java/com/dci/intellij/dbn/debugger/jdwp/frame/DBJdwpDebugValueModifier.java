@@ -2,20 +2,20 @@ package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.intellij.debugger.engine.JavaValueModifier;
 import com.intellij.xdebugger.XExpression;
-import com.intellij.xdebugger.frame.XValueModifier;
 import com.intellij.xdebugger.impl.breakpoints.XExpressionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
-public class DBJdwpDebugValueModifier extends XValueModifier {
-    private DBJdwpDebugValue value;
+public class DBJdwpDebugValueModifier extends JavaValueModifier {
+    private final DBJdwpDebugValue value;
 
     DBJdwpDebugValueModifier(DBJdwpDebugValue value) {
+        super(value.getJavaValue());
         this.value = value;
     }
 
@@ -26,10 +26,13 @@ public class DBJdwpDebugValueModifier extends XValueModifier {
     }
 
     @Override
+    protected void setValueImpl(@NotNull XExpression expression, @NotNull XModificationCallback callback) {
+
+    }
+
+    @Override
     public void setValue(@NotNull XExpression expr, @NotNull XModificationCallback callback) {
         String expression = expr.getExpression();
-
-        DBJdwpDebugProcess debugProcess = value.getDebugProcess();
         try {
             if (Strings.isNotEmpty(expression)) {
                 while (expression.charAt(0) == '\'') {
@@ -40,19 +43,10 @@ public class DBJdwpDebugValueModifier extends XValueModifier {
                     expression = expression.substring(0, expression.length() -1);
                 }
             }
-/*
-            BasicOperationInfo operationInfo = debugProcess.getDebuggerInterface().setVariableValue(
-                    value.getVariableName(),
-                    0,
-                    expression,
-                    debugProcess.getDebugConnection());
 
-            if (operationInfo.getError() != null) {
-                callback.errorOccurred("Could not change value. " + operationInfo.getError());
-            } else {
-                callback.valueModified();
-            }
-*/
+            // TODO DBN-580 implement alternative value modification
+
+            callback.valueModified();
         } catch (Exception e) {
             conditionallyLog(e);
             callback.errorOccurred(e.getMessage());
