@@ -1,30 +1,78 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
-import com.dci.intellij.dbn.debugger.common.frame.DBDebugValue;
-import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.debugger.common.frame.DBDebugValueDelegate;
+import com.intellij.debugger.engine.JavaValue;
+import com.intellij.debugger.jdi.LocalVariableProxyImpl;
+import com.intellij.debugger.ui.impl.watch.LocalVariableDescriptorImpl;
+import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl;
+import com.intellij.xdebugger.XExpression;
+import com.intellij.xdebugger.evaluation.XInstanceEvaluator;
+import com.intellij.xdebugger.frame.XValue;
 import com.intellij.xdebugger.frame.XValueModifier;
+import com.intellij.xdebugger.frame.XValueNode;
+import com.intellij.xdebugger.frame.XValuePlace;
+import com.sun.jdi.Type;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
-import javax.swing.*;
-import java.util.List;
+public class DBJdwpDebugValue extends DBDebugValueDelegate<DBJdwpDebugStackFrame> {
+    private final DBJdwpDebugValueModifier modifier;
 
-public class DBJdwpDebugValue extends DBDebugValue<DBJdwpDebugStackFrame> {
-    private DBJdwpDebugValueModifier modifier;
-    private DBJdwpDebugStackFrame stackFrame;
 
-    DBJdwpDebugValue(DBJdwpDebugStackFrame stackFrame, DBJdwpDebugValue parentValue, String variableName, @Nullable List<String> childVariableNames, Icon icon) {
-        super(stackFrame, variableName, childVariableNames, parentValue, icon);
-        this.stackFrame = stackFrame;
+    @SneakyThrows
+    public DBJdwpDebugValue(String name, XValue delegate, DBJdwpDebugStackFrame frame) {
+        super(name, delegate, frame);
+        this.modifier = new DBJdwpDebugValueModifier(this);
+
+        JavaValue javaValue = getJavaValue();
+        if (javaValue == null) return;
+
+        ValueDescriptorImpl descriptor = javaValue.getDescriptor();
+
+        if (descriptor instanceof LocalVariableDescriptorImpl) {
+            LocalVariableDescriptorImpl localVariableDescriptor = (LocalVariableDescriptorImpl) descriptor;
+            LocalVariableProxyImpl localVariable = localVariableDescriptor.getLocalVariable();
+            Type type = localVariable.getType();
+            setType(type.name());
+        }
+    }
+
+    @Nullable
+    JavaValue getJavaValue() {
+        XValue delegate = getDelegate();
+        if (delegate instanceof JavaValue) {
+            return (JavaValue) delegate;
+        }
+        return null;
+    }
+
+
+    @Override
+    public @Nullable XValueModifier getModifier() {
+        // TODO DBN-580 enable alternative modifier
+        //return modifier;
+        return super.getModifier();
     }
 
     @Override
-    public DBJdwpDebugProcess getDebugProcess() {
-        return (DBJdwpDebugProcess) super.getDebugProcess();
+    public @Nullable XInstanceEvaluator getInstanceEvaluator() {
+        return super.getInstanceEvaluator();
     }
 
     @Override
-    public XValueModifier getModifier() {
-        if (modifier == null) modifier = new DBJdwpDebugValueModifier(this);
-        return modifier;
+    public @NotNull Promise<XExpression> calculateEvaluationExpression() {
+        return super.calculateEvaluationExpression();
+    }
+
+    @Override
+    public @Nullable String getEvaluationExpression() {
+        return super.getEvaluationExpression();
+    }
+
+    @Override
+    public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
+        super.computePresentation(node, place);
     }
 }
