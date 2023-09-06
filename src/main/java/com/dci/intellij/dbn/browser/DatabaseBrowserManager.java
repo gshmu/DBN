@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.browser.ui.DatabaseBrowserForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -38,6 +37,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +52,7 @@ import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
+@Getter
 @State(
     name = DatabaseBrowserManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -66,11 +67,11 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<>();
 
-    private final transient Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> Dispatch.call(true, () -> {
-        BrowserToolWindowForm form = new BrowserToolWindowForm(this, getProject());
-        Disposer.register(this, form);
-        return form;
-    }));
+    private final transient Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> createToolWindowForm());
+
+    private BrowserToolWindowForm createToolWindowForm() {
+        return Dispatch.call(true, () -> new BrowserToolWindowForm(this, getProject()));
+    }
 
     private DatabaseBrowserManager(Project project) {
         super(project, COMPONENT_NAME);
@@ -119,27 +120,15 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
         return nn(toolWindowForm.get());
     }
 
-    public BooleanSetting getAutoscrollFromEditor() {
-        return autoscrollFromEditor;
-    }
-
-    public BooleanSetting getAutoscrollToEditor() {
-        return autoscrollToEditor;
-    }
-
-    public BooleanSetting getShowObjectProperties() {
-        return showObjectProperties;
-    }
-
     public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean focus, boolean scroll) {
         Dispatch.run(() -> {
             ToolWindow toolWindow = getBrowserToolWindow();
 
             toolWindow.show(null);
-            if (treeNode != null) {
-                DatabaseBrowserForm browserForm = getBrowserForm();
-                browserForm.selectElement(treeNode, focus, scroll);
-            }
+            if (treeNode == null) return;
+
+            DatabaseBrowserForm browserForm = getBrowserForm();
+            browserForm.selectElement(treeNode, focus, scroll);
         });
     }
 
@@ -148,12 +137,12 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
     }
 
     private void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean scroll) {
-        if (treeNode != null) {
-            Dispatch.run(() -> {
-                DatabaseBrowserForm browserForm = getBrowserForm();
-                browserForm.selectElement(treeNode, false, scroll);
-            });
-        }
+        if (treeNode == null) return;
+
+        Dispatch.run(() -> {
+            DatabaseBrowserForm browserForm = getBrowserForm();
+            browserForm.selectElement(treeNode, false, scroll);
+        });
     }
 
     public boolean isVisible() {

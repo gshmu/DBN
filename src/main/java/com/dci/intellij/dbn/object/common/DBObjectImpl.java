@@ -162,6 +162,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
         return cast(DBObjectRef.get(parentObjectRef));
     }
 
+    public <T extends DBObject> DBObjectRef<T> getParentObjectRef() {
+        return cast(parentObjectRef);
+    }
+
     @Override
     @Nullable
     public DBObject getDefaultNavigationObject() {

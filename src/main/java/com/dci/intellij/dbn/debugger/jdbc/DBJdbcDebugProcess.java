@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,7 +21,6 @@ import com.dci.intellij.dbn.debugger.*;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatusHolder;
@@ -260,12 +258,10 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         console.system("Registering breakpoints...");
         List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnection());
 
-        Write.run(() -> {
-            getBreakpointHandler().registerBreakpoints(breakpoints, null);
-            registerDefaultBreakpoint();
-            console.system("Done registering breakpoints");
-            callback.run();
-        });
+        getBreakpointHandler().registerBreakpoints(breakpoints, null);
+        registerDefaultBreakpoint();
+        console.system("Done registering breakpoints");
+        callback.run();
     }
 
     protected void registerDefaultBreakpoint() {}

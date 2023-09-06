@@ -78,8 +78,8 @@ public class BrowserToolWindowForm extends DBNFormBase {
                 (TabbedBrowserForm) oldBrowserForm : null;
 
         this.browserForm =
-                displayMode == BrowserDisplayMode.TABBED ? new TabbedBrowserForm(project, previousTabbedForm) :
-                displayMode == BrowserDisplayMode.SIMPLE ? new SimpleBrowserForm(project) : null;
+                displayMode == BrowserDisplayMode.TABBED ? new TabbedBrowserForm(this, previousTabbedForm) :
+                displayMode == BrowserDisplayMode.SIMPLE ? new SimpleBrowserForm(this) : null;
 
 
 

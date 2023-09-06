@@ -30,8 +30,8 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     private final TabbedPane connectionTabs;
     private JPanel mainPanel;
 
-    TabbedBrowserForm(@NotNull Project project, @Nullable TabbedBrowserForm previous) {
-        super(project);
+    TabbedBrowserForm(@NotNull BrowserToolWindowForm parent, @Nullable TabbedBrowserForm previous) {
+        super(parent);
         connectionTabs = new TabbedPane(this);
         //connectionTabs.setSingleRow(false);
         connectionTabs.setHideTabs(false);
@@ -39,7 +39,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
         initTabs(previous);
-        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
+        ProjectEvents.subscribe(getProject(), this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
     }
 
     @NotNull
@@ -52,13 +52,13 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
                     guarded(() -> {
                         SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                         ConnectionHandler connection = browserForm.getConnection();
-                        if (connection != null) {
-                            JBColor environmentColor = connection.getEnvironmentType().getColor();
-                            if (visibilitySettings.getConnectionTabs().value()) {
-                                tabInfo.setTabColor(environmentColor);
-                            } else {
-                                tabInfo.setTabColor(null);
-                            }
+                        if (connection == null) return;
+
+                        JBColor environmentColor = connection.getEnvironmentType().getColor();
+                        if (visibilitySettings.getConnectionTabs().value()) {
+                            tabInfo.setTabColor(environmentColor);
+                        } else {
+                            tabInfo.setTabColor(null);
                         }
                     });
                 }

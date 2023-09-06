@@ -160,7 +160,7 @@ public class Documents {
     }
 
     public static void setReadonly(Document document, Project project, boolean readonly) {
-        Write.run(() -> {
+        Write.run(project, () -> {
             //document.setReadOnly(readonly);
             removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
             if (readonly) createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
@@ -168,11 +168,11 @@ public class Documents {
     }
 
     public static void setText(@NotNull Document document, CharSequence text) {
-        Write.run(() -> {
-            FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-            VirtualFile file = fileDocumentManager.getFile(document);
-            if (isNotValid(file)) return;
+        FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+        VirtualFile file = fileDocumentManager.getFile(document);
+        if (isNotValid(file)) return;
 
+        Write.run(() -> {
             boolean isReadonly = !document.isWritable();
             try {
                 document.setReadOnly(false);

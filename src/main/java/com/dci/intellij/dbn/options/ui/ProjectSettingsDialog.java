@@ -106,7 +106,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
     }
 
     private class ApplyAction extends AbstractAction {
-        private final Alarm alarm = Dispatch.alarm(ProjectSettingsDialog.this);
+        private final Alarm alarm = Dispatch.alarm(getForm());
         private final Runnable reloader = new Runnable() {
             @Override
             public void run() {

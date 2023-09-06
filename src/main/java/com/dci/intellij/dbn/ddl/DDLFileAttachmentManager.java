@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
-import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.ui.util.Lists;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -48,6 +47,7 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import lombok.val;
+import org.apache.logging.log4j.util.Strings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -128,7 +128,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
                 mappings
                         .entrySet()
                         .stream()
-                        .filter(m -> m.getValue().getConnectionId().equals(connectionId))
+                        .filter(m -> Objects.equals(m.getValue().getConnectionId(), connectionId))
                         .map(m -> m.getKey())
                         .forEach(k -> mappings.remove(k));
             }
@@ -140,7 +140,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         List<String> fileUrls = getAttachedFileUrls(objectRef);
         List<VirtualFile> virtualFiles = null;
 
-        if (fileUrls.size() > 0) {
+        if (!fileUrls.isEmpty()) {
             VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
             for (String fileUrl : fileUrls) {
                 VirtualFile virtualFile = virtualFileManager.findFileByUrl(fileUrl);
@@ -220,13 +220,13 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     }
 
     public void attachDDLFile(DBObjectRef<DBSchemaObject> objectRef, VirtualFile virtualFile) {
-        if (objectRef != null) {
-            mappings.put(virtualFile.getUrl(), objectRef);
-            Project project = getProject();
-            ProjectEvents.notify(project,
-                    DDLFileAttachmentManagerListener.TOPIC,
-                    (listener) -> listener.ddlFileAttached(project, virtualFile));
-        }
+        if (objectRef == null) return;
+
+        mappings.put(virtualFile.getUrl(), objectRef);
+        Project project = getProject();
+        ProjectEvents.notify(project,
+                DDLFileAttachmentManagerListener.TOPIC,
+                (listener) -> listener.ddlFileAttached(project, virtualFile));
     }
 
     public void detachDDLFile(VirtualFile virtualFile) {
@@ -300,21 +300,21 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
             if (selectedDirectories.length > 0) {
                 String fileName = fileNameProvider.getFileName();
                 VirtualFile parentDirectory = selectedDirectories[0];
-                Write.run(() -> {
-                    try {
-                        DBSchemaObject object = objectRef.ensure();
-                        VirtualFile virtualFile = parentDirectory.createChildData(this, fileName);
-                        attachDDLFile(objectRef, virtualFile);
-                        DBEditableObjectVirtualFile editableObjectFile = object.getEditableVirtualFile();
-                        updateDDLFiles(editableObjectFile);
+                DBSchemaObject object = objectRef.ensure();
 
-                        DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
-                        editorManager.reopenEditor(object);
-                    } catch (IOException e) {
-                        conditionallyLog(e);
-                        Messages.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
-                    }
-                });
+                try {
+                    VirtualFile virtualFile = parentDirectory.createChildData(this, fileName);
+                    attachDDLFile(objectRef, virtualFile);
+                    DBEditableObjectVirtualFile editableObjectFile = object.getEditableVirtualFile();
+                    updateDDLFiles(editableObjectFile);
+
+                } catch (IOException e) {
+                    conditionallyLog(e);
+                    Messages.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
+                }
+
+                DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
+                editorManager.reopenEditor(object);
             }
         } else {
             showMissingFileAssociations(objectRef);
@@ -324,40 +324,40 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     public void updateDDLFiles(DBEditableObjectVirtualFile databaseFile) {
         Project project = getProject();
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
-        if (ddlFileSettings.getGeneralSettings().isDdlFilesSynchronizationEnabled()) {
-            DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
-            List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
-            if (ddlFiles != null && !ddlFiles.isEmpty()) {
-                for (VirtualFile ddlFile : ddlFiles) {
-                    DDLFileType ddlFileType = ddlFileManager.getDDLFileTypeForExtension(ddlFile.getExtension());
-                    DBContentType fileContentType = ddlFileType.getContentType();
+        if (!ddlFileSettings.getGeneralSettings().isDdlFilesSynchronizationEnabled()) return;
 
-                    StringBuilder buffer = new StringBuilder();
-                    if (fileContentType.isBundle()) {
-                        DBContentType[] contentTypes = fileContentType.getSubContentTypes();
-                        for (DBContentType contentType : contentTypes) {
-                            DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(contentType);
-                            if (sourceCodeFile != null) {
-                                String statement = ddlFileManager.createDDLStatement(sourceCodeFile, contentType);
-                                if (statement.trim().length() > 0) {
-                                    buffer.append(statement);
-                                    buffer.append('\n');
-                                }
-                                if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
-                            }
-                        }
-                    } else {
-                        DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(fileContentType);
-                        if (sourceCodeFile != null) {
-                            buffer.append(ddlFileManager.createDDLStatement(sourceCodeFile, fileContentType));
-                            buffer.append('\n');
-                        }
+        DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
+        List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
+        if (ddlFiles == null || ddlFiles.isEmpty()) return;
+
+        for (VirtualFile ddlFile : ddlFiles) {
+            DDLFileType ddlFileType = ddlFileManager.getDDLFileTypeForExtension(ddlFile.getExtension());
+            DBContentType fileContentType = ddlFileType.getContentType();
+
+            StringBuilder buffer = new StringBuilder();
+            if (fileContentType.isBundle()) {
+                DBContentType[] contentTypes = fileContentType.getSubContentTypes();
+                for (DBContentType contentType : contentTypes) {
+                    DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(contentType);
+                    if (sourceCodeFile == null) continue;
+
+                    String statement = ddlFileManager.createDDLStatement(sourceCodeFile, contentType);
+                    if (Strings.isNotBlank(statement)) {
+                        buffer.append(statement);
+                        buffer.append('\n');
                     }
-                    Document document = Documents.getDocument(ddlFile);
-                    if (document != null) {
-                        Documents.setText(document, buffer);
-                    }
+                    if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
                 }
+            } else {
+                DBSourceCodeVirtualFile sourceCodeFile = databaseFile.getContentFile(fileContentType);
+                if (sourceCodeFile != null) {
+                    buffer.append(ddlFileManager.createDDLStatement(sourceCodeFile, fileContentType));
+                    buffer.append('\n');
+                }
+            }
+            Document document = Documents.getDocument(ddlFile);
+            if (document != null) {
+                Documents.setText(document, buffer);
             }
         }
     }
@@ -367,16 +367,16 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         if (ddlFileNameProvider == null) return;
 
         List<VirtualFile> virtualFiles = lookupDetachedDDLFiles(objectRef);
-        if (virtualFiles.size() == 0) {
+        if (virtualFiles.isEmpty()) {
             List<String> fileUrls = getAttachedFileUrls(objectRef);
 
             StringBuilder message = new StringBuilder();
-            message.append(fileUrls.size() == 0 ?
+            message.append(fileUrls.isEmpty() ?
                     "No DDL Files were found in " :
                     "No additional DDL Files were found in ");
             message.append("project scope.");
 
-            if (fileUrls.size() > 0) {
+            if (!fileUrls.isEmpty()) {
                 message.append("\n\nFollowing files are already attached to ");
                 message.append(objectRef.getQualifiedNameWithType());
                 message.append(':');

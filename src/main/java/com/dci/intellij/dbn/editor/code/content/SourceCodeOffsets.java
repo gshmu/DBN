@@ -6,9 +6,11 @@ import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class SourceCodeOffsets {
-    private @Getter final GuardedBlockMarkers guardedBlocks = new GuardedBlockMarkers();
-    private @Getter @Setter int headerEndOffset = 0;
+    private final GuardedBlockMarkers guardedBlocks = new GuardedBlockMarkers();
+    private int headerEndOffset = 0;
 
     public void addGuardedBlock(int startOffset, int endOffset) {
         guardedBlocks.addMarker(startOffset, endOffset);

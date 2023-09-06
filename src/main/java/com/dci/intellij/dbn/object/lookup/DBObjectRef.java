@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.lookup;
 
 import com.dci.intellij.dbn.common.Reference;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.string.StringDeBuilder;
@@ -30,7 +31,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
@@ -94,7 +94,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     @Nullable
     @Override
     public Project getProject() {
-        T object = reference.get();
+        T object = reference == null ? null : reference.get();
         if (object != null) return object.getProject();
 
         ConnectionHandler connection = getConnection();
@@ -123,7 +123,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         return null;
     }
 
-    private DBObjectRef<?> getParentRef() {
+    public DBObjectRef<?> getParentRef() {
         return parent instanceof DBObjectRef ? (DBObjectRef) parent : null;
     }
 
@@ -351,7 +351,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
 
         clearReference();
         ConnectionHandler connection = getConnection();
-        if (isValid(connection) && connection.isEnabled()) {
+        if (Checks.isValid(connection) && connection.isEnabled()) {
             object = lookup(connection);
             if (object != null) {
                 reference = WeakRef.of(object);
@@ -530,6 +530,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     @Override
     public String toString() {
         return objectName;
+    }
+
+    public boolean isValid() {
+        return Checks.isValid(reference.get());
     }
 
 }

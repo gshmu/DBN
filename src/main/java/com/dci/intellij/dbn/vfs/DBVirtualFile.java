@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.connection.context.DatabaseContextBase;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataHolder;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,11 @@ public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypePro
     DatabaseFileViewProvider getCachedViewProvider();
 
     void invalidate();
+
+    @Nullable
+    default DBObjectRef getObjectRef() {
+        return null;
+    }
 
     @Nullable
     default DBObject getObject() {
