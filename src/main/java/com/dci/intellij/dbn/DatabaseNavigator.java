@@ -6,12 +6,17 @@ import com.dci.intellij.dbn.common.file.FileTypeService;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.plugin.DBNPluginStateListener;
 import com.dci.intellij.dbn.plugin.PluginConflictManager;
+import com.intellij.execution.Executor;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.plugins.PluginStateManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.openapi.extensions.PluginId;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +27,7 @@ import static com.dci.intellij.dbn.common.component.Components.applicationServic
 import static com.dci.intellij.dbn.common.options.setting.Settings.getBoolean;
 import static com.dci.intellij.dbn.common.options.setting.Settings.setBoolean;
 
+@Slf4j
 @State(
     name = DatabaseNavigator.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -49,6 +55,18 @@ public class DatabaseNavigator extends ApplicationComponentBase implements Persi
         PluginConflictManager.getInstance();
         FileTypeService.getInstance();
 
+        registerExecutorExtension();
+
+    }
+
+    private static void registerExecutorExtension() {
+        try {
+            ExtensionsArea extensionArea = ApplicationManager.getApplication().getExtensionArea();
+            boolean available = extensionArea.hasExtensionPoint(Executor.EXECUTOR_EXTENSION_NAME);
+            if (!available) extensionArea.getExtensionPoint(Executor.EXECUTOR_EXTENSION_NAME).registerExtension(new DefaultDebugExecutor());
+        } catch (Throwable e) {
+            log.error("Failed to register debug executor extension", e);
+        }
     }
 
 /*
