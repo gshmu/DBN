@@ -77,6 +77,8 @@ public interface DBObject extends
 
     <T extends DBObject> T getParentObject();
 
+    <T extends DBObject> DBObjectRef<T> getParentObjectRef();
+
     @Nullable
     DBObject getDefaultNavigationObject();
 

@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBView;
-import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -87,6 +86,11 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
         return getMainDatabaseFile().getObject();
     }
 
+    @NotNull
+    public DBObjectRef<DBSchemaObject> getObjectRef() {
+        return getMainDatabaseFile().getObjectRef();
+    }
+
 
     @NotNull
     @Override
@@ -136,13 +140,12 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
     @Override
     @Nullable
     public VirtualFile getParent() {
-        if (isValid()) {
-            DBObject parentObject = getObject().getParentObject();
-            if (parentObject != null) {
-                return parentObject.getVirtualFile();
-            }
-        }
-        return null;
+        if (!isValid()) return null;
+
+        DBObjectRef parentObject = getObjectRef().getParentRef();
+        if (parentObject == null) return null;
+
+        return DBObjectVirtualFile.of(parentObject);
     }
 
     @Override

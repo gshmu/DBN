@@ -275,7 +275,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
             if (virtualFile instanceof DBContentVirtualFile) {
                 DBContentVirtualFile file = (DBContentVirtualFile) virtualFile;
-                DBObjectRef<?> objectRef = file.getObject().ref();
+                DBObjectRef<?> objectRef = file.getObjectRef();
                 DBContentType contentType = file.getContentType();
                 return objectRef.getConnectionId() + PSS + OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
             }

@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,8 +25,8 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserTree = createBrowserTree(connection);
     }
 
-    public SimpleBrowserForm(@NotNull Project project) {
-        super(project);
+    public SimpleBrowserForm(@NotNull BrowserToolWindowForm parent) {
+        super(parent);
         browserTree = createBrowserTree(null);
     }
 

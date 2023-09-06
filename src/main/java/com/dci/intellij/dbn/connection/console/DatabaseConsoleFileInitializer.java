@@ -18,12 +18,12 @@ public class DatabaseConsoleFileInitializer implements FileDocumentManagerListen
         if (file instanceof DBConsoleVirtualFile) {
             // restore guarded blocks after console file loaded
             DBConsoleVirtualFile consoleFile = (DBConsoleVirtualFile) file;
+            GuardedBlockMarkers guardedBlocks = consoleFile.getContent().getOffsets().getGuardedBlocks();
+            if (guardedBlocks.isEmpty()) return;
+
             Write.run(() -> {
-                GuardedBlockMarkers guardedBlocks = consoleFile.getContent().getOffsets().getGuardedBlocks();
-                if (!guardedBlocks.isEmpty()) {
-                    removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                    createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-                }
+                removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+                createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
             });
         }
     }

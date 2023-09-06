@@ -228,23 +228,23 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     private void updateFileContent(@Nullable SourceCodeContent newContent, @Nullable CharSequence newText) {
-        Write.run(() -> {
-            if (newContent != null) {
-                localContent = newContent;
-            } else {
-                localContent.setText(newText);
-            }
+        if (newContent != null) {
+            localContent = newContent;
+        } else {
+            localContent.setText(newText);
+        }
+        Document document = Documents.getDocument(DBSourceCodeVirtualFile.this);
+        if (document == null) return;
 
-            Document document = Documents.getDocument(DBSourceCodeVirtualFile.this);
-            if (document != null) {
-                Documents.setText(document, localContent.getText());
-                SourceCodeOffsets offsets = localContent.getOffsets();
-                GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
-                if (!guardedBlocks.isEmpty()) {
-                    removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                    createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-                }
-            }
+        Documents.setText(document, localContent.getText());
+
+        SourceCodeOffsets offsets = localContent.getOffsets();
+        GuardedBlockMarkers guardedBlocks = offsets.getGuardedBlocks();
+        if (guardedBlocks.isEmpty()) return;
+
+        Write.run(getProject(), () -> {
+            removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
+            createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
         });
     }
 
