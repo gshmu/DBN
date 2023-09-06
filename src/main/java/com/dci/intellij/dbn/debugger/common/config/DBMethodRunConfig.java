@@ -41,6 +41,11 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     }
 
     @Override
+    public boolean canRun() {
+        return super.canRun() && getMethod() != null;
+    }
+
+    @Override
     public MethodExecutionInput getExecutionInput() {
         return super.getExecutionInput();
     }

@@ -21,6 +21,7 @@ import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.util.Messages.options;
@@ -52,6 +54,17 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
     @Override
     protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
         return doExecute(environment.getProject(), environment.getExecutor(), state, null, environment);
+    }
+
+    @Override
+    public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
+        if (!Objects.equals(executorId, DefaultDebugExecutor.EXECUTOR_ID)) return false;
+
+        if (profile instanceof DBRunConfig) {
+            DBRunConfig runConfiguration = (DBRunConfig) profile;
+            return runConfiguration.canRun();
+        }
+        return false;
     }
 
     @Override

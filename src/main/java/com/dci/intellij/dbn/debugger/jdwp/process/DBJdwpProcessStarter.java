@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.debugger.jdwp.process;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.jdwp.config.DBJdwpRunConfig;
 import com.intellij.debugger.DebugEnvironment;
@@ -66,10 +65,6 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
         RunProfile runProfile = session.getRunProfile();
         assertNotNull(runProfile, "Invalid run profile");
-        if (runProfile instanceof DBRunConfig) {
-            DBRunConfig runConfig = (DBRunConfig) runProfile;
-            runConfig.setCanRun(true);
-        }
 
         ExecutionEnvironment environment = ExecutionEnvironmentBuilder.create(session.getProject(), executor, runProfile).build();
         DBJdwpRunConfig jdwpRunConfig = (DBJdwpRunConfig) runProfile;

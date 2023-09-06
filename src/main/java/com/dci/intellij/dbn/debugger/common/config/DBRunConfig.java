@@ -27,7 +27,6 @@ import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
     private boolean generatedName = true;
     private boolean compileDependencies = true;
-    private boolean canRun = false;
     private DBRunConfigCategory category;
     private I executionInput;
 
@@ -37,11 +36,7 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     }
 
     public boolean canRun() {
-        return category == DBRunConfigCategory.CUSTOM || canRun;
-    }
-
-    public void setCanRun(boolean canRun) {
-        this.canRun = canRun;
+        return category == DBRunConfigCategory.CUSTOM;
     }
 
     @NotNull
@@ -52,7 +47,7 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
 
     @Override
     public boolean canRunOn(@NotNull ExecutionTarget target) {
-        return super.canRunOn(target);
+        return canRun();
     }
 
     @Override

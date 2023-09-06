@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointHandler;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatusHolder;
@@ -353,10 +352,6 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                     }
 
                     ConnectionHandler connection = getConnection();
-                    DBRunConfig<T> runProfile = getRunProfile();
-                    if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
-                        runProfile.setCanRun(false);
-                    }
 
                     DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
                     debuggerManager.unregisterDebugSession(connection);

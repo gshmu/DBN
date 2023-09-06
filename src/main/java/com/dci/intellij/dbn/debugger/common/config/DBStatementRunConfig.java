@@ -29,37 +29,39 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
         super(project, factory, name, category);
     }
 
+    @Override
+    public boolean canRun() {
+        return super.canRun() && getExecutionInput() != null;
+    }
+
     @Nullable
     @Override
     public DBLanguagePsiFile getSource() {
-        if (executionInput != null) {
-            return executionInput.getExecutionProcessor().getPsiFile();
-        }
-        return null;
+        if (executionInput == null) return null;
+        return executionInput.getExecutionProcessor().getPsiFile();
     }
 
     @Override
     public List<DBMethod> getMethods() {
-        if (executionInput != null) {
-            ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
-            if (executablePsiElement == null) return Collections.emptyList();
+        if (executionInput == null) return Collections.emptyList();
 
-            return Read.call(executablePsiElement, e -> {
-                List<DBMethod> methods = new ArrayList<>();
-                e.collectObjectReferences(DBObjectType.METHOD, object -> {
-                    if (object instanceof DBMethod) {
-                        DBMethod method = (DBMethod) object;
-                        DBSchema schema = method.getSchema();
-                        if (!schema.isSystemSchema() && !schema.isPublicSchema()) {
-                            methods.add(method);
-                        }
+        ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
+        if (executablePsiElement == null) return Collections.emptyList();
+
+        return Read.call(executablePsiElement, e -> {
+            List<DBMethod> methods = new ArrayList<>();
+            e.collectObjectReferences(DBObjectType.METHOD, object -> {
+                if (object instanceof DBMethod) {
+                    DBMethod method = (DBMethod) object;
+                    DBSchema schema = method.getSchema();
+                    if (!schema.isSystemSchema() && !schema.isPublicSchema()) {
+                        methods.add(method);
                     }
-                });
-                return methods;
+                }
             });
+            return methods;
+        });
 
-        }
-        return Collections.emptyList();
     }
 
     @Override
