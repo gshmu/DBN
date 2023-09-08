@@ -235,7 +235,7 @@ public final class Settings {
         element.setAttribute(attributeName, value.name());
     }
 
-    public Element createChildElement(Element parent, String childName) {
+    public static Element createChildElement(Element parent, String childName) {
         Element child = new Element(childName);
         parent.addContent(child);
         return child;
