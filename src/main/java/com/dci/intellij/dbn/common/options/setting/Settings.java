@@ -114,6 +114,20 @@ public final class Settings {
         }
     }
 
+    public static long longAttribute(Element element, String attributeName, long defaultValue) {
+        try {
+            String attributeValue = stringAttribute(element, attributeName);
+            if (Strings.isEmpty(attributeValue)) {
+                return defaultValue;
+            }
+            return Long.parseLong(attributeValue);
+        } catch (NumberFormatException e) {
+            conditionallyLog(e);
+            log.warn("Failed to read LONG config (" + attributeName + "): " + e.getMessage());
+            return defaultValue;
+        }
+    }
+
     /*
         public static <T extends Enum<T>> T getEnumAttribute(Element element, String attributeName, T value) {
             String attributeValue = element.getAttributeValue(attributeName);
@@ -209,11 +223,21 @@ public final class Settings {
         element.setAttribute(attributeName, Integer.toString(value));
     }
 
+    public static void setLongAttribute(Element element, String attributeName, long value) {
+        element.setAttribute(attributeName, Long.toString(value));
+    }
+
     public static void setStringAttribute(Element element, String attributeName, String value) {
         element.setAttribute(attributeName, value == null ? "" : value);
     }
 
     public static  <T extends Enum<T>> void setEnumAttribute(Element element, String attributeName, T value) {
         element.setAttribute(attributeName, value.name());
+    }
+
+    public Element createChildElement(Element parent, String childName) {
+        Element child = new Element(childName);
+        parent.addContent(child);
+        return child;
     }
 }

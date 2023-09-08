@@ -312,7 +312,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
 
         if (options.is(SHOW_VIRTUAL_CONNECTIONS)) {
             actionGroup.addSeparator();
-            for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
+            for (ConnectionHandler virtualConnectionHandler : connectionBundle.listVirtualConnections()) {
                 ConnectionSelectAction connectionAction = new ConnectionSelectAction(
                         virtualConnectionHandler,
                         file,

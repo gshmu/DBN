@@ -31,7 +31,6 @@ public abstract class OverridingShortcutInterceptor extends ShortcutInterceptor 
 
     @Override
     public void beforeEditorTyping(char c, @NotNull DataContext dataContext) {
-        System.out.println();
     }
 
     private void attemptDelegation(@NotNull AnAction action, @NotNull AnActionEvent event) {
