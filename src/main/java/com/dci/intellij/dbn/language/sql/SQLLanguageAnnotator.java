@@ -34,7 +34,7 @@ public class SQLLanguageAnnotator extends DBLanguageAnnotator {
             NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
             if (namedPsiElement.hasErrors()) {
                 String message = "Invalid " + namedPsiElement.getElementType().getDescription();
-                createAnnotation(holder, ERROR, null, message);
+                createAnnotation(holder, namedPsiElement, ERROR, null, message);
             }
         }
     }
@@ -53,7 +53,7 @@ public class SQLLanguageAnnotator extends DBLanguageAnnotator {
 
         DBLanguageDialect languageDialect = identifierPsiElement.getLanguageDialect();
         if (languageDialect.isReservedWord(identifierPsiElement.getText())) {
-            createSilentAnnotation(holder, SQLTextAttributesKeys.IDENTIFIER);
+            createSilentAnnotation(holder, identifierPsiElement, SQLTextAttributesKeys.IDENTIFIER);
         }
         if (identifierPsiElement.isObject()) {
             annotateObject(identifierPsiElement, holder);
@@ -66,9 +66,9 @@ public class SQLLanguageAnnotator extends DBLanguageAnnotator {
 
     private static void annotateAliasRef(@NotNull IdentifierPsiElement aliasReference, AnnotationHolder holder) {
         if (aliasReference.resolve() == null && aliasReference.getResolveAttempts() > 3) {
-            createAnnotation(holder, WARNING, SQLTextAttributesKeys.UNKNOWN_IDENTIFIER, "Unknown identifier");
+            createAnnotation(holder, aliasReference, WARNING, SQLTextAttributesKeys.UNKNOWN_IDENTIFIER, "Unknown identifier");
         } else {
-            createSilentAnnotation(holder, SQLTextAttributesKeys.ALIAS);
+            createSilentAnnotation(holder, aliasReference, SQLTextAttributesKeys.ALIAS);
         }
     }
 
@@ -80,7 +80,7 @@ public class SQLLanguageAnnotator extends DBLanguageAnnotator {
             holder.createWarningAnnotation(aliasDefinition, "Duplicate alias definition: " + aliasDefinition.getUnquotedText());
         }*/
 
-        createSilentAnnotation(holder, SQLTextAttributesKeys.ALIAS);
+        createSilentAnnotation(holder, aliasDefinition, SQLTextAttributesKeys.ALIAS);
     }
 
     private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
@@ -88,7 +88,7 @@ public class SQLLanguageAnnotator extends DBLanguageAnnotator {
             PsiElement reference = objectReference.resolve();
             if (reference == null && objectReference.getResolveAttempts() > 3 && checkConnection(objectReference)) {
                 if (!objectReference.getLanguageDialect().getParserTokenTypes().isFunction(objectReference.getText())) {
-                    createAnnotation(holder, WARNING, SQLTextAttributesKeys.UNKNOWN_IDENTIFIER, "Unknown identifier");
+                    createAnnotation(holder, objectReference, WARNING, SQLTextAttributesKeys.UNKNOWN_IDENTIFIER, "Unknown identifier");
                 }
             }
         }

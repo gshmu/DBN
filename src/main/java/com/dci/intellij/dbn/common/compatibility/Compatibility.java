@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Marker annotation for compatibility sensitive code blocks
  * (changes to these blocks need attention when merged in other legacy branches)
  */
-@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR})
+@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Compatibility {
 }
