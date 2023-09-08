@@ -16,7 +16,7 @@ import static com.dci.intellij.dbn.execution.statement.variables.VariableNames.a
 
 public class StatementExecutionVariables implements PersistentStateElement {
     private final ProjectRef project;
-    private final Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new HashMap<>();
+    private final Map<String, Set<StatementExecutionVariable>> variables = new HashMap<>();
 
     public StatementExecutionVariables(Project project) {
         this.project = ProjectRef.of(project);
@@ -29,7 +29,7 @@ public class StatementExecutionVariables implements PersistentStateElement {
     public Set<StatementExecutionVariable> getVariables(@Nullable VirtualFile virtualFile) {
         if (virtualFile != null) {
             String fileUrl = virtualFile.getUrl();
-            return fileVariablesMap.computeIfAbsent(fileUrl, u -> new HashSet<>());
+            return variables.computeIfAbsent(fileUrl, u -> new HashSet<>());
         }
         return Collections.emptySet();
     }
@@ -70,7 +70,7 @@ public class StatementExecutionVariables implements PersistentStateElement {
         Element variablesElement = element.getChild("execution-variables");
         if (variablesElement == null) return;
 
-        this.fileVariablesMap.clear();
+        this.variables.clear();
         for (Element fileElement : variablesElement.getChildren()) {
             String fileUrl = fileElement.getAttributeValue("file-url");
             if ( Strings.isEmpty(fileUrl)) {
@@ -79,7 +79,7 @@ public class StatementExecutionVariables implements PersistentStateElement {
             }
 
             Set<StatementExecutionVariable> fileVariables = new HashSet<>();
-            this.fileVariablesMap.put(fileUrl, fileVariables);
+            this.variables.put(fileUrl, fileVariables);
 
             for (Element child : fileElement.getChildren()) {
                 StatementExecutionVariable executionVariable = new StatementExecutionVariable();
@@ -94,7 +94,7 @@ public class StatementExecutionVariables implements PersistentStateElement {
         Element variablesElement = new Element("execution-variables");
         element.addContent(variablesElement);
 
-        for (val entry : fileVariablesMap.entrySet()) {
+        for (val entry : variables.entrySet()) {
             String fileUrl = entry.getKey();
             if (Files.isValidFileUrl(fileUrl, getProject())) {
                 Element fileElement = new Element("file");
