@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 public class ProjectWorkspaceInitializer implements StartupActivity, DumbAware {
 
     public ProjectWorkspaceInitializer() {
-        System.out.println();
     }
 
     @Override

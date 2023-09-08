@@ -84,7 +84,8 @@ class Connector {
     @Nullable
     public DBNConnection connect() {
         int connectTimeout = getConnectTimeout();
-        return Timeout.call(connectTimeout, null, true, () -> doConnect());
+        String identifier = "Connecting to \"" + connectionSettings.getDatabaseSettings().getName() + "\"";
+        return Timeout.call(identifier, connectTimeout, null, true, () -> doConnect());
     }
 
     private DBNConnection doConnect() {

@@ -19,17 +19,17 @@ public class ConnectionSelectActionGroup extends DefaultActionGroup {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 
-        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
+        for (ConnectionHandler virtualConnectionHandler : connectionBundle.listVirtualConnections()) {
             ConnectionSelectAction connectionAction = new ConnectionSelectAction(virtualConnectionHandler);
             add(connectionAction);
         }
 
-        if (connectionBundle.getConnections().size() > 0) {
-            addSeparator();
-            for (ConnectionHandler connection : connectionBundle.getConnections()) {
-                ConnectionSelectAction connectionAction = new ConnectionSelectAction(connection);
-                add(connectionAction);
-            }
+        if (connectionBundle.getConnections().isEmpty()) return;
+
+        addSeparator();
+        for (ConnectionHandler connection : connectionBundle.getConnections()) {
+            ConnectionSelectAction connectionAction = new ConnectionSelectAction(connection);
+            add(connectionAction);
         }
     }
 }

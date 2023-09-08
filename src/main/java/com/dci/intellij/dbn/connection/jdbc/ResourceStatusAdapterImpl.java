@@ -190,7 +190,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
     private boolean checkControlled() throws SQLException{
         AtomicReference<SQLException> exception = new AtomicReference<>();
-        Boolean result = Timeout.call(5, is(subject), true, () -> {
+        Boolean result = Timeout.call("Checking resource status", 5, is(subject), true, () -> {
             try {
                 return checkInner();
             } catch (SQLException e) {
@@ -223,7 +223,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             daemon = false;
         }
 
-        SQLException exception = Timeout.call(10, null, daemon, () -> {
+        SQLException exception = Timeout.call("Applying resource status", 10, null, daemon, () -> {
             try {
                 if (isDatabaseResourceDebug())
                     log.info("[DBN] Applying status {} = {} for {}", subject, value, resource);

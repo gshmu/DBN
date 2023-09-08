@@ -22,7 +22,7 @@ public final class Timeout {
     private static final Object lock = new Object();
 
     @SneakyThrows
-    public static <T> T call(int seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
+    public static <T> T call(String identifier, int seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
         long start = System.currentTimeMillis();
         try {
             Threads.delay(lock);
@@ -55,10 +55,10 @@ public final class Timeout {
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             conditionallyLog(e);
             String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
-            log.warn("Operation timed out after {} seconds (timeout = {} seconds). Returning default {}. Cause: {}", secondsSince(start), seconds, defaultValue, message);
+            log.warn("{} - Operation timed out after {}s (timeout = {}s). Defaulting to {}. Cause: {}", identifier, secondsSince(start), seconds, defaultValue, message);
         } catch (ExecutionException e) {
             conditionallyLog(e);
-            log.warn("Operation failed after {} seconds (timeout = {} seconds). Returning default {}", secondsSince(start), seconds, defaultValue, causeOf(e));
+            log.warn("{} - Operation failed after {}s (timeout = {}s). Defaulting to {}", identifier, secondsSince(start), seconds, defaultValue, causeOf(e));
             throw e.getCause();
         }
         return defaultValue;

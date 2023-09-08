@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.dispose.Disposed;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -31,12 +32,18 @@ import static com.intellij.util.containers.ContainerUtil.createConcurrentWeakKey
 
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, StatefulDisposable {
     private final ProjectRef project;
-    private final Map<ConnectionId, ConnectionHandler> virtualConnections = new LinkedHashMap<>();
+
+    private final Latent<Map<ConnectionId, ConnectionHandler>> virtualConnections = Latent.basic(() -> createVirtualConnections());
     private FilteredList<ConnectionHandler> connections = FilteredList.stateful(c -> c.isEnabled());
     private Map<ConnectionId, ConnectionHandler> index = createConcurrentWeakKeyWeakValueMap();
 
     public ConnectionBundle(Project project) {
         this.project = ProjectRef.of(project);
+        rebuildIndex();
+    }
+
+    private Map<ConnectionId, ConnectionHandler> createVirtualConnections() {
+        Map<ConnectionId, ConnectionHandler> virtualConnections = new LinkedHashMap<>();
         virtualConnections.put(
                 ConnectionId.VIRTUAL_ORACLE,
                 new VirtualConnectionHandler(
@@ -79,15 +86,19 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
                         DatabaseType.GENERIC,
                         92,
                         this));
-        rebuildIndex();
+        return virtualConnections;
     }
 
-    public Collection<ConnectionHandler> getVirtualConnections() {
-        return virtualConnections.values();
+    private Map<ConnectionId, ConnectionHandler> getVirtualConnections() {
+        return virtualConnections.get();
+    }
+
+    public Collection<ConnectionHandler> listVirtualConnections() {
+        return getVirtualConnections().values();
     }
 
     public ConnectionHandler getVirtualConnection(ConnectionId id) {
-        return virtualConnections.get(id);
+        return getVirtualConnections().get(id);
     }
 
     public void applySettings(ConnectionBundleSettings configuration) {
@@ -163,7 +174,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         ConnectionHandler connection = index.get(id);
         if (connection != null) return connection;
 
-        return virtualConnections.get(id);
+        return getVirtualConnection(id);
     }
 
     public List<ConnectionHandler> getConnections() {

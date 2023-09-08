@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.type;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -136,6 +137,6 @@ public final class DBDataTypeBundle extends StatefulDisposableBase implements Un
     @Override
     protected void disposeInner() {
         nativeDataTypes.reset();
-        dataTypes.clear();
+        Disposer.dispose(dataTypes);
     }
 }
