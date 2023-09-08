@@ -68,24 +68,23 @@ public class StatementExecutionVariables implements PersistentStateElement {
     @Override
     public void readState(Element element) {
         Element variablesElement = element.getChild("execution-variables");
-        if (variablesElement != null) {
-            this.fileVariablesMap.clear();
+        if (variablesElement == null) return;
 
-            for (Element fileElement : variablesElement.getChildren()) {
-                String fileUrl = fileElement.getAttributeValue("file-url");
-                if ( Strings.isEmpty(fileUrl)) {
-                    // TODO backward compatibility. Do cleanup
-                    fileUrl = fileElement.getAttributeValue("path");
-                }
+        this.fileVariablesMap.clear();
+        for (Element fileElement : variablesElement.getChildren()) {
+            String fileUrl = fileElement.getAttributeValue("file-url");
+            if ( Strings.isEmpty(fileUrl)) {
+                // TODO backward compatibility. Do cleanup
+                fileUrl = fileElement.getAttributeValue("path");
+            }
 
-                Set<StatementExecutionVariable> fileVariables = new HashSet<>();
-                this.fileVariablesMap.put(fileUrl, fileVariables);
+            Set<StatementExecutionVariable> fileVariables = new HashSet<>();
+            this.fileVariablesMap.put(fileUrl, fileVariables);
 
-                for (Element child : fileElement.getChildren()) {
-                    StatementExecutionVariable executionVariable = new StatementExecutionVariable();
-                    executionVariable.readState(child);
-                    fileVariables.add(executionVariable);
-                }
+            for (Element child : fileElement.getChildren()) {
+                StatementExecutionVariable executionVariable = new StatementExecutionVariable();
+                executionVariable.readState(child);
+                fileVariables.add(executionVariable);
             }
         }
     }
