@@ -12,11 +12,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class StatementExecutionVariablesCache implements PersistentStateElement {
+import static com.dci.intellij.dbn.execution.statement.variables.VariableNames.adjust;
+
+public class StatementExecutionVariables implements PersistentStateElement {
     private final ProjectRef project;
     private final Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new HashMap<>();
 
-    public StatementExecutionVariablesCache(Project project) {
+    public StatementExecutionVariables(Project project) {
         this.project = ProjectRef.of(project);
     }
 
@@ -33,26 +35,27 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
     }
 
     public void cacheVariable(@Nullable VirtualFile virtualFile, StatementExecutionVariable executionVariable) {
-        if (virtualFile != null) {
-            Set<StatementExecutionVariable> variables = getVariables(virtualFile);
-            for (StatementExecutionVariable variable : variables) {
-                if (Objects.equals(variable.getName(), executionVariable.getName())) {
-                    variable.setValue(executionVariable.getValue());
-                    return;
-                }
+        if (virtualFile == null) return;
+
+        Set<StatementExecutionVariable> variables = getVariables(virtualFile);
+        for (StatementExecutionVariable variable : variables) {
+            if (Objects.equals(variable.getName(), executionVariable.getName())) {
+                variable.setValue(executionVariable.getValue());
+                return;
             }
-            variables.add(new StatementExecutionVariable(executionVariable));
         }
+        variables.add(new StatementExecutionVariable(executionVariable));
     }
 
     @Nullable
     public StatementExecutionVariable getVariable(@Nullable VirtualFile virtualFile, String name) {
-        if (virtualFile != null) {
-            Set<StatementExecutionVariable> variables = getVariables(virtualFile);
-            for (StatementExecutionVariable variable : variables) {
-                if (Strings.equalsIgnoreCase(variable.getName(), name)) {
-                    return variable;
-                }
+        if (virtualFile == null) return null;
+
+        name = adjust(name);
+        Set<StatementExecutionVariable> variables = getVariables(virtualFile);
+        for (StatementExecutionVariable variable : variables) {
+            if (Strings.equals(variable.getName(), name)) {
+                return variable;
             }
         }
         return null;
@@ -78,8 +81,9 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
                 Set<StatementExecutionVariable> fileVariables = new HashSet<>();
                 this.fileVariablesMap.put(fileUrl, fileVariables);
 
-                for (Element variableElement : fileElement.getChildren()) {
-                    StatementExecutionVariable executionVariable = new StatementExecutionVariable(variableElement);
+                for (Element child : fileElement.getChildren()) {
+                    StatementExecutionVariable executionVariable = new StatementExecutionVariable();
+                    executionVariable.readState(child);
                     fileVariables.add(executionVariable);
                 }
             }
@@ -97,7 +101,8 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
                 Element fileElement = new Element("file");
                 fileElement.setAttribute("file-url", fileUrl);
                 for (StatementExecutionVariable executionVariable : entry.getValue()) {
-                    Element variableElement = executionVariable.getComponentState();
+                    Element variableElement = new Element("variable");
+                    executionVariable.writeState(variableElement);
                     fileElement.addContent(variableElement);
                 }
                 variablesElement.addContent(fileElement);

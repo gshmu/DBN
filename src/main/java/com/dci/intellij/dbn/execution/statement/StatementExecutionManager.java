@@ -25,8 +25,9 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCurs
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.PendingTransactionDialog;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariableTypes;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariables;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
-import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionInputsDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
@@ -70,13 +71,15 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
 
     private static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
 
-    private final StatementExecutionVariablesCache variablesCache;
+    private final StatementExecutionVariables executionVariables;
+    private final StatementExecutionVariableTypes executionVariableTypes;
 
     private static final AtomicInteger RESULT_SEQUENCE = new AtomicInteger(0);
 
     private StatementExecutionManager(@NotNull Project project) {
         super(project, COMPONENT_NAME);
-        variablesCache = new StatementExecutionVariablesCache(project);
+        executionVariables = new StatementExecutionVariables(project);
+        executionVariableTypes = new StatementExecutionVariableTypes();
 
         ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener());
     }
@@ -124,7 +127,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
     }
 
     public void cacheVariable(VirtualFile virtualFile, StatementExecutionVariable variable) {
-        variablesCache.cacheVariable(virtualFile, variable);
+        executionVariables.cacheVariable(virtualFile, variable);
     }
 
     private void refreshEditorExecutionProcessors(@NotNull FileEditor textEditor) {
@@ -386,7 +389,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                         if (reuseVariables) {
                             List<StatementExecutionVariable> variables = executionVariables.getVariables();
                             for (StatementExecutionVariable variable : variables) {
-                                variableCache.put(variable.getName().toUpperCase(), variable);
+                                variableCache.put(variable.getName(), variable);
                             }
                         } else {
                             variableCache.clear();
@@ -502,13 +505,14 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        variablesCache.writeState(element);
+        executionVariables.writeState(element);
+        executionVariableTypes.writeState(element);
         return element;
     }
 
     @Override
-
     public void loadComponentState(@NotNull Element element) {
-        variablesCache.readState(element);
+        executionVariables.readState(element);
+        executionVariableTypes.readState(element);
     }
 }
