@@ -22,15 +22,13 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 @Slf4j
 @Getter
 public class DriverBundle implements Disposable {
+    private final DriverBundleMetadata metadata;
     private final DriverClassLoader classLoader;
     private final WeakRefCache<ConnectionId, Map<Class<Driver>, Driver>> instances = WeakRefCache.weakKey();
 
-    public DriverBundle(File library, String location) {
-        this.classLoader = new DriverClassLoaderJarImpl(library, location);
-    }
-
     public DriverBundle(File library) {
-        this.classLoader = new DriverClassLoaderImpl(library, getClass().getClassLoader());
+        this.metadata = new DriverBundleMetadata(library);
+        this.classLoader = new DriverClassLoaderImpl(metadata);
     }
 
     @Override

@@ -153,7 +153,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
         connections.stream().map(c -> new ConnectionAction(file, c)).forEach(a -> actionGroup.add(a));
 
         actionGroup.addSeparator();
-        Collection<ConnectionHandler> virtualConnections = connectionBundle.getVirtualConnections();
+        Collection<ConnectionHandler> virtualConnections = connectionBundle.listVirtualConnections();
         virtualConnections.stream().map(c -> new ConnectionAction(file, c)).forEach(a -> actionGroup.add(a));
 
         actionGroup.addSeparator();

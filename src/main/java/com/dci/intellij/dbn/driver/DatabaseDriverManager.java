@@ -1,11 +1,18 @@
 package com.dci.intellij.dbn.driver;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
+import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.util.Files;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -14,7 +21,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
+import static com.dci.intellij.dbn.common.options.setting.Settings.createChildElement;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
+import static com.dci.intellij.dbn.driver.DatabaseDriverManager.COMPONENT_NAME;
 
 /**
  * JDBC Driver loader.
@@ -28,16 +37,23 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
  * </ol>
  */
 @Slf4j
-public class DatabaseDriverManager extends ApplicationComponentBase {
-    private final Map<File, DriverBundle> driversCache = new ConcurrentHashMap<>();
-    private final Map<DatabaseType, DriverBundle> bundledDriversCache = new ConcurrentHashMap<>();
+@State(
+        name = COMPONENT_NAME,
+        storages = @Storage(DatabaseNavigator.STORAGE_FILE)
+)
+public class DatabaseDriverManager extends ApplicationComponentBase implements PersistentState {
+    public static final String COMPONENT_NAME = "DBNavigator.Application.DatabaseDriverManager";
+
+    private final Map<File, DriverBundle> drivers = new ConcurrentHashMap<>();
+    private final Map<File, DriverBundleMetadata> driverMetadata = new ConcurrentHashMap<>();
+    private final Map<DatabaseType, DriverBundle> bundledDrivers = new ConcurrentHashMap<>();
 
     public static DatabaseDriverManager getInstance() {
         return applicationService(DatabaseDriverManager.class);
     }
 
     public DatabaseDriverManager() {
-        super("DBNavigator.DatabaseDriverManager");
+        super(COMPONENT_NAME);
         // TODO make this configurable
         // DriverManager.setLoginTimeout(30);
     }
@@ -45,15 +61,25 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
     public DriverBundle loadDrivers(File libraryFile, boolean force) {
         try {
             if (force) {
-                DriverBundle drivers = driversCache.remove(libraryFile);
+                DriverBundle drivers = this.drivers.remove(libraryFile);
                 Disposer.dispose(drivers);
             }
-            return driversCache.computeIfAbsent(libraryFile, f -> new DriverBundle(f));
+            return drivers.computeIfAbsent(libraryFile, f -> new DriverBundle(f));
+
         } catch (Exception e) {
             conditionallyLog(e);
             log.warn("failed to load drivers from library " + libraryFile, e);
             throw e;
         }
+    }
+
+    @Nullable
+    public DriverBundleMetadata getDriverMetadata(File library) {
+        return driverMetadata.get(library);
+    }
+
+    public void setDriverMetadata(File library, DriverBundleMetadata metadata) {
+        driverMetadata.put(library, metadata);
     }
 
     @Nullable
@@ -64,18 +90,9 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
 
         File deploymentRoot = Files.getPluginDeploymentRoot();
         File library = Files.findFileRecursively(deploymentRoot, libraryRoot);
-        if (library != null) return loadDrivers(library, false);
+        if (library == null) return null;
 
-
-/*
-        // TODO attempt to load bundled libraries from within instrumented DBN jar
-        File pluginLibrary = getPluginLibrary();
-        if (pluginLibrary != null) {
-            return new DriverBundle(pluginLibrary, libraryRoot);
-        }
-*/
-
-        return null;
+        return loadDrivers(library, false);
     }
 
     @SneakyThrows
@@ -92,16 +109,16 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
     }
 
     public boolean driversLoaded(DatabaseType databaseType) {
-        return bundledDriversCache.containsKey(databaseType);
+        return bundledDrivers.containsKey(databaseType);
     }
 
     public boolean driversLoaded(File libraryFile) {
-        return driversCache.containsKey(libraryFile);
+        return drivers.containsKey(libraryFile);
     }
 
     @SneakyThrows
     public DriverBundle getBundledDrivers(DatabaseType databaseType) {
-        return bundledDriversCache.computeIfAbsent(databaseType, dt -> loadBundledDrivers(databaseType));
+        return bundledDrivers.computeIfAbsent(databaseType, dt -> loadBundledDrivers(databaseType));
     }
 
     public DriverBundle getDrivers(File libraryFile) throws Exception {
@@ -109,6 +126,35 @@ public class DatabaseDriverManager extends ApplicationComponentBase {
             return loadDrivers(libraryFile, false);
         } else {
             throw new Exception("Could not find library \"" + libraryFile.getAbsolutePath() +"\".");
+        }
+    }
+
+    @Override
+    public Element getComponentState() {
+        Element element = new Element("state");
+        Element driverClassesElement = createChildElement(element, "known-driver-classes");
+        for (val entry : driverMetadata.entrySet()) {
+            File file = entry.getKey();
+            if (!file.exists()) continue;
+
+            DriverBundleMetadata metadata = entry.getValue();
+            Element libraryElement = createChildElement(driverClassesElement, "library");
+            metadata.writeState(libraryElement);
+        }
+        return element;
+    }
+
+    @Override
+    public void loadComponentState(@NotNull Element element) {
+        Element driverClassesElement = element.getChild("known-driver-classes");
+        if (driverClassesElement != null) {
+            for (Element libraryElement : driverClassesElement.getChildren()) {
+                DriverBundleMetadata metadata = new DriverBundleMetadata();
+                metadata.readState(libraryElement);
+                if (!metadata.isValid()) continue;
+
+                driverMetadata.put(metadata.getLibrary(), metadata);
+            }
         }
     }
 }
