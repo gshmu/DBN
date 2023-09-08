@@ -1,42 +1,40 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
-import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.list.MostRecentStack;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.util.Strings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.StringTokenizer;
 
 import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.execution.statement.variables.VariableNames.adjust;
 
 @Getter
 @Setter
-public class StatementExecutionVariable extends VariableValueProvider implements Comparable<StatementExecutionVariable>, PersistentState {
-    private GenericDataType dataType;
-    private String name;
+public class StatementExecutionVariable extends VariableValueProvider implements Comparable<StatementExecutionVariable>, PersistentStateElement {
     private int offset;
+    private String name;
+    private GenericDataType dataType;
     private MostRecentStack<String> valueHistory = new MostRecentStack<>();
     private VariableValueProvider previewValueProvider;
-    private boolean useNull;
 
-    public StatementExecutionVariable(Element state) {
-        loadComponentState(state);
-    }
+    public StatementExecutionVariable() {}
 
     public StatementExecutionVariable(StatementExecutionVariable source) {
-        dataType = source.dataType;
-        name = source.name;
-        valueHistory = new MostRecentStack<>(source.getValueHistory());
+        this.dataType = source.dataType;
+        this.name = source.name;
+        this.valueHistory = new MostRecentStack<>(source.getValueHistory());
     }
 
     public StatementExecutionVariable(ExecVariablePsiElement variablePsiElement) {
-        this.name = variablePsiElement.getText().intern();
+        this.name = adjust(variablePsiElement.getText());
         this.offset = variablePsiElement.getTextOffset();
     }
 
@@ -59,12 +57,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
     }
 
     public boolean isProvided() {
-        return useNull || valueHistory.get() != null;
-    }
-
-    @Override
-    public boolean useNull() {
-        return useNull;
+        return valueHistory.get() != null;
     }
 
     @Override
@@ -72,37 +65,43 @@ public class StatementExecutionVariable extends VariableValueProvider implements
         return name.compareTo(o.name);
     }
 
-    @Nullable
     @Override
-    public Element getComponentState() {
-        Element state = new Element("variable");
-        state.setAttribute("name", name);
-        state.setAttribute("dataType", dataType.name());
-        StringBuilder values = new StringBuilder();
-        for (String value : valueHistory) {
-            if (values.length() > 0) values.append(", ");
-            values.append(value);
-        }
-        state.setAttribute("values", values.toString());
+    public void readState(Element element) {
+        name = adjust(stringAttribute(element, "name"));
+        dataType = enumAttribute(element, "data-type", GenericDataType.class);
+        // TODO cleanup - attribute rename backward compatibility;
+        if (dataType == null) enumAttribute(element, "dataType", GenericDataType.class);
 
-        return state;
+        for (Element child : element.getChildren()) {
+            valueHistory.add(child.getText());
+        }
+
+        // TODO cleanup - attribute values backward compatibility;
+        String variableValues = element.getAttributeValue("values");
+        if (variableValues != null) {
+            StringTokenizer valuesTokenizer = new StringTokenizer(variableValues, ",");
+            while (valuesTokenizer.hasMoreTokens()) {
+                String value = valuesTokenizer.nextToken().trim();
+                if (Strings.isEmpty(value)) continue;
+                valueHistory.add(value);
+            }
+        }
     }
 
     @Override
-    public void loadComponentState(@NotNull Element state) {
-        name = stringAttribute(state, "name");
-        dataType = enumAttribute(state, "dataType", GenericDataType.class);
-        String variableValues = state.getAttributeValue("values");
-        StringTokenizer valuesTokenizer = new StringTokenizer(variableValues, ",");
+    public void writeState(Element element) {
+        element.setAttribute("name", name);
+        element.setAttribute("data-type", dataType.name());
+        for (String value : valueHistory) {
+            if (Strings.isEmpty(value)) continue;
 
-        while (valuesTokenizer.hasMoreTokens()) {
-            String value = valuesTokenizer.nextToken().trim();
-            valueHistory.add(value);
+            Element valueElement = new Element("value");
+            element.addContent(valueElement);
+            element.addContent(value);
         }
     }
 
     public void populate(StatementExecutionVariable variable) {
-        setUseNull(variable.useNull());
         setValue(variable.getValue());
     }
 }

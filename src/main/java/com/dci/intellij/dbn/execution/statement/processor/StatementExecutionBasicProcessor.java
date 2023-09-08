@@ -374,6 +374,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
         String statementText = executionInput.getExecutableStatementText();
         StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
         if (executionVariables != null) {
+            executionVariables.cacheVariableDataTypes(connection);
             statementText = executionVariables.prepareStatementText(connection, statementText, false);
             executionInput.setExecutableStatementText(statementText);
 
