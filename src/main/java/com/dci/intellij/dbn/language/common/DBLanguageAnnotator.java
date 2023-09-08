@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
@@ -37,7 +38,7 @@ public abstract class DBLanguageAnnotator implements Annotator {
             case FUNCTION: textAttributes = SQLTextAttributesKeys.FUNCTION; break;
             case KEYWORD: textAttributes = SQLTextAttributesKeys.KEYWORD; break;
         };
-        createSilentAnnotation(holder, textAttributes);
+        createSilentAnnotation(holder, tokenPsiElement, textAttributes);
     }
 
     protected static void annotateExecutable(@NotNull ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
@@ -52,7 +53,7 @@ public abstract class DBLanguageAnnotator implements Annotator {
         if (isDebugConsole(file)) return;
         if (!hasConnectivityContext(file)) return;
 
-        createGutterAnnotation(holder, executablePsiElement.getStatementGutterRenderer());
+        createGutterAnnotation(holder, executablePsiElement, executablePsiElement.getStatementGutterRenderer());
     }
 
     public final void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
@@ -69,19 +70,19 @@ public abstract class DBLanguageAnnotator implements Annotator {
     protected abstract boolean isSupported(PsiElement psiElement);
 
 
-    protected static void createGutterAnnotation(AnnotationHolder holder, GutterIconRenderer gutterRenderer) {
+    protected static void createGutterAnnotation(AnnotationHolder holder, @Compatibility PsiElement element, GutterIconRenderer gutterRenderer) {
         holder.newSilentAnnotation(INFORMATION)
                 .gutterIconRenderer(gutterRenderer)
                 .create();
     }
 
-    protected static void createSilentAnnotation(AnnotationHolder holder, @Nullable TextAttributesKey attributes) {
+    protected static void createSilentAnnotation(AnnotationHolder holder, @Compatibility PsiElement element, @Nullable TextAttributesKey attributes) {
         AnnotationBuilder builder = holder.newSilentAnnotation(INFORMATION);
         withTextAttributes(builder, attributes);
         builder.create();
     }
 
-    protected static void createAnnotation(AnnotationHolder holder, @NotNull HighlightSeverity severity, @Nullable TextAttributesKey attributes, String message) {
+    protected static void createAnnotation(AnnotationHolder holder, @Compatibility PsiElement element, @NotNull HighlightSeverity severity, @Nullable TextAttributesKey attributes, String message) {
         AnnotationBuilder builder = holder.newAnnotation(severity, message).needsUpdateOnTyping(true);
         withTextAttributes(builder, attributes);
         builder.create();
