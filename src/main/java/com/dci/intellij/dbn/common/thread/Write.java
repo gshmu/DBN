@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.util.Measured;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.project.Project;
 import lombok.experimental.UtilityClass;
 
@@ -18,7 +19,7 @@ public final class Write {
     }
 
     public static void run(Project project, Runnable runnable) {
-        Application application = ApplicationManager.getApplication();
+        ApplicationEx application = (ApplicationEx) ApplicationManager.getApplication();
         if (application.isWriteAccessAllowed()) {
             if (project == null) {
                 Measured.run("executing Write action", () -> guarded(runnable, r -> r.run()));
@@ -30,7 +31,10 @@ public final class Write {
             application.runWriteAction(() -> run(project, runnable));
 
         } else {
-            Dispatch.run(() -> run(project, runnable));
+            Background.run(project, () -> {
+                ModalityState modalityState = application.getDefaultModalityState();
+                application.invokeAndWait(() -> run(project, runnable), modalityState);
+            });
         }
     }
 }
