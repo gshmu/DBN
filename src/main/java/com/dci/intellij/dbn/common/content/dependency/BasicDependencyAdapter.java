@@ -1,7 +1,14 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
 public class BasicDependencyAdapter implements ContentDependencyAdapter {
-    public static BasicDependencyAdapter INSTANCE = new BasicDependencyAdapter();
+    public static BasicDependencyAdapter REGULAR = new BasicDependencyAdapter();
+
+    public static BasicDependencyAdapter FAST = new BasicDependencyAdapter() {
+        @Override
+        public boolean canLoadFast() {
+            return true;
+        }
+    };
 
     @Override
     public void refreshSources() {

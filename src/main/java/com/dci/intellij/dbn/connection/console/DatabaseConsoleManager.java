@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -78,12 +79,19 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
     }
 
     public void createConsole(ConnectionHandler connection, String name, DBConsoleType type) {
-        DBConsole console = connection.getConsoleBundle().createConsole(name, type);
-        DBConsoleVirtualFile consoleFile = console.getVirtualFile();
-        consoleFile.setText("");
-        Editors.openFile(connection.getProject(), consoleFile, true);
+        Project project = connection.getProject();
+        Progress.background(project, connection, true,
+                "Creating console",
+                "Creating " + type.getName() + " \"" + name + "\"",indicator -> {
+            DBConsole console = connection.getConsoleBundle().createConsole(name, type);
+            DBConsoleVirtualFile consoleFile = console.getVirtualFile();
+            consoleFile.setText("");
+            consoleFile.setDatabaseSchema(connection.getDefaultSchema());
 
-        reloadConsoles(connection);
+            reloadConsoles(connection);
+
+            Dispatch.run(() -> Editors.openFile(project, consoleFile, true));
+        });
     }
 
     public void renameConsole(@NotNull DBConsole console, String newName) {
