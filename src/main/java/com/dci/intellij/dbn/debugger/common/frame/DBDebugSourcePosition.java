@@ -17,11 +17,10 @@ public class DBDebugSourcePosition extends XSourcePositionWrapper {
 
     @Nullable
     public static DBDebugSourcePosition create(@Nullable VirtualFile file, int line) {
-        if (file != null) {
-            XSourcePositionImpl sourcePosition = XSourcePositionImpl.create(file, line);
-            return new DBDebugSourcePosition(sourcePosition);
-        }
-        return null;
+        if (file == null) return null;
+
+        XSourcePositionImpl sourcePosition = XSourcePositionImpl.create(file, line);
+        return new DBDebugSourcePosition(sourcePosition);
     }
 
     @NotNull

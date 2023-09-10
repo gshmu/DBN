@@ -41,22 +41,21 @@ public class DBJdwpDebugPositionManager implements PositionManager {
 
         String ownerName = DBJdwpDebugUtil.getOwnerName(location);
         VirtualFile virtualFile = getDebugProcess().getVirtualFile(location);
-        if (virtualFile != null) {
-            PsiFile psiFile = PsiUtil.getPsiFile(getDebugProcess().getProject(), virtualFile);
+        if (virtualFile == null) return null;
 
-            if (psiFile != null) {
-                if (ownerName == null) {
-                    ExecutionInput executionInput = getDebugProcess().getExecutionInput();
-                    if (executionInput instanceof StatementExecutionInput) {
-                        StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
-                        lineNumber += statementExecutionInput.getExecutableLineNumber();
-                    }
-                }
-                return SourcePosition.createFromLine(psiFile, lineNumber);
+        PsiFile psiFile = PsiUtil.getPsiFile(getDebugProcess().getProject(), virtualFile);
+
+        if (psiFile == null) return null;
+
+        if (ownerName == null) {
+            ExecutionInput executionInput = getDebugProcess().getExecutionInput();
+            if (executionInput instanceof StatementExecutionInput) {
+                StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
+                lineNumber += statementExecutionInput.getExecutableLineNumber();
             }
         }
-
-        return null;
+        //return SourcePosition.createFromLine(psiFile, lineNumber);
+        return new DBJdwpDebugSourcePosition(psiFile, lineNumber);
     }
 
     protected DBJdwpDebugProcess getDebugProcess() {
