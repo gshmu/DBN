@@ -35,6 +35,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.object.type.DBObjectType.ANY;
+import static com.dci.intellij.dbn.object.type.DBObjectType.CONSOLE;
 import static java.util.Collections.emptyList;
 
 @Getter
@@ -221,7 +222,10 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
             DynamicContentProperty... properties) {
 
         if (!isSupported(objectType)) return null;
-        return createObjectList(objectType, treeParent, BasicDependencyAdapter.INSTANCE, properties);
+        BasicDependencyAdapter dependencyAdapter = objectType == CONSOLE ?
+                BasicDependencyAdapter.FAST :
+                BasicDependencyAdapter.REGULAR;
+        return createObjectList(objectType, treeParent, dependencyAdapter, properties);
     }
 
     @Nullable

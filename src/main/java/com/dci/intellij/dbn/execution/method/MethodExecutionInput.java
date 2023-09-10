@@ -79,8 +79,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     @Nullable
     @Override
     public ConnectionHandler getConnection() {
-        DBMethod method = getMethod();
-        return method == null ? this.method == null ? null : this.method.getConnection() : method.getConnection();
+        return method == null ? null : method.getConnection();
     }
 
     @Override
