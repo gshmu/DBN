@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.openapi.editor.Editor;
@@ -42,5 +43,23 @@ public class DBJdwpDebugSourcePosition extends SourcePosition {
     @Override
     public Editor openEditor(boolean requestFocus) {
         return null;
+    }
+
+    @Override
+    @Compatibility
+    public void navigate(boolean requestFocus) {
+
+    }
+
+    @Override
+    @Compatibility
+    public boolean canNavigate() {
+        return false;
+    }
+
+    @Override
+    @Compatibility
+    public boolean canNavigateToSource() {
+        return false;
     }
 }
