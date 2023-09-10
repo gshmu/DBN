@@ -31,6 +31,12 @@ public abstract class ComplementaryShortcutInterceptor extends ShortcutIntercept
         attemptDelegation(action, event);
     }
 
+    @Override
+    @Compatibility
+    public void beforeActionPerformed(AnAction anAction, DataContext dataContext, AnActionEvent anActionEvent) {
+
+    }
+
 
     private void attemptDelegation(AnAction action, AnActionEvent event) {
         if (isNotValid(action)) return;
