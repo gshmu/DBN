@@ -5,9 +5,10 @@ import com.dci.intellij.dbn.common.exception.ProcessDeferredException;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
 public abstract class OverridingShortcutInterceptor extends ShortcutInterceptor {
     public OverridingShortcutInterceptor(String delegateActionId) {
@@ -25,15 +26,17 @@ public abstract class OverridingShortcutInterceptor extends ShortcutInterceptor 
 
     @Override
     @Compatibility
-    public void beforeActionPerformed(@NotNull AnAction action, @NotNull DataContext dataContext, @NotNull AnActionEvent event) {
+    public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
         attemptDelegation(action, event);
     }
 
     @Override
-    public void beforeEditorTyping(char c, @NotNull DataContext dataContext) {
+    public void beforeEditorTyping(char c, DataContext dataContext) {
     }
 
-    private void attemptDelegation(@NotNull AnAction action, @NotNull AnActionEvent event) {
+    private void attemptDelegation(AnAction action, AnActionEvent event) {
+        if (isNotValid(action)) return;
+        if (isNotValid(event)) return;
         if (Objects.equals(delegateActionClass, action.getClass())) return; // action is being invoked (no delegation needed)
         if (!matchesDelegateShortcuts(event)) return; // event not matching delegate shortcut
         if (!canDelegateExecute(event)) return; // delegate action may be disabled
