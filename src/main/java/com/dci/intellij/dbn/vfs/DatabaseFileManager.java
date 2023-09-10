@@ -20,10 +20,10 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -82,9 +82,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
             public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
                 if (file instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile databaseFile = (DBObjectVirtualFile) file;
-                    if (databaseFile.getObjectType() != DBObjectType.CONSOLE) {
-                        openFiles.add(databaseFile);
-                    }
+                    openFiles.add(databaseFile);
                 }
             }
 
@@ -92,9 +90,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
             public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
                 if (file instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile databaseFile = (DBObjectVirtualFile) file;
-                    if (databaseFile.getObjectType() != DBObjectType.CONSOLE) {
-                        openFiles.remove(databaseFile);
-                    }
+                    openFiles.remove(databaseFile);
                 }
             }
 
@@ -213,16 +209,16 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     @Override
     public void loadComponentState(@NotNull Element element) {
         Element openFilesElement = element.getChild("open-files");
-        if (openFilesElement != null && pendingOpenFiles != null) {
-            List<Element> fileElements = openFilesElement.getChildren();
-            for (Element fileElement : fileElements) {
-                DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(fileElement);
-                if (objectRef != null && objectRef.getObjectType() != DBObjectType.CONSOLE) {
-                    ConnectionId connectionId = objectRef.getConnectionId();
-                    val objectRefs = pendingOpenFiles.computeIfAbsent(connectionId, id -> new ArrayList<>());
-                    objectRefs.add(objectRef);
-                }
-            }
+        if (openFilesElement == null || pendingOpenFiles == null) return;
+
+        List<Element> fileElements = openFilesElement.getChildren();
+        for (Element fileElement : fileElements) {
+            DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(fileElement);
+            if (objectRef == null) continue;
+
+            ConnectionId connectionId = objectRef.getConnectionId();
+            val objectRefs = pendingOpenFiles.computeIfAbsent(connectionId, id -> new ArrayList<>());
+            objectRefs.add(objectRef);
         }
     }
 
@@ -259,11 +255,16 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                                 if (progress.isCanceled()) continue;
                                 if (!connection.canConnect()) continue;
 
-                                DBSchemaObject object = objectRef.get();
+                                DBObject object = objectRef.get();
                                 if (object == null) continue;
 
                                 progress.setText2(connection.getName() + " - " + objectRef.getQualifiedNameWithType());
-                                editorManager.openEditor(object, null, false, false);
+                                if (object instanceof DBConsole) {
+                                    DBConsole console = (DBConsole) object;
+                                    editorManager.openDatabaseConsole(console, false);
+                                } else {
+                                    editorManager.openEditor(object, null, false, false);
+                                }
                             }
                         }));
     }

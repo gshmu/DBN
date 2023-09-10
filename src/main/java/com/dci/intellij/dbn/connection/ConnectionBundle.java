@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
@@ -146,6 +147,9 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         }
 
         rebuildIndex();
+
+        // ensure console state loaded
+        DatabaseConsoleManager.getInstance(getProject());
     }
 
     private void rebuildIndex() {
