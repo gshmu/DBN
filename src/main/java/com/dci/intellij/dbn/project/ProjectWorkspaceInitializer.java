@@ -61,11 +61,8 @@ public class ProjectWorkspaceInitializer extends ProjectComponentBase implements
     }
 
     private void reopenEditors() {
-        Project project = getProject();
-        Background.run(project, () -> {
-            DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
-            fileManager.reopenDatabaseEditors();
-        });
+        DatabaseFileManager fileManager = DatabaseFileManager.getInstance(getProject());
+        fileManager.reopenDatabaseEditors();
     }
 
 

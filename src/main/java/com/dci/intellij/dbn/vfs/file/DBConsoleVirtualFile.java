@@ -50,9 +50,8 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         super(console.getProject(), DBObjectRef.of(console));
 
         ConnectionHandler connection = console.getConnection();
-        SchemaId schemaId = connection.getDefaultSchema();
         SessionId sessionId = connection.getSessionBundle().getMainSession().getId();
-        connectionContext = createConnectionContext(this, sessionId, schemaId);
+        connectionContext = createConnectionContext(this, sessionId, null);
 
         setCharset(connection.getSettings().getDetailSettings().getCharset());
     }
