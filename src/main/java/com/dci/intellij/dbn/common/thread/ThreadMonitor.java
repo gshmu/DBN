@@ -144,6 +144,18 @@ public class ThreadMonitor {
         return ApplicationManager.getApplication().isDispatchThread();
     }
 
+    public static boolean isReadActionThread() {
+        return ApplicationManager.getApplication().isReadAccessAllowed();
+    }
+
+    public static boolean isWriteActionThread() {
+        return ApplicationManager.getApplication().isWriteAccessAllowed();
+    }
+
+    public static boolean isTimeSensitiveThread() {
+        return isDispatchThread() || isWriteActionThread() || isReadActionThread();
+    }
+
     public static int getProcessCount(ThreadProperty property) {
         return getProcessCounter(property).intValue();
     }

@@ -106,7 +106,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     private void evaluate() {
         set(evaluating, true);
 
-        if (ThreadMonitor.isDispatchThread()) {
+        if (ThreadMonitor.isTimeSensitiveThread()) {
             Background.run(null, () -> evaluate());
             return;
         }
@@ -144,7 +144,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     private void change(boolean value) throws SQLException {
         set(changing, true);
 
-        if (ThreadMonitor.isDispatchThread()) {
+        if (ThreadMonitor.isTimeSensitiveThread()) {
             Background.run(null, () -> change(value));
             return;
         }
