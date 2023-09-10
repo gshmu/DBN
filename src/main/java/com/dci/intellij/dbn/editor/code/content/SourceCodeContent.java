@@ -29,7 +29,7 @@ public class SourceCodeContent{
     }
 
     public SourceCodeContent(CharSequence text) {
-        this.text = text;
+        setText(text);
     }
 
     public boolean isLoaded() {
