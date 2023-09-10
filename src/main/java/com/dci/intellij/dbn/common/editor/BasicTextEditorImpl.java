@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
@@ -213,7 +214,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
     @Override
     @Workaround
     public boolean equals(Object o) {
-        return o == this || o.equals(textEditor);
+        return o == this || Objects.equals(o, textEditor);
     }
 
     @Override
