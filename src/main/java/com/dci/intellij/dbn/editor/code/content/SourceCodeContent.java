@@ -40,6 +40,11 @@ public class SourceCodeContent{
         text = EMPTY_CONTENT;
     }
 
+    public void setText(CharSequence text) {
+        // do not capture the mutable char sequence in com.intellij.openapi.editor.Document
+        this.text = text == null ? "" : text.toString();
+    }
+
     public byte[] getBytes(Charset charset) {
         return text.toString().getBytes(charset);
     }
