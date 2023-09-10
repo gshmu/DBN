@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
+import static com.dci.intellij.dbn.common.thread.ThreadMonitor.*;
 import static com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskStatus.*;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
@@ -86,25 +87,16 @@ class InterfaceTask<R> implements TimeAware {
     }
 
     private static boolean verifyCallingTread() {
-        if (ThreadMonitor.isDispatchThread()) {
-            log.error("Interface loads not allowed from event dispatch thread: ThreadInfo {}",
-                    ThreadMonitor.current(),
-                    new RuntimeException("Illegal database interface invocation"));
+        if (isDispatchThread()) return handleIllegalCallingThread("event dispatch thread");
+        if (isWriteActionThread()) return handleIllegalCallingThread("write action threads");
+        if (isReadActionThread()) return handleIllegalCallingThread("read action threads");
+        return true;
+    }
 
-            return false;
-
-        } else if (ThreadMonitor.isWriteActionThread()) {
-            log.error("Interface loads not allowed from write action threads: ThreadInfo {}",
-                    ThreadMonitor.current(),
-                    new RuntimeException("Illegal database interface invocation"));
-            return false;
-
-        } else if (ThreadMonitor.isReadActionThread()) {
-            log.error("Interface loads not allowed from read action threads: ThreadInfo {}",
-                    ThreadMonitor.current(),
-                    new RuntimeException("Illegal database interface invocation"));
-            return false;
-        }
+    private static boolean handleIllegalCallingThread(String identifier) {
+        log.error("Database interface access is not allowed from {}: ThreadInfo {}", identifier,
+                ThreadMonitor.current(),
+                new RuntimeException("Illegal database interface invocation"));
         return false;
     }
 
