@@ -7,22 +7,20 @@ import com.intellij.debugger.engine.events.DebuggerCommandImpl;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
-
 @Getter
 public abstract class ManagedThreadCommand extends DebuggerCommandImpl{
+    private final Priority priority;
+
+    @Compatibility
     private ManagedThreadCommand(Priority priority) {
-        super(priority);
+        //super(priority); // backward compatibility
+        super();
+        this.priority = priority;
     }
 
-    @Deprecated
-    @Compatibility // TODO verify if used in earlier versions, decommission otherwise
-    public void execute() {
-        try {
-            action();
-        } catch (Exception e) {
-            conditionallyLog(e);
-        }
+    @Override
+    public Priority getPriority() {
+        return super.getPriority();
     }
 
     public static void schedule(DebugProcess debugProcess, Priority priority, Runnable action) {
