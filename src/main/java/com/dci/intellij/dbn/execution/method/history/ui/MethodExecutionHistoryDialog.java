@@ -34,7 +34,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         this.selectedExecutionInput = WeakRef.of(executionInput);
         this.editable = editable;
         this.debug = debug;
-        setModal(true);
+        setModal(false);
         setResizable(true);
         setDefaultSize(1200, 800);
         init();
