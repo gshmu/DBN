@@ -86,11 +86,13 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
     }
 
     private static void markEditorsModified(@NotNull Project project, @NotNull DBObjectVirtualFile file, boolean modified) {
-        Collection<TabInfo> tabInfos = getEditorTabInfos(project, file);
-        Icon icon = modified ? CompoundIcons.addModifiedOverlay(file.getIcon()) : file.getIcon();
-        for (TabInfo tabInfo : tabInfos) {
-            Dispatch.run(() -> tabInfo.setIcon(icon));
-        }
+        Dispatch.run(() -> {
+            Collection<TabInfo> tabInfos = getEditorTabInfos(project, file);
+            Icon icon = modified ? CompoundIcons.addModifiedOverlay(file.getIcon()) : file.getIcon();
+            for (TabInfo tabInfo : tabInfos) {
+                tabInfo.setIcon(icon);
+            }
+        });
     }
 
     public boolean isFileOpen(DBEditableObjectVirtualFile databaseFile) {
@@ -267,9 +269,11 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
 
     public void openDatabaseConsole(DBConsole console, boolean focus) {
-        ConnectionHandler connection = console.getConnection();
-        Project project = connection.getProject();
-        Editors.openFile(project, console.getVirtualFile(), focus);
+        Dispatch.run(true, () -> {
+            ConnectionHandler connection = console.getConnection();
+            Project project = connection.getProject();
+            Editors.openFile(project, console.getVirtualFile(), focus);
+        });
     }
 
     public void closeEditor(DBSchemaObject object) {

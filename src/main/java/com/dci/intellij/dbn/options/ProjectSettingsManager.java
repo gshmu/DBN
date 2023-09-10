@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -17,23 +16,15 @@ import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.tns.TnsImportData;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
-import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
-import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
-import com.dci.intellij.dbn.debugger.ExecutionConfigManager;
-import com.dci.intellij.dbn.editor.DatabaseEditorStateManager;
-import com.dci.intellij.dbn.editor.code.SourceCodeManager;
-import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
-import com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
-import com.dci.intellij.dbn.vfs.DatabaseFileManager;
+import com.dci.intellij.dbn.project.ProjectWorkspaceInitializer;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -58,7 +49,6 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
 
     private final ProjectSettings projectSettings;
     private ConfigId lastConfigId;
-    private boolean initialized;
 
     private ProjectSettingsManager(Project project) {
         super(project, COMPONENT_NAME);
@@ -182,31 +172,14 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
 
     @Override
     public void initializeComponent() {
-        // TODO SERVICES
-        // TODO find another way to define "silent" dependencies
-
         Project project = getProject();
+
         ProjectSettingsProvider.init(project);
-        DatabaseConsoleManager.getInstance(project);
-        DatabaseEditorStateManager.getInstance(project);
-        SourceCodeManager.getInstance(project);
-        DatasetEditorManager.getInstance(project);
-        DatabaseCompilerManager.getInstance(project);
-        DDLFileAttachmentManager.getInstance(project);
-        DatabaseLoaderManager.getInstance(project);
-        DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
-
-        Background.run(getProject(), () -> {
-            ExecutionConfigManager configManager = ExecutionConfigManager.getInstance(project);
-            configManager.removeRunConfigurations();
-        });
-
-        fileManager.reopenDatabaseEditors();
-        initialized = true;
+        ProjectWorkspaceInitializer.init(project);
     }
 
     public void exportToDefaultSettings() {
-        final Project project = getProject();
+        Project project = getProject();
         Messages.showQuestionDialog(
                 project, "Default project settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
@@ -227,7 +200,7 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
     }
 
     public void importDefaultSettings(final boolean isNewProject) {
-        final Project project = getProject();
+        Project project = getProject();
         Boolean settingsLoaded = project.getUserData(UserDataKeys.PROJECT_SETTINGS_LOADED);
         if (settingsLoaded == null || !settingsLoaded || !isNewProject) {
             String message = isNewProject ?

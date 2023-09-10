@@ -275,6 +275,7 @@
         <applicationService serviceImplementation="com.dci.intellij.dbn.credentials.DatabaseCredentialManager"/>
 
         <!--<projectService serviceImplementation="com.dci.intellij.dbn.options.GlobalProjectSettings"/>-->
+        <projectService serviceImplementation="com.dci.intellij.dbn.project.ProjectWorkspaceInitializer"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.project.ProjectStateManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.diagnostics.DiagnosticsManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager"/>
@@ -564,7 +565,7 @@
     </projectListeners>
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="DBNavigator.NotificationGroup" displayType="BALLOON" key="DBNavigator"/>
-        <postStartupActivity implementation="com.dci.intellij.dbn.project.ProjectWorkspaceInitializer" order="last"/>
+        <!--<postStartupActivity implementation="com.dci.intellij.dbn.project.ProjectWorkspaceInitializer" order="last"/>-->
         <!--<applicationInitializedListener implementation="com.dci.intellij.dbn.init.DatabaseNavigatorInitializer"/>-->
         <virtualFileSystem implementationClass="com.dci.intellij.dbn.vfs.DatabaseFileSystem" key="db" physical="false"/>
 
