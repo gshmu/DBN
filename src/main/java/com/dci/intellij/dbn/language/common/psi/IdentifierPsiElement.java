@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.Capture;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
-import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -34,6 +33,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.common.thread.ThreadMonitor.isDispatchThread;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
@@ -521,29 +521,29 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
 
         ref = nvl(ref, () -> new PsiResolveResult(this));
 
-        if (ThreadMonitor.isDispatchThread()) {
-            return ref.getReference();
-        }
-        if (ref.isDirty()) {
-            boolean cancelled = false;
-            try {
-                ref.preResolve();
-                CharSequence text = ref.getText();
-                if (text != null && text.length() > 0) {
-                    if (getParent() instanceof QualifiedIdentifierPsiElement) {
-                        QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
-                        resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
-                    } else {
-                        resolveWithScopeParentLookup(getObjectType(), getElementType());
-                    }
+        if (isDispatchThread()) return ref.getReference();
+        if (!ref.isDirty()) return ref.getReference();
+
+
+        boolean cancelled = false;
+        try {
+            ref.preResolve();
+            CharSequence text = ref.getText();
+            if (text != null && text.length() > 0) {
+                if (getParent() instanceof QualifiedIdentifierPsiElement) {
+                    QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
+                    resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
+                } else {
+                    resolveWithScopeParentLookup(getObjectType(), getElementType());
                 }
-            } catch (ProcessCanceledException e){
-                conditionallyLog(e);
-                cancelled = true;
-            } finally {
-                ref.postResolve(cancelled);
             }
+        } catch (ProcessCanceledException e){
+            conditionallyLog(e);
+            cancelled = true;
+        } finally {
+            ref.postResolve(cancelled);
         }
+
         return ref.getReference();
     }
 
