@@ -87,10 +87,9 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
     private static void markEditorsModified(@NotNull Project project, @NotNull DBObjectVirtualFile file, boolean modified) {
         Collection<TabInfo> tabInfos = getEditorTabInfos(project, file);
+        Icon icon = modified ? CompoundIcons.addModifiedOverlay(file.getIcon()) : file.getIcon();
         for (TabInfo tabInfo : tabInfos) {
-            Icon icon = file.getIcon();
-            if (modified) icon = CompoundIcons.addModifiedOverlay(icon);
-            tabInfo.setIcon(icon);
+            Dispatch.run(() -> tabInfo.setIcon(icon));
         }
     }
 
