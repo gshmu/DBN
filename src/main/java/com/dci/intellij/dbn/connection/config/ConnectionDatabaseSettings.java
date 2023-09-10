@@ -19,6 +19,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -226,7 +227,8 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     public boolean driversLoaded() {
         DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
         if (driverSource == DriverSource.EXTERNAL) {
-            return driverManager.driversLoaded(getDriverLibraryFile());
+            File libraryFile = getDriverLibraryFile();
+            return libraryFile != null && driverManager.driversLoaded(libraryFile);
         }
 
         if (driverSource == DriverSource.BUNDLED) {
@@ -307,8 +309,9 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         updateSignature();
     }
 
+    @Nullable
     public File getDriverLibraryFile() {
-        return new File(driverLibrary);
+        return Strings.isEmptyOrSpaces(driverLibrary) ?  null : new File(driverLibrary);
     }
 
     @Override
