@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -21,6 +22,7 @@ import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import com.dci.intellij.dbn.debugger.ExecutionConfigManager;
 import com.dci.intellij.dbn.editor.DatabaseEditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
@@ -193,6 +195,11 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
         DDLFileAttachmentManager.getInstance(project);
         DatabaseLoaderManager.getInstance(project);
         DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
+
+        Background.run(getProject(), () -> {
+            ExecutionConfigManager configManager = ExecutionConfigManager.getInstance(project);
+            configManager.removeRunConfigurations();
+        });
 
         fileManager.reopenDatabaseEditors();
         initialized = true;
