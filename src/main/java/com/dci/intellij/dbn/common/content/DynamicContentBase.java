@@ -190,9 +190,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
 
     @Override
     public void load() {
-        //if (shouldLoad()) { // TODO review DYNAMIC-CONENT-SYNC
-            ensureLoaded(false);
-        //}
+        ensureLoaded(false);
     }
 
     @Override
@@ -241,17 +239,15 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
      * Synchronised block making sure the content is loaded before the thread is released
      */
     private void ensureLoaded(boolean force) {
-        Synchronized.on(this,
-                //o -> o.shouldLoad(), // TODO review DYNAMIC-CONENT-SYNC
-                o -> {
-                    o.set(LOADING, true);
-                    try {
-                        o.performLoad(force);
-                    } finally {
-                        o.set(LOADING, false);
-                        o.changeSignature();
-                    }
-                });
+        Synchronized.on(this, o -> {
+            o.set(LOADING, true);
+            try {
+                o.performLoad(force);
+            } finally {
+                o.set(LOADING, false);
+                o.changeSignature();
+            }
+        });
 
     }
 
