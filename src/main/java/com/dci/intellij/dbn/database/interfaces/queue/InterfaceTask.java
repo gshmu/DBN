@@ -64,22 +64,15 @@ class InterfaceTask<R> implements TimeAware {
             return;
         }
 
-        boolean dispatchThread = ThreadMonitor.isDispatchThread();
-        boolean modalProcess = ThreadMonitor.isModalProcess();
+        boolean validCallingThread = verifyCallingTread();
         while (status.isBefore(FINISHED)) {
-            LockSupport.parkNanos(this, dispatchThread ? ONE_SECOND : TEN_SECONDS);
+            LockSupport.parkNanos(this, validCallingThread ? TEN_SECONDS : ONE_SECOND);
 
             if (is(InterfaceTaskStatus.CANCELLED)) {
                 break;
             }
 
-            if (dispatchThread) {
-                log.error("Interface loads not allowed from event dispatch thread: ThreadInfo {}",
-                        ThreadMonitor.current(),
-                        new RuntimeException("Illegal database interface invocation"));
-
-                break;
-            }
+            if (!validCallingThread) break;
 
             if (isOlderThan(5, TimeUnit.MINUTES)) {
                 exception = new TimeoutException();
@@ -90,6 +83,29 @@ class InterfaceTask<R> implements TimeAware {
         if (exception == null) return;
 
         throw Exceptions.toSqlException(exception);
+    }
+
+    private static boolean verifyCallingTread() {
+        if (ThreadMonitor.isDispatchThread()) {
+            log.error("Interface loads not allowed from event dispatch thread: ThreadInfo {}",
+                    ThreadMonitor.current(),
+                    new RuntimeException("Illegal database interface invocation"));
+
+            return false;
+
+        } else if (ThreadMonitor.isWriteActionThread()) {
+            log.error("Interface loads not allowed from write action threads: ThreadInfo {}",
+                    ThreadMonitor.current(),
+                    new RuntimeException("Illegal database interface invocation"));
+            return false;
+
+        } else if (ThreadMonitor.isReadActionThread()) {
+            log.error("Interface loads not allowed from read action threads: ThreadInfo {}",
+                    ThreadMonitor.current(),
+                    new RuntimeException("Illegal database interface invocation"));
+            return false;
+        }
+        return false;
     }
 
     public boolean is(InterfaceTaskStatus status) {
