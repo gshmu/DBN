@@ -55,6 +55,7 @@ public final class Projects {
     }
 
     public static @NotNull Project[] getOpenProjects() {
-        return ProjectManager.getInstance().getOpenProjects();
+        ProjectManager projectManager = ProjectManager.getInstance();
+        return projectManager == null ? new Project[0] : projectManager.getOpenProjects();
     }
 }
