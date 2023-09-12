@@ -261,7 +261,7 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
                                 progress.setText2(connection.getName() + " - " + objectRef.getQualifiedNameWithType());
                                 if (object instanceof DBConsole) {
                                     DBConsole console = (DBConsole) object;
-                                    editorManager.openDatabaseConsole(console, false);
+                                    editorManager.openDatabaseConsole(console, false, false);
                                 } else {
                                     editorManager.openEditor(object, null, false, false);
                                 }

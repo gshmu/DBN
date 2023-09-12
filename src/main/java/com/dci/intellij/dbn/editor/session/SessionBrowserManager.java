@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -44,6 +43,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.editor.session.SessionInterruptionType.DISCONNECT;
@@ -299,27 +299,25 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
     private class UpdateTimestampTask extends TimerTask {
         @Override
         public void run() {
-            if (openFiles.size() > 0) {
-                Read.run(() -> {
-                    Project project = getProject();
-                    if (!project.isDisposed()) {
-                        List<SessionBrowser> sessionBrowsers = new ArrayList<>();
-                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                        FileEditor[] editors = fileEditorManager.getAllEditors();
-                        for (FileEditor editor : editors) {
-                            if (editor instanceof SessionBrowser) {
-                                SessionBrowser sessionBrowser = (SessionBrowser) editor;
-                                sessionBrowsers.add(sessionBrowser);
-                            }
-                        }
+            if (openFiles.isEmpty()) return;
 
-                        if (sessionBrowsers.size() > 0) {
-                            Dispatch.run(() -> {
-                                for (SessionBrowser sessionBrowser : sessionBrowsers) {
-                                    sessionBrowser.refreshLoadTimestamp();
-                                }
-                            });
-                        }
+            Project project = getProject();
+            if (isNotValid(project)) return;
+
+            List<SessionBrowser> sessionBrowsers = new ArrayList<>();
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            FileEditor[] editors = fileEditorManager.getAllEditors();
+            for (FileEditor editor : editors) {
+                if (editor instanceof SessionBrowser) {
+                    SessionBrowser sessionBrowser = (SessionBrowser) editor;
+                    sessionBrowsers.add(sessionBrowser);
+                }
+            }
+
+            if (!sessionBrowsers.isEmpty()) {
+                Dispatch.run(() -> {
+                    for (SessionBrowser sessionBrowser : sessionBrowsers) {
+                        sessionBrowser.refreshLoadTimestamp();
                     }
                 });
             }

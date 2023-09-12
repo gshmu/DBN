@@ -248,7 +248,7 @@ public final class DatabaseBrowserTree extends DBNTree implements Borderless {
             Project project = ensureProject();
             if (object instanceof DBConsole) {
                 DBConsole console = (DBConsole) object;
-                editorManager.openDatabaseConsole(console, true);
+                editorManager.openDatabaseConsole(console, false, deliberate);
                 event.consume();
             } else if (object.is(DBObjectProperty.EDITABLE)) {
                 DBSchemaObject schemaObject = (DBSchemaObject) object;
@@ -275,7 +275,7 @@ public final class DatabaseBrowserTree extends DBNTree implements Borderless {
             DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
             ConnectionHandler connection = objectBundle.getConnection();
             DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
-            editorManager.openDatabaseConsole(defaultConsole, deliberate);
+            editorManager.openDatabaseConsole(defaultConsole, false, deliberate);
         }
     }
 

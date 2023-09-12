@@ -213,7 +213,7 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
     }
 
     private DBLanguagePsiFile ensureFileParsed(VirtualFile file) {
-        PsiFile psiFile = Read.call(file, f -> PsiUtil.getPsiFile(getProject(), f));
+        PsiFile psiFile = PsiUtil.getPsiFile(getProject(), file);
         return psiFile instanceof DBLanguagePsiFile ? (DBLanguagePsiFile) psiFile : null;
     }
 

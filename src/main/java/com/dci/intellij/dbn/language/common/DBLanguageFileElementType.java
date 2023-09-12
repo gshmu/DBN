@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
@@ -45,9 +44,7 @@ public class DBLanguageFileElementType extends IFileElementType {
 
     @NotNull
     private static PsiBuilder createBuilder(ASTNode chameleon, Project project, Lexer lexer, DBLanguageDialect languageDialect, String text) {
-        return Read.call(() -> {
-            PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-            return factory.createBuilder(project, chameleon, lexer, languageDialect, text);
-        });
+        PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
+        return factory.createBuilder(project, chameleon, lexer, languageDialect, text);
     }
 }

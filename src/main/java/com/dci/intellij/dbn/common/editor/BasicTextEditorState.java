@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
@@ -43,18 +42,19 @@ public class BasicTextEditorState implements FileEditorState {
         selectionEnd = integerAttribute(sourceElement, "selection-end", 0);
         verticalScrollProportion = Float.parseFloat(stringAttribute(sourceElement, "vertical-scroll-proportion"));
 
-        Element foldingElement = sourceElement.getChild("folding");
-        if (foldingElement != null) {
-            Read.run(() -> {
-                Document document = Documents.getDocument(virtualFile);
-                CodeFoldingManager instance = CodeFoldingManager.getInstance(project);
-                if (document != null) {
-                    CodeFoldingState foldingState = instance.readFoldingState(foldingElement, document);
-                    setFoldingState(foldingState);
-                }
-            });
-        }
+        readFoldingState(sourceElement, project, virtualFile);
+    }
 
+    private void readFoldingState(@NotNull Element sourceElement, Project project, VirtualFile virtualFile) {
+        Element foldingElement = sourceElement.getChild("folding");
+        if (foldingElement == null) return;
+
+        Document document = Documents.getDocument(virtualFile);
+        if (document == null) return;
+
+        CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
+        CodeFoldingState foldingState = codeFoldingManager.readFoldingState(foldingElement, document);
+        setFoldingState(foldingState);
     }
 
     public void writeState(Element targetElement, Project project) {
@@ -63,17 +63,21 @@ public class BasicTextEditorState implements FileEditorState {
         targetElement.setAttribute("selection-start", Integer.toString(selectionStart));
         targetElement.setAttribute("selection-end", Integer.toString(selectionEnd));
         targetElement.setAttribute("vertical-scroll-proportion", Float.toString(verticalScrollProportion));
-        if (foldingState != null) {
-            Element foldingElement = new Element("folding");
-            targetElement.addContent(foldingElement);
-            try {
-                CodeFoldingManager.getInstance(project).writeFoldingState(foldingState, foldingElement);
-            } catch (WriteExternalException e) { // TODO
-                conditionallyLog(e);
-            } catch (Exception e) {
-                conditionallyLog(e);
-                e.printStackTrace();
-            }
+        writeFoldingState(targetElement, project);
+    }
+
+    private void writeFoldingState(Element targetElement, Project project) {
+        if (foldingState == null) return;
+
+        Element foldingElement = new Element("folding");
+        targetElement.addContent(foldingElement);
+        try {
+            CodeFoldingManager foldingManager = CodeFoldingManager.getInstance(project);
+            foldingManager.writeFoldingState(foldingState, foldingElement);
+        } catch (WriteExternalException e) { // TODO
+            conditionallyLog(e);
+        } catch (Exception e) {
+            conditionallyLog(e);
         }
     }
 
