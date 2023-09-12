@@ -447,7 +447,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     @NotNull
     private static DBObjectType load(String name) {
-        name = name.toUpperCase();
+        name = Strings.cachedUpperCase(name);
         try {
             return valueOf(name);
         } catch (IllegalArgumentException e) {

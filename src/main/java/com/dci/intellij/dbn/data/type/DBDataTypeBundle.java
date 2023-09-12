@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.dci.intellij.dbn.common.util.Strings.cachedUpperCase;
+
 public final class DBDataTypeBundle extends StatefulDisposableBase implements UnlistedDisposable {
     private final ConnectionRef connection;
 
@@ -41,7 +43,7 @@ public final class DBDataTypeBundle extends StatefulDisposableBase implements Un
 
     public DBNativeDataType getNativeDataType(String name) {
         if (name != null) {
-            String upperCaseName = name.toUpperCase();
+            String upperCaseName = cachedUpperCase(name);
             Map<String, DBNativeDataType> dataTypes = getNativeDataTypes();
 
             DBNativeDataType dataType = dataTypes.get(upperCaseName);
@@ -69,7 +71,7 @@ public final class DBDataTypeBundle extends StatefulDisposableBase implements Un
         List<DataTypeDefinition> dataTypeDefinitions = interfaces.getNativeDataTypes().list();
         for (DataTypeDefinition dataTypeDefinition : dataTypeDefinitions) {
             DBNativeDataType dataType = new DBNativeDataType(dataTypeDefinition);
-            nativeDataTypes.put(dataType.getName().toUpperCase(), dataType);
+            nativeDataTypes.put(cachedUpperCase(dataType.getName()), dataType);
         }
         return nativeDataTypes;
     }

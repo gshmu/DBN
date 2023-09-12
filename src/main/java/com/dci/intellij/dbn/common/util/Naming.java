@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.util;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -10,9 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+@UtilityClass
 public class Naming {
-
-    private Naming() {}
 
     public static String nextNumberedIdentifier(String identifier, boolean insertWhitespace) {
         StringBuilder text = new StringBuilder();
@@ -22,7 +22,7 @@ public class Naming {
             if ('0' <= chr && chr <= '9') {
                 number.insert(0, chr);
             } else {
-                text.append(identifier.substring(0, i+1));
+                text.append(identifier, 0, i+1);
                 break;
             }
         }
@@ -130,7 +130,7 @@ public class Naming {
                 int startIndex = 0;
                 StringBuilder buffer  = new StringBuilder();
                 while(index > -1) {
-                    buffer.append(name.substring(startIndex, index+1));
+                    buffer.append(name, startIndex, index+1);
                     buffer.append(chr);
                     startIndex = index + 1;
                     index = name.indexOf(chr, startIndex);

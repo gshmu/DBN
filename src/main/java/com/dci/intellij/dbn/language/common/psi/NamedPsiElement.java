@@ -76,23 +76,23 @@ public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
     @Nullable
     public Icon getIcon(boolean open) {
         Icon icon = super.getIcon(open);
-        if (icon == null) {
-            BasePsiElement subject = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-            if (subject != null && subject.getParent() == this) {
-                if (subject instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subject;
-                    if (identifierPsiElement.isObject() && identifierPsiElement.isValid()) {
-                        VirtualFile file = PsiUtil.getVirtualFileForElement(identifierPsiElement);
-                        if (file instanceof DBSourceCodeVirtualFile) {
-                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
-                            return identifierPsiElement.getObjectType().getIcon(sourceCodeFile.getContentType());
-                        }
-                        return identifierPsiElement.getObjectType().getIcon();
-                    }
-                }
+        if (icon != null) return icon;
+
+        BasePsiElement subject = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        if (subject == null) return null;
+        if (subject.getParent() != this) return null;
+
+        if (subject instanceof IdentifierPsiElement) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subject;
+            if (!identifierPsiElement.isObject()) return null;
+            if (!identifierPsiElement.isValid()) return null;
+
+            VirtualFile file = PsiUtil.getVirtualFileForElement(identifierPsiElement);
+            if (file instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
+                return identifierPsiElement.getObjectType().getIcon(sourceCodeFile.getContentType());
             }
-        } else {
-            return icon;
+            return identifierPsiElement.getObjectType().getIcon();
         }
         return null;
     }

@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Editors;
@@ -68,7 +67,6 @@ import static com.dci.intellij.dbn.common.util.Documents.getEditors;
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseContextBase, Presentable, StatefulDisposable, UnlistedDisposable {
     private final Language language;
     private final DBLanguageFileType fileType;
-    private final ParserDefinition parserDefinition;
     private DBObjectRef<DBSchemaObject> underlyingObject;
 
     @Override
@@ -81,7 +79,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
         super(viewProvider);
         this.language = findLanguage(language);
         this.fileType = fileType;
-        parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(language);
+        ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(language);
         if (parserDefinition == null) {
             throw new RuntimeException("PsiFileBase: language.getParserDefinition() returned null.");
         }
@@ -171,11 +169,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
         if (name.contains("SpellCheckingInspection") || name.contains("InjectedLanguageManager")) {
             visitor.visitFile(this);
         }
-    }
-
-    @NotNull
-    public ParserDefinition getParserDefinition() {
-        return parserDefinition;
     }
 
     @Nullable
@@ -340,10 +333,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             return DBObjectPsiCache.asPsiDirectory(parentObject);
 
         }
-        return Read.call(this, f -> f.getSuperParent());
-    }
-
-    private PsiDirectory getSuperParent() {
         return super.getParent();
     }
 
@@ -353,29 +342,24 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
         if (virtualFile.getFileSystem() instanceof DatabaseFileSystem) {
             return Checks.isValid(virtualFile);
         } else {
-            return Read.call(this, f -> f.isSuperValid());
+            return super.isValid();
         }
-    }
-
-    private boolean isSuperValid() {
-        return super.isValid();
     }
 
     public String getParseRootId() {
         VirtualFile virtualFile = getVirtualFile();
-        if (virtualFile != null) {
-            String parseRootId = virtualFile.getUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY);
-            if (parseRootId == null && virtualFile instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-                parseRootId = sourceCodeFile.getParseRootId();
-                if (parseRootId != null) {
-                    virtualFile.putUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY, parseRootId);
-                }
-            }
+        if (virtualFile == null) return null;
 
-            return parseRootId;
+        String parseRootId = virtualFile.getUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY);
+        if (parseRootId == null && virtualFile instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+            parseRootId = sourceCodeFile.getParseRootId();
+            if (parseRootId != null) {
+                virtualFile.putUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY, parseRootId);
+            }
         }
-        return null;
+
+        return parseRootId;
     }
 
     public double getDatabaseVersion() {

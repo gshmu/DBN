@@ -120,7 +120,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         if (!isEditable(object)) return;
         if (DBFileOpenHandle.isFileOpening(object)) return;
 
-        NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor);
+        NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL, focusEditor).with(FOCUS, focusEditor);
         NavigationInstructions browserInstructions = NavigationInstructions.create().with(SCROLL, scrollBrowser);
         DBFileOpenHandle handle = DBFileOpenHandle.create(object).
                 withEditorProviderId(editorProviderId).
@@ -238,29 +238,30 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                     return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
                 }
             }
-        }
-        else if (contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_SPEC_AND_BODY)) {
+        } else if (contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_SPEC_AND_BODY)) {
             DDLFileGeneralSettings ddlFileSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
             ConnectionHandler connection = object.getConnection();
             boolean ddlFileBinding = connection.getSettings().getDetailSettings().isEnableDdlFileBinding();
-            if (ddlFileBinding && ddlFileSettings.isDdlFilesLookupEnabled()) {
-                List<VirtualFile> attachedDDLFiles = databaseFile.getAttachedDDLFiles();
-                if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
-                    DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.of(object);
-                    List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(objectRef);
-                    if (virtualFiles.size() > 0) {
-                        int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
-                        return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
-                    } else if (ddlFileSettings.isDdlFilesCreationEnabled()) {
-                        Messages.showQuestionDialog(
-                                project, "No DDL file found",
-                                "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
-                                        "(You can disable this check in \"DDL File\" options)", Messages.OPTIONS_YES_NO, 0,
-                                option -> when(option == 0, () -> fileAttachmentManager.createDDLFile(objectRef)));
+            if (!ddlFileBinding || !ddlFileSettings.isDdlFilesLookupEnabled()) return true;
 
-                    }
+            List<VirtualFile> attachedDDLFiles = databaseFile.getAttachedDDLFiles();
+            if (attachedDDLFiles != null && !attachedDDLFiles.isEmpty()) return true;
+
+            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+            DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.of(object);
+            List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(objectRef);
+            if (virtualFiles.isEmpty()) {
+                if (ddlFileSettings.isDdlFilesCreationEnabled()) {
+                    Messages.showQuestionDialog(
+                            project, "No DDL file found",
+                            "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
+                                    "(You can disable this check in \"DDL File\" options)", Messages.OPTIONS_YES_NO, 0,
+                            option -> when(option == 0, () -> fileAttachmentManager.createDDLFile(objectRef)));
+
                 }
+            } else {
+                int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
+                return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
             }
         }
 
@@ -268,12 +269,17 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
     }
 
 
-    public void openDatabaseConsole(DBConsole console, boolean focus) {
-        Dispatch.run(true, () -> {
-            ConnectionHandler connection = console.getConnection();
-            Project project = connection.getProject();
-            Editors.openFile(project, console.getVirtualFile(), focus);
-        });
+    public void openDatabaseConsole(DBConsole console, boolean scrollBrowser, boolean focusEditor) {
+        ConnectionHandler connection = console.getConnection();
+        Project project = connection.getProject();
+
+        NavigationInstructions editorInstructions = NavigationInstructions.create().with(OPEN).with(SCROLL, focusEditor).with(FOCUS, focusEditor);
+        NavigationInstructions browserInstructions = NavigationInstructions.create().with(SCROLL, scrollBrowser);
+        DBFileOpenHandle handle = DBFileOpenHandle.create(console).
+                withEditorInstructions(editorInstructions).
+                withBrowserInstructions(browserInstructions);
+
+        invokeFileOpen(handle, () -> Editors.openFile(project, console.getVirtualFile(), focusEditor));
     }
 
     public void closeEditor(DBSchemaObject object) {

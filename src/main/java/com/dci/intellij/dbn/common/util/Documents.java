@@ -84,13 +84,12 @@ public class Documents {
         if (lastRefresh != null && !isOlderThan(lastRefresh, 1, SECONDS)) return;
 
         psiFile.putUserData(LAST_ANNOTATION_REFRESH, System.currentTimeMillis());
-        Read.run(() -> {
-            if (psiFile.isValid()) {
-                Project project = psiFile.getProject();
-                DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
-                daemonCodeAnalyzer.restart(psiFile);
-            }
-        });
+
+        if (!psiFile.isValid()) return;
+
+        Project project = psiFile.getProject();
+        DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
+        daemonCodeAnalyzer.restart(psiFile);
     }
 
     public static Document createDocument(CharSequence text) {
@@ -105,13 +104,11 @@ public class Documents {
 
     @Nullable
     public static Document getDocument(@NotNull PsiFile file) {
-        return Read.call(file, f -> {
-            if (isNotValid(f)) return null;
+        if (isNotValid(file)) return null;
 
-            Project project = f.getProject();
-            PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-            return documentManager.getDocument(f);
-        });
+        Project project = file.getProject();
+        PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+        return documentManager.getDocument(file);
     }
 
     public static Editor[] getEditors(Document document) {

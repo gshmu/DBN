@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ref.WeakRefCache;
@@ -140,6 +140,15 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
     }
 
     @Override
+    public PsiFile getContainingFile() {
+        return Read.call(this, e -> e.getSuperContainingFile());
+    }
+
+    private PsiFile getSuperContainingFile() {
+        return super.getContainingFile();
+    }
+
+    @Override
     public BasePsiElement getOriginalElement() {
         PsiFile containingFile = getContainingFile();
         PsiFile originalFile = containingFile.getOriginalFile();
@@ -188,15 +197,12 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
 
     @NotNull
     public DBLanguagePsiFile getFile() {
-        DBLanguagePsiFile file = Read.call(this, e -> {
-            PsiElement parent = e.getParent();
-            while (parent != null) {
-                if (parent instanceof DBLanguagePsiFile) return (DBLanguagePsiFile) parent;
-                parent = parent.getParent();
-            }
-            return null;
-        });
-        return Failsafe.nn(file);
+        PsiElement parent = getParent();
+        while (parent != null) {
+            if (parent instanceof DBLanguagePsiFile) return (DBLanguagePsiFile) parent;
+            parent = parent.getParent();
+        }
+        throw new AlreadyDisposedException(null);
     }
 
     @Nullable

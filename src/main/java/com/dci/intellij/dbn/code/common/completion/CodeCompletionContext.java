@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Threads;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -136,7 +135,7 @@ public class CodeCompletionContext {
     }
 
     public void queue(Runnable runnable) {
-        queue.submit(() -> Read.run(runnable));
+        queue.submit(runnable);
     }
 
     public void awaitCompletion() {

@@ -569,16 +569,15 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
     public BasePsiElement getObjectNavigationElement(@NotNull DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
         DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
         DBContentVirtualFile contentFile = editableObjectFile.getContentFile(contentType);
-        if (contentFile != null) {
-            PSQLFile file = (PSQLFile) PsiUtil.getPsiFile(getProject(), contentFile);
-            if (file != null) {
-                return
-                    contentType == DBContentType.CODE_BODY ? file.lookupObjectDeclaration(objectType, objectName) :
-                    contentType == DBContentType.CODE_SPEC ? file.lookupObjectSpecification(objectType, objectName) : null;
-            }
-        }
+        if (contentFile == null) return null;
 
-        return null;
+        PSQLFile file = PsiUtil.getPsiFile(getProject(), contentFile);
+        if (file == null) return null;
+
+        return
+            contentType == DBContentType.CODE_BODY ? file.lookupObjectDeclaration(objectType, objectName) :
+            contentType == DBContentType.CODE_SPEC ? file.lookupObjectSpecification(objectType, objectName) : null;
+
     }
 
     public void navigateToObject(@NotNull DBSchemaObject parentObject, @NotNull BasePsiElement basePsiElement) {

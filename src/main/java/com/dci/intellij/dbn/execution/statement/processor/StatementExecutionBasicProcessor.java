@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -144,21 +143,18 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
 
     @Override
     public boolean isDirty(){
-        return Read.call(this, p -> {
-            StatementExecutionInput executionInput = p.executionInput;
-            if (p.getPsiFile() == null ||
-                    getConnection() != executionInput.getConnection() || // connection changed since execution
-                    getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
-                return true;
-            } else {
-                ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-                ExecutablePsiElement cachedExecutable = p.getCachedExecutable();
-                return executablePsiElement == null ||
-                        cachedExecutable == null ||
-                        !cachedExecutable.isValid() ||
-                        !cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
-            }
-        });
+        if (getPsiFile() == null ||
+                getConnection() != executionInput.getConnection() || // connection changed since execution
+                getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution
+            return true;
+        } else {
+            ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            ExecutablePsiElement cachedExecutable = getCachedExecutable();
+            return executablePsiElement == null ||
+                    cachedExecutable == null ||
+                    !cachedExecutable.isValid() ||
+                    !cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
+        }
     }
 
     @Override
@@ -605,46 +601,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
             BasePsiElement compilablePsiElement = getCompilableBlockPsiElement();
             if (compilablePsiElement == null)  return;
 
-            hasCompilerErrors = Read.call(() -> {
-                DBContentType contentType = getCompilableContentType();
-                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
-                compilerAction.setSourceStartOffset(compilablePsiElement.getTextOffset());
-
-                DBSchemaObject object = getAffectedObject();
-                CompilerResult compilerResult = null;
-                if (object == null) {
-                    DBSchema schema = getAffectedSchema();
-                    IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
-                    if (schema != null && subjectPsiElement != null) {
-                        DBObjectType objectType = subjectPsiElement.getObjectType();
-                        String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                        compilerResult = new CompilerResult(compilerAction, connection, schema, objectType, objectName);
-                    }
-                } else {
-                    compilerResult = new CompilerResult(compilerAction, object);
-                }
-
-                if (compilerResult != null) {
-                    if (object != null) {
-                        Project project = getProject();
-                        DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                        if (object.is(COMPILABLE)) {
-                            CompileType compileType = compilerManager.getCompileType(object, contentType);
-                            if (compileType == CompileType.DEBUG) {
-                                compilerManager.compileObject(object, compileType, compilerAction);
-                            }
-                            ProjectEvents.notify(project,
-                                    CompileManagerListener.TOPIC,
-                                    (listener) -> listener.compileFinished(connection, object));
-                        }
-                        object.refresh();
-                    }
-
-                    executionResult.setCompilerResult(compilerResult);
-                    return compilerResult.hasErrors();
-                }
-                return false;
-            });
+            hasCompilerErrors = evaluateCompilerErrors(executionResult, compilablePsiElement, connection);
         }
 
         if (hasCompilerErrors) {
@@ -661,6 +618,47 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
             executionResult.updateExecutionMessage(MessageType.INFO, message);
             executionResult.setExecutionStatus(StatementExecutionStatus.SUCCESS);
         }
+    }
+
+    @NotNull
+    private Boolean evaluateCompilerErrors(StatementExecutionBasicResult executionResult, BasePsiElement compilablePsiElement, ConnectionHandler connection) {
+        DBContentType contentType = getCompilableContentType();
+        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
+        compilerAction.setSourceStartOffset(compilablePsiElement.getTextOffset());
+
+        DBSchemaObject object = getAffectedObject();
+        CompilerResult compilerResult = null;
+        if (object == null) {
+            DBSchema schema = getAffectedSchema();
+            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+            if (schema != null && subjectPsiElement != null) {
+                DBObjectType objectType = subjectPsiElement.getObjectType();
+                String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
+                compilerResult = new CompilerResult(compilerAction, connection, schema, objectType, objectName);
+            }
+        } else {
+            compilerResult = new CompilerResult(compilerAction, object);
+        }
+
+        if (compilerResult == null) return false;
+
+        if (object != null) {
+            Project project = getProject();
+            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+            if (object.is(COMPILABLE)) {
+                CompileType compileType = compilerManager.getCompileType(object, contentType);
+                if (compileType == CompileType.DEBUG) {
+                    compilerManager.compileObject(object, compileType, compilerAction);
+                }
+                ProjectEvents.notify(project,
+                        CompileManagerListener.TOPIC,
+                        (listener) -> listener.compileFinished(connection, object));
+            }
+            object.refresh();
+        }
+
+        executionResult.setCompilerResult(compilerResult);
+        return compilerResult.hasErrors();
     }
 
 

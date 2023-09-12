@@ -5,12 +5,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static java.lang.Character.isWhitespace;
 
 @UtilityClass
 public class Strings extends com.intellij.openapi.util.text.StringUtil {
+
+    private static final Map<String, String> UPPER_CASE_STRING_CACHE = new ConcurrentHashMap<>();
 
     @NotNull
     public static List<String> tokenize(@NotNull String string, @NotNull String separator) {
@@ -326,6 +329,10 @@ public class Strings extends com.intellij.openapi.util.text.StringUtil {
 
         int last = lastIndexOf(builder, chr -> !isWhitespace(chr));
         builder.delete(last + 1, builder.length());
+    }
+
+    public static String cachedUpperCase(String string) {
+        return UPPER_CASE_STRING_CACHE.computeIfAbsent(string, k -> k.toUpperCase().intern());
     }
 
     public interface CharPredicate {

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.project;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
@@ -14,6 +15,8 @@ import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 @UtilityClass
 public final class Projects {
+
+    public static final Project[] EMPTY_PROJECT_ARRAY = new Project[0];
 
     public static void closeProject(@NotNull Project project) {
         Dispatch.run(() -> {
@@ -55,6 +58,6 @@ public final class Projects {
     }
 
     public static @NotNull Project[] getOpenProjects() {
-        return ProjectManager.getInstance().getOpenProjects();
+        return Unsafe.silent(EMPTY_PROJECT_ARRAY, () -> ProjectManager.getInstance().getOpenProjects());
     }
 }
