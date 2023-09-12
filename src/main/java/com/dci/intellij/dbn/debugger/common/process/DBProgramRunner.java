@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.config.ConnectionDebuggerSettings;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
@@ -146,8 +147,9 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             @NotNull T executionInput,
             @NotNull ExecutionEnvironment environment,
             @Nullable Callback callback) {
-        DBRunConfig<?> runProfile = (DBRunConfig) environment.getRunProfile();
-        if (!runProfile.isCompileDependencies()) return;
+
+        ConnectionDebuggerSettings debuggerSettings = connection.getSettings().getDebuggerSettings();
+        if (!debuggerSettings.isCompileDependencies()) return;
 
         Project project = connection.getProject();
         Progress.prompt(project, connection, true,
@@ -157,6 +159,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                     if (progress.isCanceled()) return;
                     DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
 
+                    DBRunConfig<?> runProfile = (DBRunConfig) environment.getRunProfile();
                     List<DBMethod> methods = runProfile.getMethods();
                     List<DBSchemaObject> dependencies = debuggerManager.loadCompileDependencies(methods);
                     if (progress.isCanceled()) return;

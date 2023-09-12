@@ -39,6 +39,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private final ConnectionSshTunnelSettings sshTunnelSettings   = new ConnectionSshTunnelSettings(this);
     private final ConnectionSslSettings sslSettings               = new ConnectionSslSettings(this);
     private final ConnectionDetailSettings detailSettings         = new ConnectionDetailSettings(this);
+    private final ConnectionDebuggerSettings debuggerSettings     = new ConnectionDebuggerSettings(this);
     private final ConnectionFilterSettings filterSettings         = new ConnectionFilterSettings(this);
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
@@ -58,6 +59,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
                 sshTunnelSettings,
                 sslSettings,
                 detailSettings,
+                debuggerSettings,
                 filterSettings};
     }
 
