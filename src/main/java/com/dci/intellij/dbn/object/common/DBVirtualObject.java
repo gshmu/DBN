@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.path.NodeBase;
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -83,7 +82,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
         BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
         if (underlyingPsiElement == null) return false;
 
-        boolean psiElementValid = Read.call(underlyingPsiElement, e -> e.isValid());
+        boolean psiElementValid = underlyingPsiElement.isValid();
         if (!psiElementValid) return false;
 
         DBObjectType objectType = getObjectType();
@@ -449,10 +448,8 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     
     @Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        return Read.call(this, o -> {
-            BasePsiElement relevantPsiElement = o.getRelevantPsiElement();
-            return relevantPsiElement.isValid() ? relevantPsiElement.getContainingFile() : null;
-        });
+        BasePsiElement relevantPsiElement = getRelevantPsiElement();
+        return relevantPsiElement.isValid() ? relevantPsiElement.getContainingFile() : null;
     }
 
     /*********************************************************

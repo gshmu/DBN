@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -18,6 +19,7 @@ import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,25 +111,27 @@ public class DBBreakpointUtil {
         return base + ":" + line + " (id=" + breakpointId + ")";
     }
 
-    public static List<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(final ConnectionHandler connection) {
-        return Read.call(connection, c -> {
-            DBBreakpointType databaseBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
-            Project project = c.getProject();
-            XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-            Collection<XLineBreakpoint<XBreakpointProperties>> breakpoints =
-                    (Collection<XLineBreakpoint<XBreakpointProperties>>) breakpointManager.getBreakpoints(databaseBreakpointType);
+    public static List<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(ConnectionHandler connection) {
+        Project project = connection.getProject();
+        Collection<XLineBreakpoint<XBreakpointProperties>> allBreakpoints = getAllBreakpoints(project);
 
-            List<XLineBreakpoint<XBreakpointProperties>> connectionBreakpoints = new ArrayList<>();
-            for (XLineBreakpoint<XBreakpointProperties> breakpoint : breakpoints) {
-                XBreakpointProperties properties = breakpoint.getProperties();
-                if (properties instanceof DBBreakpointProperties) {
-                    DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
-                    if (c == breakpointProperties.getConnection()) {
-                        connectionBreakpoints.add(breakpoint);
-                    }
+        List<XLineBreakpoint<XBreakpointProperties>> breakpoints = new ArrayList<>();
+        for (val breakpoint : allBreakpoints) {
+            XBreakpointProperties properties = breakpoint.getProperties();
+            if (properties instanceof DBBreakpointProperties) {
+                DBBreakpointProperties breakpointProperties = (DBBreakpointProperties) properties;
+                if (connection == breakpointProperties.getConnection()) {
+                    breakpoints.add(breakpoint);
                 }
             }
-            return connectionBreakpoints;
-        });
+        }
+        return breakpoints;
+    }
+
+    @NotNull
+    private static Collection<XLineBreakpoint<XBreakpointProperties>> getAllBreakpoints(Project project) {
+        DBBreakpointType databaseBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
+        XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
+        return Read.call(() -> Unsafe.cast(breakpointManager.getBreakpoints(databaseBreakpointType)));
     }
 }

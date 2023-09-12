@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.psql;
 
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -17,38 +16,34 @@ public class PSQLFile extends DBLanguagePsiFile {
     }
 
     public BasePsiElement lookupObjectSpecification(DBObjectType objectType, CharSequence objectName) {
-        return Read.call(() -> {
-            PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
-            PsiElement child = getFirstChild();
-            while (child != null) {
-                if (child instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) child;
-                    BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
-                    if (specObject != null) {
-                        return specObject.findEnclosingElement(ElementTypeAttribute.OBJECT_SPECIFICATION);
-                    }
+        PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            if (child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
+                BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
+                if (specObject != null) {
+                    return specObject.findEnclosingElement(ElementTypeAttribute.OBJECT_SPECIFICATION);
                 }
-                child = child.getNextSibling();
             }
-            return null;
-        });
+            child = child.getNextSibling();
+        }
+        return null;
     }
 
     public BasePsiElement lookupObjectDeclaration(DBObjectType objectType, CharSequence objectName) {
-        return Read.call(() -> {
-            PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
-            PsiElement child = getFirstChild();
-            while (child != null) {
-                if (child instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) child;
-                    BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
-                    if (specObject != null) {
-                        return specObject.findEnclosingElement(ElementTypeAttribute.OBJECT_DECLARATION);
-                    }
+        PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            if (child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
+                BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
+                if (specObject != null) {
+                    return specObject.findEnclosingElement(ElementTypeAttribute.OBJECT_DECLARATION);
                 }
-                child = child.getNextSibling();
             }
-            return null;
-        });
+            child = child.getNextSibling();
+        }
+        return null;
     }
 }

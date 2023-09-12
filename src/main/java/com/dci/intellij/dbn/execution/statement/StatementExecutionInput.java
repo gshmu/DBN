@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -41,11 +40,11 @@ public class StatementExecutionInput extends LocalExecutionInput {
     private String executableStatementText;
     private boolean bulkExecution = false;
 
-    private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> Read.call(this, i -> {
+    private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> {
         ConnectionHandler connection = getConnection();
         if (isNotValid(connection)) return null;
 
-        DBLanguagePsiFile psiFile = i.getExecutionProcessor().getPsiFile();
+        DBLanguagePsiFile psiFile = getExecutionProcessor().getPsiFile();
         if (isNotValid(psiFile)) return null;
 
         DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
@@ -55,9 +54,9 @@ public class StatementExecutionInput extends LocalExecutionInput {
                 getProject(),
                 "preview",
                 languageDialect,
-                i.getOriginalStatementText(),
+                getOriginalStatementText(),
                 connection,
-                i.getTargetSchemaId());
+                getTargetSchemaId());
         if (isNotValid(previewFile)) return null;
 
         PsiElement firstChild = previewFile.getFirstChild();
@@ -68,7 +67,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         }
 
         return null;
-    }));
+    });
 
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
@@ -162,7 +161,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public String getStatementDescription() {
         ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
-        return executablePsiElement == null ? "SQL Statement" : Read.call(executablePsiElement, e -> e.getPresentableText());
+        return executablePsiElement == null ? "SQL Statement" : executablePsiElement.getPresentableText();
     }
 
     @Override

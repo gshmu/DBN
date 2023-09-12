@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.*;
@@ -123,7 +122,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private PsiFile createFakePsiFile() {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-        return Read.call(psiFileFactory, f -> f.createFileFromText("object", SQLLanguage.INSTANCE, ""));
+        return psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, "");
     }
 
     @NotNull

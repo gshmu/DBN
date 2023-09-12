@@ -34,30 +34,26 @@ public class PsiUtil {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
             currentSchema = basePsiElement.getSchema();
         }
-        if (currentSchema == null) {
-            VirtualFile virtualFile = getVirtualFileForElement(psiElement);
-            if (virtualFile != null) {
-                FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(psiElement.getProject());
-                SchemaId schemaId = contextManager.getDatabaseSchema(virtualFile);
-                ConnectionHandler connection = contextManager.getConnection(virtualFile);
-                if (schemaId != null && connection != null) {
-                    currentSchema = connection.getSchema(schemaId);
-                }
 
-            }
-        }
-        return currentSchema;
+        if (currentSchema != null) return currentSchema;
+
+        VirtualFile virtualFile = getVirtualFileForElement(psiElement);
+        if (virtualFile == null) return null;
+
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(psiElement.getProject());
+        SchemaId schemaId = contextManager.getDatabaseSchema(virtualFile);
+        ConnectionHandler connection = contextManager.getConnection(virtualFile);
+        if (schemaId == null || connection == null) return null;
+
+        return connection.getSchema(schemaId);
     }
 
     @Nullable
     public static VirtualFile getVirtualFileForElement(@NotNull PsiElement psiElement) {
-        return Read.call(psiElement, e -> {
-            if (e.isValid()) {
-                PsiFile psiFile = e.getContainingFile().getOriginalFile();
-                return psiFile.getVirtualFile();
-            }
-            return null;
-        });
+        if (isNotValid(psiElement)) return null;
+
+        PsiFile psiFile = Read.call(psiElement, e -> e.getContainingFile().getOriginalFile());
+        return psiFile.getVirtualFile();
     }
 
     @Nullable
@@ -309,13 +305,11 @@ public class PsiUtil {
 
     @Nullable
     public static <T extends PsiFile> T getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        return Read.call(() -> {
-            if (isNotValid(project)) return null;
-            if (isNotValid(virtualFile)) return null;
+        if (isNotValid(project)) return null;
+        if (isNotValid(virtualFile)) return null;
 
-            PsiManager psiManager = PsiManager.getInstance(project);
-            return (T) psiManager.findFile(virtualFile);
-        });
+        PsiManager psiManager = PsiManager.getInstance(project);
+        return (T) Read.call(() -> psiManager.findFile(virtualFile));
     }
 
 

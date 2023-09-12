@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -48,19 +47,17 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
         ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
         if (executablePsiElement == null) return Collections.emptyList();
 
-        return Read.call(executablePsiElement, e -> {
-            List<DBMethod> methods = new ArrayList<>();
-            e.collectObjectReferences(DBObjectType.METHOD, object -> {
-                if (object instanceof DBMethod) {
-                    DBMethod method = (DBMethod) object;
-                    DBSchema schema = method.getSchema();
-                    if (!schema.isSystemSchema() && !schema.isPublicSchema()) {
-                        methods.add(method);
-                    }
+        List<DBMethod> methods = new ArrayList<>();
+        executablePsiElement.collectObjectReferences(DBObjectType.METHOD, object -> {
+            if (object instanceof DBMethod) {
+                DBMethod method = (DBMethod) object;
+                DBSchema schema = method.getSchema();
+                if (!schema.isSystemSchema() && !schema.isPublicSchema()) {
+                    methods.add(method);
                 }
-            });
-            return methods;
+            }
         });
+        return methods;
 
     }
 
