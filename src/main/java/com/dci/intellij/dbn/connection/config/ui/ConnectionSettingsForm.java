@@ -77,13 +77,17 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         detailsTabInfo.setText("Details");
         tabbedPane.addTab(detailsTabInfo);
 
+        if (databaseSettings.getDatabaseType() == DatabaseType.ORACLE) {
+            ConnectionDebuggerSettings debuggerSettings = connectionSettings.getDebuggerSettings();
+            TabInfo debuggerTabInfo = new TabInfo(new JBScrollPane(debuggerSettings.createComponent()));
+            debuggerTabInfo.setText("Debugger");
+            tabbedPane.addTab(debuggerTabInfo);
+        }
+
         ConnectionFilterSettings filterSettings = connectionSettings.getFilterSettings();
         TabInfo filtersTabInfo = new TabInfo(new JBScrollPane(filterSettings.createComponent()));
         filtersTabInfo.setText("Filters");
         tabbedPane.addTab(filtersTabInfo);
-
-        ConnectionDatabaseSettingsForm databaseSettingsForm = databaseSettings.getSettingsEditor();
-        ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
 
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
         Icon icon = connectionSettings.isNew() ? Icons.CONNECTION_NEW :
@@ -116,34 +120,27 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
             ConnectionSettings configuration = getConfiguration();
             ConnectionSettings clone = configuration.clone();
             clone.getDatabaseSettings().getAuthenticationInfo().setTemporary(true);
+
             ConnectionDatabaseSettingsForm databaseSettingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
-            if(databaseSettingsEditor != null) {
-                databaseSettingsEditor.applyFormChanges(clone.getDatabaseSettings());
-            }
+            if(databaseSettingsEditor != null) databaseSettingsEditor.applyFormChanges(clone.getDatabaseSettings());
+
             ConnectionPropertiesSettingsForm propertiesSettingsEditor = configuration.getPropertiesSettings().getSettingsEditor();
-            if (propertiesSettingsEditor != null) {
-                propertiesSettingsEditor.applyFormChanges(clone.getPropertiesSettings());
-            }
+            if (propertiesSettingsEditor != null) propertiesSettingsEditor.applyFormChanges(clone.getPropertiesSettings());
 
             ConnectionSshTunnelSettingsForm sshTunnelSettingsForm = configuration.getSshTunnelSettings().getSettingsEditor();
-            if (sshTunnelSettingsForm != null) {
-                sshTunnelSettingsForm.applyFormChanges(clone.getSshTunnelSettings());
-            }
+            if (sshTunnelSettingsForm != null) sshTunnelSettingsForm.applyFormChanges(clone.getSshTunnelSettings());
 
             ConnectionSslSettingsForm sslSettingsForm = configuration.getSslSettings().getSettingsEditor();
-            if (sslSettingsForm != null) {
-                sslSettingsForm.applyFormChanges(clone.getSslSettings());
-            }
+            if (sslSettingsForm != null) sslSettingsForm.applyFormChanges(clone.getSslSettings());
 
             ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
-            if (detailSettingsForm != null) {
-                detailSettingsForm.applyFormChanges(clone.getDetailSettings());
-            }
+            if (detailSettingsForm != null) detailSettingsForm.applyFormChanges(clone.getDetailSettings());
+
+            ConnectionDebuggerSettingsForm debuggerSettingsForm = configuration.getDebuggerSettings().getSettingsEditor();
+            if (debuggerSettingsForm != null) debuggerSettingsForm.applyFormChanges(clone.getDebuggerSettings());
 
             ConnectionFilterSettingsForm filterSettingsForm = configuration.getFilterSettings().getSettingsEditor();
-            if (filterSettingsForm != null) {
-                filterSettingsForm.applyFormChanges(clone.getFilterSettings());
-            }
+            if (filterSettingsForm != null) filterSettingsForm.applyFormChanges(clone.getFilterSettings());
 
             return clone;
         } finally {
@@ -193,14 +190,14 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
             private void refreshConnectionList(ConnectionSettings configuration) {
                 ConnectionBundleSettings bundleSettings = configuration.getParent();
                 ConnectionBundleSettingsForm bundleSettingsEditor = bundleSettings.getSettingsEditor();
-                if (bundleSettingsEditor != null) {
-                    JList connectionList = bundleSettingsEditor.getList();
-                    UserInterface.repaint(connectionList);
-                    ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
-                    if (settingsEditor != null) {
-                        settingsEditor.notifyPresentationChanges();
-                    }
-                }
+                if (bundleSettingsEditor == null) return;
+
+                JList connectionList = bundleSettingsEditor.getList();
+                UserInterface.repaint(connectionList);
+                ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
+                if (settingsEditor == null) return;
+
+                settingsEditor.notifyPresentationChanges();
             }
         };
     }
