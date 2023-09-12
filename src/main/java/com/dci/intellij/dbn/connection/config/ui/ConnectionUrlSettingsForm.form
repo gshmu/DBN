@@ -15,7 +15,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Connect Type"/>
+          <text value="Connect &amp;type"/>
         </properties>
       </component>
       <hspacer id="1381a">
@@ -78,7 +78,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="TNS Folder"/>
+          <text value="TNS &amp;folder"/>
         </properties>
       </component>
       <component id="cbbec" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tnsFolderTextField">
@@ -94,7 +94,7 @@
           </grid>
         </constraints>
         <properties>
-          <labelFor value="ab2b2"/>
+          <labelFor value=""/>
           <text value="&amp;URL"/>
         </properties>
       </component>
@@ -132,7 +132,8 @@
           </grid>
         </constraints>
         <properties>
-          <text value="TNS Profile"/>
+          <labelFor value="cf336"/>
+          <text value="TNS &amp;profile"/>
         </properties>
       </component>
       <component id="abbbc" class="javax.swing.JLabel" binding="databaseLabel">
