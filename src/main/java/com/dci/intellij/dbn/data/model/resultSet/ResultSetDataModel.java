@@ -42,6 +42,8 @@ public class ResultSetDataModel<
     public ResultSetDataModel(@NotNull ConnectionHandler connection) {
         super(connection.getProject());
         this.connection = connection.ref();
+
+        Disposer.register(connection, this);
     }
 
     public ResultSetDataModel(DBNResultSet resultSet, @NotNull ConnectionHandler connection, int maxRecords) throws SQLException {
