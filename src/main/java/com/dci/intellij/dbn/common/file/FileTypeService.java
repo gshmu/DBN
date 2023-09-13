@@ -14,6 +14,8 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,8 @@ import static com.dci.intellij.dbn.common.file.FileTypeService.COMPONENT_NAME;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Slf4j
+@Getter
+@Setter
 @State(
     name = COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -34,6 +38,7 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
     public static final String COMPONENT_NAME = "DBNavigator.Application.FileTypeService";
 
     private final Map<String, String> originalFileAssociations = new HashMap<>();
+    private boolean silentFileChangeContext = false;
 
     private FileTypeService() {
         super(COMPONENT_NAME);

@@ -14,8 +14,7 @@ class ConnectionPoolCleaner extends TimerTask {
 
     @Override
     public void run() {
-        Project[] projects = Projects.getOpenProjects();
-        for (Project project : projects) {
+        for (Project project : Projects.getOpenProjects()) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
             List<ConnectionHandler> connections = connectionManager.getConnections();
             for (ConnectionHandler connection : connections) {
