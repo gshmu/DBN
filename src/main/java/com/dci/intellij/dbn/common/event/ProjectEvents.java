@@ -35,8 +35,7 @@ public final class ProjectEvents {
     }
 
     public static <T> void subscribe(Topic<T> topic, T handler) {
-        Project[] openProjects = Projects.getOpenProjects();
-        for (Project openProject : openProjects) {
+        for (Project openProject : Projects.getOpenProjects()) {
             subscribe(openProject, null, topic, handler);
         }
 
