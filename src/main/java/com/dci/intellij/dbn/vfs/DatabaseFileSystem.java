@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.project.ProjectWorkspaceInitializer;
+import com.dci.intellij.dbn.project.ProjectComponentsInitializer;
 import com.dci.intellij.dbn.vfs.file.*;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -222,7 +222,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             return true;
         } else {
             Project project = connection.getProject();
-            ProjectWorkspaceInitializer initializer = ProjectWorkspaceInitializer.getInstance(project);
+            ProjectComponentsInitializer initializer = ProjectComponentsInitializer.getInstance(project);
             return initializer.isInitialized();
         }
     }

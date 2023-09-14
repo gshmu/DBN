@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Editors;
@@ -151,9 +152,9 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
     }
 
     private Language findLanguage(Language baseLanguage) {
-        final FileViewProvider viewProvider = getViewProvider();
-        final Set<Language> languages = viewProvider.getLanguages();
-        for (final Language actualLanguage : languages) {
+        FileViewProvider viewProvider = getViewProvider();
+        Set<Language> languages = viewProvider.getLanguages();
+        for (Language actualLanguage : languages) {
             if (actualLanguage.isKindOf(baseLanguage)) {
                 return actualLanguage;
             }
@@ -169,6 +170,15 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
         if (name.contains("SpellCheckingInspection") || name.contains("InjectedLanguageManager")) {
             visitor.visitFile(this);
         }
+    }
+
+    @Override
+    public PsiElement getFirstChild() {
+        return Read.call(this, f -> f.getSuperFirstChild());
+    }
+
+    private PsiElement getSuperFirstChild() {
+        return super.getFirstChild();
     }
 
     @Nullable
