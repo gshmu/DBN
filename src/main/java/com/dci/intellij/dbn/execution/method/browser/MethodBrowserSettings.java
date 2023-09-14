@@ -17,8 +17,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 public class MethodBrowserSettings implements PersistentConfiguration, ConnectionConfigListener {
     private DBObjectRef<DBMethod> selectedMethod;
@@ -111,9 +110,8 @@ public class MethodBrowserSettings implements PersistentConfiguration, Connectio
         if (connection != null) element.setAttribute("connection-id", connection.getConnectionId().id());
         if (selectedSchema != null) element.setAttribute("schema", selectedSchema);
         if(selectedMethod != null) {
-            Element methodElement = new Element("selected-method");
+            Element methodElement = newElement(element, "selected-method");
             selectedMethod.writeState(methodElement);
-            element.addContent(methodElement);
         }
     }
 }

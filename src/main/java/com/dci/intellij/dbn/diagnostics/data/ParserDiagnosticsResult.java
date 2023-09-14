@@ -15,8 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.Timestamp;
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.integerAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.setIntegerAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 
 @Getter
@@ -109,11 +108,10 @@ public class ParserDiagnosticsResult implements PersistentStateElement, Comparab
             String filePath = entry.getKey();
             IssueCounter issues = entry.getValue();
 
-            Element child = new Element("file");
+            Element child = newElement(element, "file");
             child.setAttribute("path", filePath);
             setIntegerAttribute(child, "error-count", issues.getErrors());
             setIntegerAttribute(child, "warning-count", issues.getWarnings());
-            element.addContent(child);
         }
     }
 

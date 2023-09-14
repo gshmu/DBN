@@ -115,13 +115,11 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
     @Override
     public void writeConfiguration(Element element) {
         setIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
-        Element contentTypes = new Element("content-types");
-        element.addContent(contentTypes);
+        Element contentTypesElement = newElement(element, "content-types");
         for (TextContentType contentType : getContentTypes()) {
-            Element child = new Element("content-type");
-            child.setAttribute("name", contentType.getName());
-            child.setAttribute("enabled", Boolean.toString(contentType.isSelected()));
-            contentTypes.addContent(child);
+            Element contentTypeElement = newElement(contentTypesElement, "content-type");
+            contentTypeElement.setAttribute("name", contentType.getName());
+            contentTypeElement.setAttribute("enabled", Boolean.toString(contentType.isSelected()));
         }
     }
 }

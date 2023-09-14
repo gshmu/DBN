@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.setEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.editor.DBContentType.*;
 
 @Getter
@@ -90,11 +89,10 @@ public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileS
     @Override
     public void writeConfiguration(Element element) {
         for (DDLFileType fileType : fileTypes) {
-            Element fileTypeElement = new Element("mapping");
+            Element fileTypeElement = newElement(element, "mapping");
             setEnumAttribute(fileTypeElement, "file-type-id", fileType.getId());
             String extensions = Strings.concatenate(fileType.getExtensions(), ",");
             fileTypeElement.setAttribute("extensions", extensions);
-            element.addContent(fileTypeElement);
         }
     }
 }

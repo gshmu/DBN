@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @State(
@@ -84,16 +85,14 @@ public class ObjectQuickFilterManager extends ProjectComponentBase implements Pe
     public Element getComponentState() {
         Element element = new Element("state");
         Settings.setEnum(element, "last-used-operator", lastUsedOperator);
-        Element filtersElement = new Element("filters");
-        element.addContent(filtersElement);
+        Element filtersElement = newElement(element, "filters");
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (val entry : quickFilters.entrySet()) {
             ObjectQuickFilterKey key = entry.getKey();
             if (connectionManager.isValidConnectionId(key.getConnectionId())) {
                 ObjectQuickFilter<?> filter = entry.getValue();
-                Element filterElement = new Element("filter");
-                filtersElement.addContent(filterElement);
+                Element filterElement = newElement(filtersElement, "filter");
 
                 key.writeState(filterElement);
                 filter.writeState(filterElement);

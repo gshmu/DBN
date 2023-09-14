@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @Setter
@@ -278,9 +277,8 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         element.setAttribute("connection-id", connectionId.id());
         element.setAttribute("dataset", datasetName);
         for (DatasetFilter filter : filters) {
-            Element filterElement = new Element("filter");
+            Element filterElement = newElement(element, "filter");
             filter.writeConfiguration(filterElement);
-            element.addContent(filterElement);
         }
         element.setAttribute("active-filter-id", activeFilter == null ? "" : activeFilter.getId());
     }

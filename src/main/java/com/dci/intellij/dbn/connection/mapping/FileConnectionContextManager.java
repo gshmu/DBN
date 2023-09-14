@@ -56,6 +56,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.file.util.VirtualFiles.isLocalFileSystem;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.util.Files.isDbLanguageFile;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.common.util.Messages.showWarningDialog;
@@ -502,9 +503,8 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
         Element element = new Element("state");
         Map<String, FileConnectionContext> mappings = registry.getMappings();
         for (FileConnectionContext mapping : mappings.values()) {
-            Element mappingElement = new Element("mapping");
+            Element mappingElement = newElement(element, "mapping");
             mapping.writeState(mappingElement);
-            element.addContent(mappingElement);
         }
         return element;
     }

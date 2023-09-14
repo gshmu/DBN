@@ -20,6 +20,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Getter
@@ -107,9 +108,8 @@ public class ObjectNameFilterSettings
     @Override
     public void writeConfiguration(Element element) {
         for (ObjectNameFilter filter : filters) {
-            Element filterElement = new Element("filter");
+            Element filterElement = newElement(element, "filter");
             filter.writeConfiguration(filterElement);
-            element.addContent(filterElement);
         }
     }
 

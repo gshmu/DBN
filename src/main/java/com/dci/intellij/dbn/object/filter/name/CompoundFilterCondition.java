@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Getter
@@ -197,12 +198,11 @@ public class CompoundFilterCondition implements Filter<DBObject>, FilterConditio
         element.setAttribute("join-type", joinType.toString());
         for (FilterCondition condition : conditions) {
             Element childElement =
-                    condition instanceof SimpleNameFilterCondition ? new Element("simple-condition") :
-                    condition instanceof CompoundFilterCondition ? new Element("compound-condition") : null;
+                    condition instanceof SimpleNameFilterCondition ? newElement(element, "simple-condition") :
+                    condition instanceof CompoundFilterCondition ? newElement(element, "compound-condition") : null;
 
             if (childElement != null) {
                 condition.writeConfiguration(childElement);
-                element.addContent(childElement);
             }
         }
 

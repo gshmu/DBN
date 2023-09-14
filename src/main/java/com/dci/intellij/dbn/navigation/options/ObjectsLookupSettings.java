@@ -16,8 +16,7 @@ import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.booleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @Setter
@@ -118,14 +117,12 @@ public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationS
 
     @Override
     public void writeConfiguration(Element element) {
-        Element visibleObjectsElement = new Element("lookup-objects");
-        element.addContent(visibleObjectsElement);
+        Element visibleObjectsElement = newElement(element, "lookup-objects");
 
         for (ObjectTypeEntry objectTypeEntry : getLookupObjectTypes()) {
-            Element child = new Element("object-type");
+            Element child = newElement(visibleObjectsElement, "object-type");
             child.setAttribute("name", objectTypeEntry.getName());
             child.setAttribute("enabled", Boolean.toString(objectTypeEntry.isSelected()));
-            visibleObjectsElement.addContent(child);
         }
         forceDatabaseLoad.writeConfiguration(element);
         promptConnectionSelection.writeConfiguration(element);

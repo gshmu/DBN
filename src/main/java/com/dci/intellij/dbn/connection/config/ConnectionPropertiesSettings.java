@@ -63,17 +63,13 @@ public class ConnectionPropertiesSettings extends BasicProjectConfiguration<Conn
     @Override
     public void writeConfiguration(Element element) {
         setBoolean(element, "auto-commit", enableAutoCommit);
-        if (properties.size() > 0) {
-            Element propertiesElement = new Element("properties");
-            for (val entry : properties.entrySet()) {
-                Element propertyElement = new Element("property");
-                propertyElement.setAttribute("key", entry.getKey());
-                propertyElement.setAttribute("value", Commons.nvl(entry.getValue(), ""));
+        if (properties.isEmpty()) return;
 
-                propertiesElement.addContent(propertyElement);
-            }
-
-            element.addContent(propertiesElement);
+        Element propertiesElement = newElement(element, "properties");
+        for (val entry : properties.entrySet()) {
+            Element propertyElement = newElement(propertiesElement, "property");
+            propertyElement.setAttribute("key", entry.getKey());
+            propertyElement.setAttribute("value", Commons.nvl(entry.getValue(), ""));
         }
     }
 }

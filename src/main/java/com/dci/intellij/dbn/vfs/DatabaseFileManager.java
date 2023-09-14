@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.util.Commons.list;
 
 @State(
@@ -193,17 +194,15 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     @Nullable
     @Override
     public Element getComponentState() {
-        Element stateElement = new Element("state");
-        Element openFilesElement = new Element("open-files");
-        stateElement.addContent(openFilesElement);
+        Element element = new Element("state");
+        Element filesElement = newElement(element, "open-files");
         for (DBObjectVirtualFile<?> openFile : openFiles) {
             DBObjectRef<?> objectRef = openFile.getObjectRef();
-            Element fileElement = new Element("object");
+            Element fileElement = newElement(filesElement, "object");
             objectRef.writeState(fileElement);
-            openFilesElement.addContent(fileElement);
         }
 
-        return stateElement;
+        return element;
     }
 
     @Override

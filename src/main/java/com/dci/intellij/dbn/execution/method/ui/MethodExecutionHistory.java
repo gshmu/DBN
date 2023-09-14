@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 
 @Getter
 @Setter
@@ -176,24 +177,20 @@ public class MethodExecutionHistory implements PersistentStateElement, Connectio
 
     @Override
     public void writeState(Element element) {
-        Element historyElement = new Element("execution-history");
-        element.addContent(historyElement);
+        Element historyElement = newElement(element, "execution-history");
 
         Settings.setBoolean(historyElement, "group-entries", groupEntries);
 
-        Element configsElement = new Element("execution-inputs");
-        historyElement.addContent(configsElement);
+        Element configsElement = newElement(historyElement, "execution-inputs");
         for (MethodExecutionInput executionInput : this.executionInputs) {
             if (!executionInput.isObsolete()) {
-                Element configElement = new Element("execution-input");
+                Element configElement = newElement(configsElement, "execution-input");
                 executionInput.writeConfiguration(configElement);
-                configsElement.addContent(configElement);
             }
         }
 
         if (selection != null) {
-            Element selectionElement = new Element("selection");
-            historyElement.addContent(selectionElement);
+            Element selectionElement = newElement(historyElement, "selection");
             selection.writeState(selectionElement);
         }
     }

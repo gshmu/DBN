@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
@@ -47,23 +49,13 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
     public void writeState(Element element) {
         Settings.setInteger(element, "refresh-interval", refreshInterval);
 
-        Element sortingElement = new Element("sorting");
-        element.addContent(sortingElement);
+        Element sortingElement = newElement(element, "sorting");
         sortingState.writeState(sortingElement);
 
-        Element filterElement = new Element("filter");
-        element.addContent(filterElement);
+        Element filterElement = newElement(element, "filter");
         Settings.setString(filterElement, "user", filterState.getFilterValue(SessionBrowserFilterType.USER));
         Settings.setString(filterElement, "host", filterState.getFilterValue(SessionBrowserFilterType.HOST));
         Settings.setString(filterElement, "status", filterState.getFilterValue(SessionBrowserFilterType.STATUS));
-    }
-
-    public int getRefreshInterval() {
-        return refreshInterval;
-    }
-
-    public void setRefreshInterval(int refreshInterval) {
-        this.refreshInterval = refreshInterval;
     }
 
     @Override

@@ -49,8 +49,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
-import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @State(
@@ -311,8 +310,7 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
     }
 
     private void storeTouchedNodes(Element element) {
-        Element nodesElement = new Element("loaded-nodes");
-        element.addContent(nodesElement);
+        Element nodesElement = newElement(element, "loaded-nodes");
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         List<ConnectionHandler> connections = connectionManager.getConnections();
@@ -333,11 +331,10 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
                             }
                         }, true);
 
-                        if (objectTypes.size() > 0) {
-                            Element schemaElement = new Element("schema");
+                        if (!objectTypes.isEmpty()) {
+                            Element schemaElement = newElement(connectionElement, "schema");
                             schemaElement.setAttribute("name", schema.getName());
                             schemaElement.setAttribute("object-types", DBObjectType.toCsv(objectTypes));
-                            connectionElement.addContent(schemaElement);
                             addConnectionElement = true;
                         }
                     }

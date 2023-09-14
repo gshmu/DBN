@@ -51,8 +51,7 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
      ***********************************************/
     @Override
     public void writeState(Element element) {
-        Element child = new Element("export-instructions");
-        element.addContent(child);
+        Element child = newElement(element, "export-instructions");
 
         setBoolean(child, "create-header", createHeader);
         setBoolean(child, "friendly-headers", friendlyHeaders);
@@ -73,20 +72,20 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
     @Override
     public void readState(Element element) {
         Element child = element.getChild("export-instructions");
-        if (child != null) {
-            createHeader = getBoolean(child, "create-header", createHeader);
-            friendlyHeaders = getBoolean(child, "friendly-headers", friendlyHeaders);
-            quoteValuesContainingSeparator = getBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
-            quoteAllValues = getBoolean(child, "quote-all-values", quoteAllValues);
-            beginQuote = getString(child, "begin-quote", beginQuote);
-            endQuote = getString(child, "end-quote", endQuote);
-            valueSeparator = getString(child, "value-separator", valueSeparator);
-            fileName = getString(child, "file-name", fileName);
-            fileLocation = getString(child, "file-location", fileLocation);
-            scope = getEnum(child, "scope", scope);
-            destination = getEnum(child, "destination", destination);
-            format = getEnum(child, "format", format);
-            charset = Charset.forName(getString(element, "charset", charset.name()));
-        }
+        if (child == null) return;
+
+        createHeader = getBoolean(child, "create-header", createHeader);
+        friendlyHeaders = getBoolean(child, "friendly-headers", friendlyHeaders);
+        quoteValuesContainingSeparator = getBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
+        quoteAllValues = getBoolean(child, "quote-all-values", quoteAllValues);
+        beginQuote = getString(child, "begin-quote", beginQuote);
+        endQuote = getString(child, "end-quote", endQuote);
+        valueSeparator = getString(child, "value-separator", valueSeparator);
+        fileName = getString(child, "file-name", fileName);
+        fileLocation = getString(child, "file-location", fileLocation);
+        scope = getEnum(child, "scope", scope);
+        destination = getEnum(child, "destination", destination);
+        format = getEnum(child, "format", format);
+        charset = Charset.forName(getString(element, "charset", charset.name()));
     }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Getter
@@ -174,10 +175,9 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
         }
 
         for (ObjectTypeFilterSetting objectTypeEntry : getSettings()) {
-            Element child = new Element("object-type");
+            Element child = newElement(element, "object-type");
             child.setAttribute("name", objectTypeEntry.getObjectType().name());
             child.setAttribute("enabled", Boolean.toString(objectTypeEntry.isSelected()));
-            element.addContent(child);
         }
     }
 }

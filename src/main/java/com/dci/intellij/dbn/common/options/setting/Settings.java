@@ -186,33 +186,28 @@ public final class Settings {
 
 
     public static void setInteger(Element parent, String childName, int value) {
-        Element element = new Element(childName);
+        Element element = newElement(parent, childName);
         element.setAttribute("value", Integer.toString(value));
-        parent.addContent(element);
     }
 
     public static void setString(Element parent, String childName, String value) {
-        Element element = new Element(childName);
+        Element element = newElement(parent, childName);
         element.setAttribute("value", value == null ? "" : value);
-        parent.addContent(element);
     }
 
     public static void setDouble(Element parent, String childName, double value) {
-        Element element = new Element(childName);
+        Element element = newElement(parent, childName);
         element.setAttribute("value", Double.toString(value));
-        parent.addContent(element);
     }
 
     public static void setBoolean(Element parent, String childName, boolean value) {
-        Element element = new Element(childName);
+        Element element = newElement(parent, childName);
         element.setAttribute("value", Boolean.toString(value));
-        parent.addContent(element);
     }
 
     public static  <T extends Enum<T>> void setEnum(Element parent, String childName, T value) {
-        Element element = new Element(childName);
+        Element element = newElement(parent, childName);
         element.setAttribute("value",value == null ? "" : value.name());
-        parent.addContent(element);
     }
 
     public static void setBooleanAttribute(Element element, String attributeName, boolean value) {
@@ -235,7 +230,7 @@ public final class Settings {
         element.setAttribute(attributeName, value.name());
     }
 
-    public static Element createChildElement(Element parent, String childName) {
+    public static Element newElement(Element parent, String childName) {
         Element child = new Element(childName);
         parent.addContent(child);
         return child;

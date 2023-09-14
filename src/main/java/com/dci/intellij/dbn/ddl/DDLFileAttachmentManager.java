@@ -60,6 +60,7 @@ import java.util.*;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
@@ -506,10 +507,9 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
             String fileUrl = entry.getKey();
             val objectRef = entry.getValue();
 
-            Element childElement = new Element("mapping");
+            Element childElement = newElement(element, "mapping");
             childElement.setAttribute("file-url", fileUrl);
             objectRef.writeState(childElement);
-            element.addContent(childElement);
         }
 
         return element;
