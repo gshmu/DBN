@@ -48,20 +48,18 @@ public class StatementExecutionVariableTypes implements PersistentStateElement {
 
     @Override
     public void writeState(Element element) {
-        Element root = new Element("execution-variable-types");
-        element.addContent(root);
+        Element root = newElement(element, "execution-variable-types");
         for (val entry : variableTypes.entrySet()) {
             ConnectionId connectionId = entry.getKey();
             Map<String, GenericDataType> parameters = entry.getValue();
             for (val paramEntry : parameters.entrySet()) {
-                Element child = new Element("variable");
+                Element child = newElement(root, "variable");
                 String parameterName = paramEntry.getKey();
                 GenericDataType parameterType = paramEntry.getValue();
 
                 setStringAttribute(child, "connection-id", connectionId.id());
                 setStringAttribute(child, "name", parameterName);
                 setEnumAttribute(child, "data-type", parameterType);
-                root.addContent(child);
             }
         }
     }

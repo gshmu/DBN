@@ -17,6 +17,8 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -96,8 +98,7 @@ public class ObjectQuickFilter<T extends DBObject> implements Filter<T>, Cloneab
     public void writeState(Element element) {
         element.setAttribute("join-type", joinType.name());
         for (ObjectQuickFilterCondition condition : conditions) {
-            Element conditionElement = new Element("condition");
-            element.addContent(conditionElement);
+            Element conditionElement = newElement(element, "condition");
             condition.writeState(conditionElement);
         }
 

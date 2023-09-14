@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -131,9 +133,8 @@ public class ConnectionBundleSettings extends BasicProjectConfiguration<ProjectS
     @Override
     public void writeConfiguration(Element element) {
         for (ConnectionSettings connectionSetting : connections) {
-            Element connectionElement = new Element("connection");
+            Element connectionElement = newElement(element, "connection");
             connectionSetting.writeConfiguration(connectionElement);
-            element.addContent(connectionElement);
         }
     }
 

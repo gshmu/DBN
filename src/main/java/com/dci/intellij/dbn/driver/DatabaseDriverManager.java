@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
-import static com.dci.intellij.dbn.common.options.setting.Settings.createChildElement;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.driver.DatabaseDriverManager.COMPONENT_NAME;
 
@@ -132,13 +132,13 @@ public class DatabaseDriverManager extends ApplicationComponentBase implements P
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        Element driverClassesElement = createChildElement(element, "known-driver-classes");
+        Element driverClassesElement = newElement(element, "known-driver-classes");
         for (val entry : driverMetadata.entrySet()) {
             File file = entry.getKey();
             if (!file.exists()) continue;
 
             DriverBundleMetadata metadata = entry.getValue();
-            Element libraryElement = createChildElement(driverClassesElement, "library");
+            Element libraryElement = newElement(driverClassesElement, "library");
             metadata.writeState(libraryElement);
         }
         return element;

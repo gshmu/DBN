@@ -46,6 +46,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
@@ -318,10 +319,8 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        Element browserSettingsElement = new Element("method-browser");
-        element.addContent(browserSettingsElement);
+        Element browserSettingsElement = newElement(element, "method-browser");
         browserSettings.writeConfiguration(browserSettingsElement);
-
 
         executionHistory.writeState(element);
         argumentValuesHistory.writeState(element);

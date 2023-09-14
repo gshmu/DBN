@@ -11,6 +11,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -125,14 +127,12 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
 
     @Override
     public void writeConfiguration(Element element) {
-        Element uncommittedChangesElement = new Element("uncommitted-changes");
-        element.addContent(uncommittedChangesElement);
+        Element uncommittedChangesElement = newElement(element, "uncommitted-changes");
         closeProject.writeConfiguration(uncommittedChangesElement);
         disconnect.writeConfiguration(uncommittedChangesElement);
         toggleAutoCommit.writeConfiguration(uncommittedChangesElement);
 
-        Element multipleUncommittedChangesElement = new Element("multiple-uncommitted-changes");
-        element.addContent(multipleUncommittedChangesElement);
+        Element multipleUncommittedChangesElement = newElement(element, "multiple-uncommitted-changes");
         commitMultipleChanges.writeConfiguration(multipleUncommittedChangesElement);
         rollbackMultipleChanges.writeConfiguration(multipleUncommittedChangesElement);
 

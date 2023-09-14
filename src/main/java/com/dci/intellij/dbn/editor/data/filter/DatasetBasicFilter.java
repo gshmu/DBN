@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 
 @Getter
 @Setter
@@ -146,8 +147,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
         element.setAttribute("type", "basic");
         element.setAttribute("join-type", joinType.name());
         for (DatasetBasicFilterCondition condition: conditions) {
-            Element conditionElement = new Element("condition");
-            element.addContent(conditionElement);
+            Element conditionElement = newElement(element, "condition");
             condition.writeConfiguration(conditionElement);
         }
     }

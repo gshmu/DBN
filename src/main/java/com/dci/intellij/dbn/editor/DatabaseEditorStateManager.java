@@ -161,16 +161,14 @@ public class DatabaseEditorStateManager extends ProjectComponentBase implements 
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        Element editorProvidersElement = new Element("last-used-providers");
-        element.addContent(editorProvidersElement);
+        Element editorProvidersElement = newElement(element, "last-used-providers");
         for (val entry : lastUsedEditorProviders.entrySet()) {
             DBObjectType objectType = entry.getKey();
             EditorProviderId editorProviderId = entry.getValue();
 
-            Element objectTypeElement = new Element("object-type");
+            Element objectTypeElement = newElement(editorProvidersElement, "object-type");
             setEnumAttribute(objectTypeElement, "object-type", objectType);
             setEnumAttribute(objectTypeElement, "editor-provider", editorProviderId);
-            editorProvidersElement.addContent(objectTypeElement);
 
         }
         return element;

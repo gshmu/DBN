@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -164,17 +166,14 @@ public class CodeCompletionFilterSettings
     public void writeConfiguration(Element element) {
         rootFilterOptions.writeConfiguration(element);
 
-        Element userSchemaElement = new Element("user-schema");
+        Element userSchemaElement = newElement(element,"user-schema");
         userSchemaOptions.writeConfiguration(userSchemaElement);
-        element.addContent(userSchemaElement);
 
-        Element publicSchemaElement = new Element("public-schema");
+        Element publicSchemaElement = newElement(element,"public-schema");
         publicSchemaOptions.writeConfiguration(publicSchemaElement);
-        element.addContent(publicSchemaElement);
 
-        Element anySchemaElement = new Element("any-schema");
+        Element anySchemaElement = newElement(element,"any-schema");
         anySchemaOptions.writeConfiguration(anySchemaElement);
-        element.addContent(anySchemaElement);
     }
 
     /*********************************************************

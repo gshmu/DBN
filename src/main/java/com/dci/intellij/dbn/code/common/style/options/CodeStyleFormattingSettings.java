@@ -85,9 +85,8 @@ public abstract class CodeStyleFormattingSettings extends BasicConfiguration<DBL
     public void writeConfiguration(Element element) {
         setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleFormattingOption option : options.values()) {
-            Element optionElement = new Element("option");
+            Element optionElement = newElement(element,"option");
             option.writeConfiguration(optionElement);
-            element.addContent(optionElement);
         }
     }
 }

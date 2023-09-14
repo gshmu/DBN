@@ -14,6 +14,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -59,9 +61,8 @@ public class ScriptExecutionSettings extends BasicProjectConfiguration<Execution
 
     @Override
     public void writeConfiguration(Element element) {
-        Element executorsElement = new Element("command-line-interfaces");
+        Element executorsElement = newElement(element, "command-line-interfaces");
         commandLineInterfaces.writeConfiguration(executorsElement);
-        element.addContent(executorsElement);
         Settings.setInteger(element, "execution-timeout", executionTimeout);
     }
 }

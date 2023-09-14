@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.integerAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @Getter
 @Setter
@@ -118,11 +117,10 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
             String columnName = sortingInstruction.getColumnName();
             SortDirection sortDirection = sortingInstruction.getDirection();
             if (columnName != null && !sortDirection.isIndefinite()) {
-                Element columnElement = new Element("column");
+                Element columnElement = newElement(element, "column");
                 columnElement.setAttribute("name", columnName);
                 columnElement.setAttribute("index", Integer.toString(sortingInstruction.getIndex()));
                 columnElement.setAttribute("direction", sortDirection.name());
-                element.addContent(columnElement);
             }
         }
     }

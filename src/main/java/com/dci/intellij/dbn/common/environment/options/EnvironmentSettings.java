@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -68,16 +70,13 @@ public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjec
 
     @Override
     public void writeConfiguration(Element element) {
-        Element environmentTypesElement = new Element("environment-types");
-        element.addContent(environmentTypesElement);
+        Element environmentTypesElement = newElement(element, "environment-types");
         for (EnvironmentType environmentType : environmentTypes) {
-            Element itemElement = new Element("environment-type");
+            Element itemElement = newElement(environmentTypesElement, "environment-type");
             environmentType.writeConfiguration(itemElement);
-            environmentTypesElement.addContent(itemElement);
         }
 
-        Element visibilitySettingsElement = new Element("visibility-settings");
-        element.addContent(visibilitySettingsElement);
+        Element visibilitySettingsElement = newElement(element, "visibility-settings");
         visibilitySettings.writeConfiguration(visibilitySettingsElement);
     }
 }

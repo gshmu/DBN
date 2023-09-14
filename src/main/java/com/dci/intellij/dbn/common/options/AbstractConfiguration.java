@@ -9,6 +9,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 
 @Slf4j
 public abstract class AbstractConfiguration<P extends Configuration, E extends ConfigurationEditorForm> implements Configuration<P, E> {
@@ -18,11 +19,10 @@ public abstract class AbstractConfiguration<P extends Configuration, E extends C
      ****************************************************************/
     protected void writeConfiguration(Element element, Configuration configuration) {
         String elementName = configuration.getConfigElementName();
-        if (elementName != null) {
-            Element childElement = new Element(elementName);
-            element.addContent(childElement);
-            configuration.writeConfiguration(childElement);
-        }
+        if (elementName == null) return;
+
+        Element childElement = newElement(element, elementName);
+        configuration.writeConfiguration(childElement);
     }
 
 

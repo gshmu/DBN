@@ -380,15 +380,13 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
     public Element getComponentState() {
         Element element = new Element("state");
         setBooleanAttribute(element, "clear-outputs", clearOutputOption);
-        Element interfacesElement = new Element("recently-used-interfaces");
-        element.addContent(interfacesElement);
+        Element interfacesElement = newElement(element, "recently-used-interfaces");
         for (val entry : recentlyUsedInterfaces.entrySet()) {
             DatabaseType databaseType = entry.getKey();
             String interfaceId = entry.getValue();
-            Element interfaceElement = new Element("mapping");
+            Element interfaceElement = newElement(interfacesElement, "mapping");
             interfaceElement.setAttribute("database-type", databaseType.name());
             interfaceElement.setAttribute("interface-id", interfaceId);
-            interfacesElement.addContent(interfaceElement);
         }
         return element;
     }

@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Getter
@@ -110,10 +111,9 @@ public class DatabaseBrowserSortingSettings
     @Override
     public void writeConfiguration(Element element) {
         for (DBObjectComparator comparator : comparators.values()) {
-            Element child = new Element("object-type");
+            Element child = newElement(element, "object-type");
             child.setAttribute("name", comparator.getObjectType().getName().toUpperCase());
             child.setAttribute("sorting-type", comparator.getSortingType().name());
-            element.addContent(child);
         }
     }
 }

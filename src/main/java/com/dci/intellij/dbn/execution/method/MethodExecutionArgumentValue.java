@@ -13,6 +13,7 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Data
@@ -69,8 +70,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement, Clo
     public void writeState(Element element) {
         element.setAttribute("name", name);
         for (String value : valueHistory) {
-            Element valueElement = new Element("value");
-            element.addContent(valueElement);
+            Element valueElement = newElement(element, "value");
 
             CDATA cdata = new CDATA(value);
             valueElement.setContent(cdata);

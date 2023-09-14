@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.execution.statement.variables.VariableNames.adjust;
 
 public class StatementExecutionVariables implements PersistentStateElement {
@@ -91,20 +92,17 @@ public class StatementExecutionVariables implements PersistentStateElement {
 
     @Override
     public void writeState(Element element) {
-        Element variablesElement = new Element("execution-variables");
-        element.addContent(variablesElement);
+        Element variablesElement = newElement(element, "execution-variables");
 
         for (val entry : variables.entrySet()) {
             String fileUrl = entry.getKey();
             if (Files.isValidFileUrl(fileUrl, getProject())) {
-                Element fileElement = new Element("file");
+                Element fileElement = newElement(variablesElement, "file");
                 fileElement.setAttribute("file-url", fileUrl);
                 for (StatementExecutionVariable executionVariable : entry.getValue()) {
-                    Element variableElement = new Element("variable");
+                    Element variableElement = newElement(fileElement, "variable");
                     executionVariable.writeState(variableElement);
-                    fileElement.addContent(variableElement);
                 }
-                variablesElement.addContent(fileElement);
             }
         }
     }

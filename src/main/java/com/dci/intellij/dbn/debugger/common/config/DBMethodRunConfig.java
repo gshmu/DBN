@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> implements Cloneable<DBMethodRunConfig> {
     private Map<DBObjectRef<DBMethod>, MethodExecutionInput> methodSelectionHistory = new HashMap<>();
 
@@ -102,17 +104,14 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
         super.writeExternal(element);
         MethodExecutionInput executionInput = getExecutionInput();
         if (executionInput != null && getCategory() == DBRunConfigCategory.CUSTOM) {
-            Element methodIdentifierElement = new Element("method-identifier");
+            Element methodIdentifierElement = newElement(element, "method-identifier");
             executionInput.getMethodRef().writeState(methodIdentifierElement);
-            element.addContent(methodIdentifierElement);
 
-            Element methodIdentifierHistoryElement = new Element("method-identifier-history");
+            Element methodIdentifierHistoryElement = newElement(element, "method-identifier-history");
             for (MethodExecutionInput histExecutionInput : methodSelectionHistory.values()) {
-                methodIdentifierElement = new Element("method-identifier");
+                methodIdentifierElement = newElement(methodIdentifierHistoryElement, "method-identifier");
                 histExecutionInput.getMethodRef().writeState(methodIdentifierElement);
-                methodIdentifierHistoryElement.addContent(methodIdentifierElement);
             }
-            element.addContent(methodIdentifierHistoryElement);
         }
     }
 

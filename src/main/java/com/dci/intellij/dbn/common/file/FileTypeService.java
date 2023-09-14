@@ -25,6 +25,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
 import static com.dci.intellij.dbn.common.file.FileTypeService.COMPONENT_NAME;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Slf4j
@@ -134,18 +135,16 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
 
     @Override
     public Element getComponentState() {
-        Element stateElement = new Element("state");
-        Element mappingsElement = new Element("original-file-types");
-        stateElement.addContent(mappingsElement);
+        Element element = new Element("state");
+        Element mappingsElement = newElement(element, "original-file-types");
 
         for (String fileExtension : originalFileAssociations.keySet()) {
             String fileType = originalFileAssociations.get(fileExtension);
-            Element mappingElement = new Element("mapping");
+            Element mappingElement = newElement(mappingsElement, "mapping");
             mappingElement.setAttribute("file-extension", fileExtension);
             mappingElement.setAttribute("file-type", fileType);
-            mappingsElement.addContent(mappingElement);
         }
-        return stateElement;
+        return element;
     }
 
     @Override

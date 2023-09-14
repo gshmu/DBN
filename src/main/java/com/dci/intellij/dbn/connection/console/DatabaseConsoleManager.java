@@ -170,15 +170,13 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         List<ConnectionHandler> connections = connectionManager.getConnectionBundle().getAllConnections();
         for (ConnectionHandler connection : connections) {
-            Element connectionElement = new Element("connection");
-            element.addContent(connectionElement);
+            Element connectionElement = newElement(element, "connection");
             connectionElement.setAttribute("id", connection.getConnectionId().id());
 
             List<DBConsole> consoles = connection.getConsoleBundle().getConsoles();
             for (DBConsole console : consoles) {
                 DBConsoleVirtualFile virtualFile = console.getVirtualFile();
-                Element consoleElement = new Element("console");
-                connectionElement.addContent(consoleElement);
+                Element consoleElement = newElement(connectionElement, "console");
 
                 DatabaseSession databaseSession = Commons.nvl(
                         virtualFile.getSession(),

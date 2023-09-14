@@ -83,8 +83,7 @@ public class DeveloperMode implements PersistentStateElement {
 
     @Override
     public void writeState(Element element) {
-        Element developerMode = new Element("developer-mode");
-        element.addContent(developerMode);
+        Element developerMode = newElement(element, "developer-mode");
         setInteger(developerMode, "timeout", timeout);
         setBoolean(developerMode, "enabled", enabled);
     }

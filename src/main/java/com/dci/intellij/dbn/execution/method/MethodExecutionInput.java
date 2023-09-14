@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Commons.coalesce;
 
@@ -239,13 +240,10 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         method.writeState(element);
         element.setAttribute("execution-schema", getTargetSchemaId() == null ? "" : getTargetSchemaId().id());
 
-        Element argumentValuesElement = new Element("argument-values");
-        element.addContent(argumentValuesElement);
-
+        Element argumentValuesElement = newElement(element, "argument-values");
         for (MethodExecutionArgumentValue executionVariable : argumentValueHistory.values()) {
-            Element argumentElement = new Element("argument");
+            Element argumentElement = newElement(argumentValuesElement, "argument");
             executionVariable.writeState(argumentElement);
-            argumentValuesElement.addContent(argumentElement);
         }
     }
 

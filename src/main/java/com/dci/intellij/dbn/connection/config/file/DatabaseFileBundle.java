@@ -12,8 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.setStringAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.common.util.Lists.filter;
 
 @Getter
@@ -122,10 +121,9 @@ public class DatabaseFileBundle implements PersistentConfiguration, Cloneable<Da
             String path = file.getPath();
             String schema = file.getSchema();
             if (Strings.isNotEmpty(path) || Strings.isNotEmpty(schema)) {
-                Element child = new Element("file");
+                Element child = newElement(element, "file");
                 setStringAttribute(child, "path", path);
                 setStringAttribute(child, "schema", schema);
-                element.addContent(child);
             }
         }
     }

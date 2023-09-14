@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
-import static com.dci.intellij.dbn.common.options.setting.Settings.getEnum;
-import static com.dci.intellij.dbn.common.options.setting.Settings.setEnum;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.connection.config.tns.TnsImportService.COMPONENT_NAME;
 
 @Getter
@@ -57,18 +56,18 @@ public class TnsImportService extends ApplicationComponentBase implements Persis
 
     @Override
     public Element getComponentState() {
-        Element stateElement = new Element("state");
-        Element optionsElement = new Element("tns-import-options");
-        stateElement.addContent(optionsElement);
+        Element element = new Element("state");
+        Element optionsElement = newElement(element, "tns-import-options");
 
         setEnum(optionsElement, "import-type", importType);
-        return stateElement;
+        return element;
     }
 
     @Override
-    public void loadComponentState(@NotNull Element stateElement) {
-        Element optionsElement = stateElement.getChild("tns-import-options");
+    public void loadComponentState(@NotNull Element element) {
+        Element optionsElement = element.getChild("tns-import-options");
         if (optionsElement == null) return;
+
         importType = getEnum(optionsElement, "import-type", importType);
     }
 }

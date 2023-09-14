@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 
 @State(
     name = DatasetFilterManager.COMPONENT_NAME,
@@ -179,9 +180,8 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
             val filterLists = entry.getValue();
             for (val groupEntry : filterLists.entrySet()) {
                 DatasetFilterGroup filterGroup = groupEntry.getValue();
-                Element filterListElement = new Element("filter-actions");
+                Element filterListElement = newElement(element, "filter-actions");
                 filterGroup.writeConfiguration(filterListElement);
-                element.addContent(filterListElement);
             }
         }
         return element;

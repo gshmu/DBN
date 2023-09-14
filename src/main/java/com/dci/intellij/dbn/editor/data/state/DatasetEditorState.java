@@ -53,29 +53,25 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
     }
 
     @Override
-    public void writeState(Element targetElement) {
-        targetElement.setAttribute("row-count", Integer.toString(getRowCount()));
-        targetElement.setAttribute("readonly", Boolean.toString(isReadonly()));
+    public void writeState(Element element) {
+        element.setAttribute("row-count", Integer.toString(getRowCount()));
+        element.setAttribute("readonly", Boolean.toString(isReadonly()));
 
-        Element columnsElement = new Element("columns");
-        targetElement.addContent(columnsElement);
+        Element columnsElement = newElement(element, "columns");
         columnSetup.writeState(columnsElement);
 
-        Element sortingElement = new Element("sorting");
-        targetElement.addContent(sortingElement);
+        Element sortingElement = newElement(element, "sorting");
         sortingState.writeState(sortingElement);
 
-        Element contentTypesElement = new Element("content-types");
-        targetElement.addContent(contentTypesElement);
-        if (contentTypesMap != null && contentTypesMap.size() > 0) {
+        Element contentTypesElement = newElement(element, "content-types");
+        if (contentTypesMap != null && !contentTypesMap.isEmpty()) {
             for (val entry : contentTypesMap.entrySet()) {
                 String columnName = entry.getKey();
                 String contentTypeName = entry.getValue();
 
-                Element contentTypeElement = new Element("content-type");
+                Element contentTypeElement = newElement(contentTypesElement, "content-type");
                 contentTypeElement.setAttribute("column-name", columnName);
                 contentTypeElement.setAttribute("type-name", contentTypeName);
-                contentTypesElement.addContent(contentTypeElement);
             }
         }
     }
