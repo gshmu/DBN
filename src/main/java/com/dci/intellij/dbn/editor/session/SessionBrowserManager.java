@@ -26,7 +26,6 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
@@ -304,23 +303,14 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
             Project project = getProject();
             if (isNotValid(project)) return;
 
-            List<SessionBrowser> sessionBrowsers = new ArrayList<>();
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            FileEditor[] editors = fileEditorManager.getAllEditors();
-            for (FileEditor editor : editors) {
-                if (editor instanceof SessionBrowser) {
-                    SessionBrowser sessionBrowser = (SessionBrowser) editor;
-                    sessionBrowsers.add(sessionBrowser);
-                }
-            }
+            List<SessionBrowser> sessionBrowsers = Editors.getFileEditors(project, SessionBrowser.class);
+            if (sessionBrowsers.isEmpty()) return;
 
-            if (!sessionBrowsers.isEmpty()) {
-                Dispatch.run(() -> {
-                    for (SessionBrowser sessionBrowser : sessionBrowsers) {
-                        sessionBrowser.refreshLoadTimestamp();
-                    }
-                });
-            }
+            Dispatch.run(() -> {
+                for (SessionBrowser sessionBrowser : sessionBrowsers) {
+                    sessionBrowser.refreshLoadTimestamp();
+                }
+            });
         }
     }
 
