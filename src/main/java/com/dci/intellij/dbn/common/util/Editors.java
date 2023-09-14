@@ -56,6 +56,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
@@ -234,14 +235,7 @@ public class Editors {
         Project project = editor.getProject();
         if (project == null) return null;
 
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        FileEditor[] allEditors = fileEditorManager.getAllEditors();
-        for (FileEditor fileEditor : allEditors) {
-            if (editor == getEditor(fileEditor)) {
-                return fileEditor;
-            }
-        }
-        return null;
+        return getFileEditor(project, e -> editor == getEditor(e));
     }
 
     public static void initEditorHighlighter(
@@ -311,7 +305,7 @@ public class Editors {
 
         if (contentFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
-            for (SourceCodeEditor sourceCodeEditor: getEditors(project, SourceCodeEditor.class)) {
+            for (SourceCodeEditor sourceCodeEditor: getFileEditors(project, SourceCodeEditor.class)) {
                 DBSourceCodeVirtualFile virtualFile = sourceCodeEditor.getVirtualFile();
                 if (virtualFile.equals(sourceCodeFile)) {
                     setEditorReadonly(sourceCodeEditor.getEditor(), readonly);
@@ -320,7 +314,7 @@ public class Editors {
         } else if (contentFile instanceof DBDatasetVirtualFile) {
             DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) contentFile;
             DBEditableObjectVirtualFile objectFile = datasetFile.getMainDatabaseFile();
-            for (DatasetEditor datasetEditor : getEditors(project, DatasetEditor.class)) {
+            for (DatasetEditor datasetEditor : getFileEditors(project, DatasetEditor.class)) {
                 if (Objects.equals(datasetEditor.getDatabaseFile(), objectFile)) {
                     datasetEditor.getEditorTable().cancelEditing();
                     datasetEditor.setEnvironmentReadonly(readonly);
@@ -329,14 +323,30 @@ public class Editors {
         }
     }
 
-    public static <T extends FileEditor> List<T> getEditors(Project project, Class<T> type) {
+    public static <T extends FileEditor> List<T> getFileEditors(Project project, Class<T> type) {
+        return getFileEditors(project, e -> type.isAssignableFrom(e.getClass()));
+    }
+
+    public static <T extends FileEditor> List<T> getFileEditors(Project project, Predicate<FileEditor> filter) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         FileEditor[] allEditors = Read.call(fileEditorManager, m -> m.getAllEditors());
         return Arrays
                 .stream(allEditors)
-                .filter(e -> type.isAssignableFrom(e.getClass()))
+                .filter(filter)
                 .map(e -> (T) e)
                 .collect(Collectors.toList());
+    }
+
+    @Nullable
+    public static <T extends FileEditor> T getFileEditor(Project project, Predicate<FileEditor> filter) {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        FileEditor[] allEditors = Read.call(fileEditorManager, m -> m.getAllEditors());
+        return Arrays
+                .stream(allEditors)
+                .filter(filter)
+                .map(e -> (T) e)
+                .findFirst()
+                .orElse(null);
     }
 
     @Nullable
