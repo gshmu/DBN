@@ -85,8 +85,7 @@ public final class Diagnostics {
         }
 
         public void writeState(Element element) {
-            Element databaseLag = new Element("database-lag");
-            element.addContent(databaseLag);
+            Element databaseLag = newElement(element, "database-lag");
             setBooleanAttribute(databaseLag, "enabled", enabled);
             setIntegerAttribute(databaseLag, "connectivity", connectivity);
             setIntegerAttribute(databaseLag, "querying", querying);
@@ -117,8 +116,7 @@ public final class Diagnostics {
 
         @Override
         public void writeState(Element element) {
-            Element debugMode = new Element("debug-logging");
-            element.addContent(debugMode);
+            Element debugMode = newElement(element, "debug-logging");
             setBooleanAttribute(debugMode, "failsafe-errors", failsafeErrors);
             setBooleanAttribute(debugMode, "database-access", databaseAccess);
             setBooleanAttribute(debugMode, "database-resource", databaseResource);
@@ -153,8 +151,7 @@ public final class Diagnostics {
 
         @Override
         public void writeState(Element element) {
-            Element miscellaneous = new Element("miscellaneous");
-            element.addContent(miscellaneous);
+            Element miscellaneous = newElement(element, "miscellaneous");
             setBooleanAttribute(miscellaneous, "dialog-sizing-reset", dialogSizingReset);
             setBooleanAttribute(miscellaneous, "bulk-actions-enabled", bulkActionsEnabled);
             setBooleanAttribute(miscellaneous, "background-disposer-disabled", backgroundDisposerDisabled);

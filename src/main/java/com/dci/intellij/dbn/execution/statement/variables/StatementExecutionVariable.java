@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.enumAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.execution.statement.variables.VariableNames.adjust;
 
 @Getter
@@ -95,9 +94,8 @@ public class StatementExecutionVariable extends VariableValueProvider implements
         for (String value : valueHistory) {
             if (Strings.isEmpty(value)) continue;
 
-            Element valueElement = new Element("value");
-            element.addContent(valueElement);
-            element.addContent(value);
+            Element valueElement = newElement(element, "value");
+            valueElement.addContent(value);
         }
     }
 

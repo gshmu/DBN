@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -55,9 +57,8 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
     @Override
     public void writeConfiguration(Element element){
         for (CodeCompletionFilterOption option : options) {
-            Element child = new Element("filter-element");
+            Element child = newElement(element, "filter-element");
             option.writeConfiguration(child);
-            element.addContent(child);
         }
     }
 

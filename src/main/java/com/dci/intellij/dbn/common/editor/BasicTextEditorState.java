@@ -17,8 +17,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
-import static com.dci.intellij.dbn.common.options.setting.Settings.integerAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Data
@@ -66,11 +65,10 @@ public class BasicTextEditorState implements FileEditorState {
         writeFoldingState(targetElement, project);
     }
 
-    private void writeFoldingState(Element targetElement, Project project) {
+    private void writeFoldingState(Element element, Project project) {
         if (foldingState == null) return;
 
-        Element foldingElement = new Element("folding");
-        targetElement.addContent(foldingElement);
+        Element foldingElement = newElement(element, "folding");
         try {
             CodeFoldingManager foldingManager = CodeFoldingManager.getInstance(project);
             foldingManager.writeFoldingState(foldingState, foldingElement);

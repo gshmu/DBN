@@ -342,8 +342,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             setString(element, "tns-profile", nvl(databaseInfo.getTnsProfile()));
             DatabaseFileBundle fileBundle = databaseInfo.getFileBundle();
             if (fileBundle != null) {
-                Element filesElement = new Element("files");
-                element.addContent(filesElement);
+                Element filesElement = newElement(element, "files");
                 fileBundle.writeConfiguration(filesElement);
             }
 

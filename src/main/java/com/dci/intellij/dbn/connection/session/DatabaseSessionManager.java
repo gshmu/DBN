@@ -23,8 +23,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
-import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 @State(
     name = DatabaseSessionManager.COMPONENT_NAME,
@@ -121,15 +120,13 @@ public class DatabaseSessionManager extends ProjectComponentBase implements Pers
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         List<ConnectionHandler> connections = connectionManager.getConnectionBundle().getAllConnections();
         for (ConnectionHandler connection : connections) {
-            Element connectionElement = new Element("connection");
-            element.addContent(connectionElement);
+            Element connectionElement = newElement(element, "connection");
             connectionElement.setAttribute("id", connection.getConnectionId().id());
 
             List<DatabaseSession> sessions = connection.getSessionBundle().getSessions();
             for (DatabaseSession session : sessions) {
                 if (session.isCustom()) {
-                    Element sessionElement = new Element("session");
-                    connectionElement.addContent(sessionElement);
+                    Element sessionElement = newElement(connectionElement, "session");
                     sessionElement.setAttribute("name", session.getName());
                     sessionElement.setAttribute("id", session.getId().id());
                 }

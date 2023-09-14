@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
-import com.dci.intellij.dbn.project.ProjectWorkspaceInitializer;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -168,14 +167,6 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
     public void loadComponentState(@NotNull Element element) {
         projectSettings.readConfiguration(element);
         getProject().putUserData(UserDataKeys.PROJECT_SETTINGS_LOADED, true);
-    }
-
-    @Override
-    public void initializeComponent() {
-        Project project = getProject();
-
-        ProjectSettingsProvider.init(project);
-        ProjectWorkspaceInitializer.init(project);
     }
 
     public void exportToDefaultSettings() {

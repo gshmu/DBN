@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 
 @Getter
 @Setter
@@ -63,9 +65,8 @@ public class CmdLineInterfaceBundle implements Cloneable<CmdLineInterfaceBundle>
     @Override
     public void writeConfiguration(Element element) {
         for (CmdLineInterface cmdLineInterface : interfaces) {
-            Element child = new Element("value");
+            Element child = newElement(element, "value");
             cmdLineInterface.writeConfiguration(child);
-            element.addContent(child);
         }
 
     }

@@ -94,9 +94,8 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<DBLCodeSt
     public void writeConfiguration(Element element) {
         setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleCaseOption option : options.values()) {
-            Element optionElement = new Element("option");
+            Element optionElement = newElement(element,"option");
             option.writeConfiguration(optionElement);
-            element.addContent(optionElement);
         }
     }
 }

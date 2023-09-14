@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
@@ -224,12 +225,10 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
     @Override
     public Element getComponentState() {
         Element element = new Element("state");
-        Element historyElement = new Element("diagnostics-history");
-        element.addContent(historyElement);
+        Element historyElement = newElement(element, "diagnostics-history");
         for (ParserDiagnosticsResult capturedResult : resultHistory) {
             if (!capturedResult.isDraft()) {
-                Element resultElement = new Element("result");
-                historyElement.addContent(resultElement);
+                Element resultElement = newElement(historyElement, "result");
                 capturedResult.writeState(resultElement);
             }
         }

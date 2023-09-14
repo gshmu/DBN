@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Getter
@@ -99,10 +100,9 @@ public class DatabaseBrowserEditorSettings extends BasicProjectConfiguration<Dat
     @Override
     public void writeConfiguration(Element element) {
         for (DefaultEditorOption option : options) {
-            Element child = new Element("object-type");
+            Element child = newElement(element, "object-type");
             child.setAttribute("name", option.getObjectType().getName().toUpperCase());
             child.setAttribute("editor-type", option.getEditorType().name());
-            element.addContent(child);
         }
     }
 }

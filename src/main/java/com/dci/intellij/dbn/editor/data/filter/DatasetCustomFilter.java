@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
@@ -86,14 +88,13 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("type", "custom");
-        Element conditionElement = new Element("condition");
-        element.addContent(conditionElement);
-        if (this.condition != null) {
-            String condition = StringUtil.replace(this.condition, "\n", "<br>");
-            condition = StringUtil.replace(condition, "  ", "<sp>");
-            CDATA cdata = new CDATA(condition);
-            conditionElement.setContent(cdata);
-        }
+        Element conditionElement = newElement(element, "condition");
+        if (this.condition == null) return;
+
+        String condition = StringUtil.replace(this.condition, "\n", "<br>");
+        condition = StringUtil.replace(condition, "  ", "<sp>");
+        CDATA cdata = new CDATA(condition);
+        conditionElement.setContent(cdata);
     }
 
 }

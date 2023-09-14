@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.dci.intellij.dbn.common.options.setting.Settings.connectionIdAttribute;
-import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 
 public class MethodExecutionArgumentValueHistory implements PersistentStateElement, ConnectionConfigListener {
     private final Map<ConnectionId, Map<String, MethodExecutionArgumentValue>> argumentValues = new ConcurrentHashMap<>();
@@ -74,20 +73,17 @@ public class MethodExecutionArgumentValueHistory implements PersistentStateEleme
 
     @Override
     public void writeState(Element element) {
-        Element argumentValuesElement = new Element("argument-values-cache");
-        element.addContent(argumentValuesElement);
+        Element argumentValuesElement = newElement(element, "argument-values-cache");
 
         for (val entry : argumentValues.entrySet()) {
             ConnectionId connectionId = entry.getKey();
-            Element connectionElement = new Element("connection");
+            Element connectionElement = newElement(argumentValuesElement, "connection");
             connectionElement.setAttribute("connection-id", connectionId.id());
-            argumentValuesElement.addContent(connectionElement);
 
             for (val argumentEntry : entry.getValue().entrySet()) {
                 MethodExecutionArgumentValue argumentValue = argumentEntry.getValue();
-                if (argumentValue.getValueHistory().size() > 0) {
-                    Element argumentElement = new Element("argument");
-                    connectionElement.addContent(argumentElement);
+                if (!argumentValue.getValueHistory().isEmpty()) {
+                    Element argumentElement = newElement(connectionElement, "argument");
                     argumentValue.writeState(argumentElement);
                 }
 

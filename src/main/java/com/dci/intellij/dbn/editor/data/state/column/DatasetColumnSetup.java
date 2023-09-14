@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 
 @Getter
@@ -77,8 +78,7 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
     @Override
     public void writeState(Element element) {
         for (DatasetColumnState columnState : columnStates) {
-            Element childElement = new Element("column");
-            element.addContent(childElement);
+            Element childElement = newElement(element, "column");
             columnState.writeState(childElement);
         }
     }

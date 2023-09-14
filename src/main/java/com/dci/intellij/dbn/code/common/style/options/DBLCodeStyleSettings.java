@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jdom.Element;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
+
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public abstract class DBLCodeStyleSettings<P extends DBLCodeStyleSettings, T extends CompositeConfigurationEditorForm>
@@ -45,8 +47,7 @@ public abstract class DBLCodeStyleSettings<P extends DBLCodeStyleSettings, T ext
 
     @Override
     public void writeConfiguration(Element element) {
-         Element child = new Element(getElementName());
-         element.addContent(child);
+         Element child = newElement(element, getElementName());
          writeConfiguration(child, caseSettings);
          writeConfiguration(child, formattingSettings);
      }

@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.ui.util.Splitters.makeRegular;
 import static com.dci.intellij.dbn.common.util.Commons.nvl;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
@@ -255,9 +256,8 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         try {
             Element rootElement = new Element("connection-configurations");
             for (ConnectionSettings configuration : configurations) {
-                Element configElement = new Element("config");
+                Element configElement = newElement(rootElement, "config");
                 configuration.writeConfiguration(configElement);
-                rootElement.addContent(configElement);
             }
 
             Document document = new Document(rootElement);
