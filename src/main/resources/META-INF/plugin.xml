@@ -263,8 +263,14 @@
         <a href="http://confluence.jetbrains.net/display/CONTEST/DBN+-+Change+Notes">See full release notes</a>
      ]]></change-notes>
 
+    <application-components>
+        <component><implementation-class>com.dci.intellij.dbn.DatabaseNavigator</implementation-class></component>
+    </application-components>
+    <project-components>
+        <component><implementation-class>com.dci.intellij.dbn.project.ProjectComponentsInitializer</implementation-class></component>
+    </project-components>
+
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.dci.intellij.dbn.DatabaseNavigator"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.plugin.PluginConflictManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.common.file.FileTypeService"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.driver.DatabaseDriverManager"/>
@@ -275,7 +281,6 @@
         <applicationService serviceImplementation="com.dci.intellij.dbn.credentials.DatabaseCredentialManager"/>
 
         <!--<projectService serviceImplementation="com.dci.intellij.dbn.options.GlobalProjectSettings"/>-->
-        <projectService serviceImplementation="com.dci.intellij.dbn.project.ProjectWorkspaceInitializer"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.project.ProjectStateManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.diagnostics.DiagnosticsManager"/>
         <projectService serviceImplementation="com.dci.intellij.dbn.diagnostics.ParserDiagnosticsManager"/>
@@ -565,7 +570,7 @@
     </projectListeners>
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="DBNavigator.NotificationGroup" displayType="BALLOON" key="DBNavigator"/>
-        <!--<postStartupActivity implementation="com.dci.intellij.dbn.project.ProjectWorkspaceInitializer" order="last"/>-->
+        <!--<postStartupActivity implementation="com.dci.intellij.dbn.project.ProjectComponentsInitializer" order="last"/>-->
         <!--<applicationInitializedListener implementation="com.dci.intellij.dbn.init.DatabaseNavigatorInitializer"/>-->
         <virtualFileSystem implementationClass="com.dci.intellij.dbn.vfs.DatabaseFileSystem" key="db" physical="false"/>
 

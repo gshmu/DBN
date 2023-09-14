@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -57,7 +58,8 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
         Project project = session.getProject();
         if (virtualFile == null) {
             XDebuggerManager debuggerManager = XDebuggerManager.getInstance(project);
-            debuggerManager.getBreakpointManager().removeBreakpoint(breakpoint);
+            XBreakpointManager breakpointManager = debuggerManager.getBreakpointManager();
+            Write.run(project, () -> breakpointManager.removeBreakpoint(breakpoint));
         } else {
             try {
                 if (getBreakpointId(breakpoint) != null) {
