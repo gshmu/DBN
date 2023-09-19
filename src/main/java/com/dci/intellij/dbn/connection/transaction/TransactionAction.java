@@ -52,7 +52,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
     DISCONNECT_IDLE(
             "Idle disconnect",
             NotificationGroup.SESSION,
-            NotificationType.INFORMATION, "Disconnected from \"{0}\" - exceeded the configured idle timeout.",
+            NotificationType.INFORMATION, "Disconnected from \"{0}\" - exceeded the configured idle time",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
             (connection, target) -> connection.closeConnection(target)),
