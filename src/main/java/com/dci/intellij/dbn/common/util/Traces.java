@@ -9,14 +9,16 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 @UtilityClass
 public final class Traces {
 
-    public static boolean isCalledThrough(Class clazz) {
+    public static boolean isCalledThrough(Class ... oneOfClasses) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
             for (int i = 3; i < stackTraceElements.length; i++) {
                 StackTraceElement stackTraceElement = stackTraceElements[i];
                 String className = stackTraceElement.getClassName();
-                if (Objects.equals(clazz.getName(), className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
-                    return true;
+                for (Class clazz : oneOfClasses) {
+                    if (Objects.equals(clazz.getName(), className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
+                        return true;
+                    }
                 }
             }
         } catch (Exception e) {

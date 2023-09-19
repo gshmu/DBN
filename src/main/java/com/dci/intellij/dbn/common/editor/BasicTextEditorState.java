@@ -41,7 +41,8 @@ public class BasicTextEditorState implements FileEditorState {
         selectionEnd = integerAttribute(sourceElement, "selection-end", 0);
         verticalScrollProportion = Float.parseFloat(stringAttribute(sourceElement, "vertical-scroll-proportion"));
 
-        readFoldingState(sourceElement, project, virtualFile);
+        // TODO read/write deadlock - defer folding state update
+        //readFoldingState(sourceElement, project, virtualFile);
     }
 
     private void readFoldingState(@NotNull Element sourceElement, Project project, VirtualFile virtualFile) {
@@ -62,6 +63,7 @@ public class BasicTextEditorState implements FileEditorState {
         targetElement.setAttribute("selection-start", Integer.toString(selectionStart));
         targetElement.setAttribute("selection-end", Integer.toString(selectionEnd));
         targetElement.setAttribute("vertical-scroll-proportion", Float.toString(verticalScrollProportion));
+
         writeFoldingState(targetElement, project);
     }
 

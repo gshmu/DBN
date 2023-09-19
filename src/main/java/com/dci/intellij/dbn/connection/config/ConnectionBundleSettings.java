@@ -33,6 +33,10 @@ public class ConnectionBundleSettings extends BasicProjectConfiguration<ProjectS
         super(parent);
     }
 
+    public static void init(@NotNull Project project) {
+        getInstance(project);
+    }
+
     public static ConnectionBundleSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getConnectionSettings();
     }
@@ -44,10 +48,6 @@ public class ConnectionBundleSettings extends BasicProjectConfiguration<ProjectS
             }
         }
         return null;
-    }
-
-    public List<ConnectionSettings> getConnections() {
-        return connections;
     }
 
     @NotNull

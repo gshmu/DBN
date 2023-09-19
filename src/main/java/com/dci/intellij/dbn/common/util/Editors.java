@@ -26,6 +26,7 @@ import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.EditorKind;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -500,6 +501,7 @@ public class Editors {
     }
 
     public static boolean isMainEditor(Editor editor) {
+        if (editor.getEditorKind() != EditorKind.MAIN_EDITOR) return false;
         return getFileEditor(editor) != null;
     }
 
