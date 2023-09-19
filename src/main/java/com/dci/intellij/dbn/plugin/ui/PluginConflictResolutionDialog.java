@@ -55,12 +55,6 @@ public class PluginConflictResolutionDialog extends DBNDialog<PluginConflictReso
             return;
         }
 
-        if (true) { // TODO cleanup
-            super.doOKAction();
-            PluginConflictResolutionDialog.open();
-            return;
-        }
-
         PluginConflictManager conflictManager = PluginConflictManager.getInstance();
         conflictManager.applyConflictResolution(resolution);
         super.doOKAction();

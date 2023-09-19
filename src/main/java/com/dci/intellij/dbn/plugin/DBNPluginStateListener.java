@@ -32,7 +32,7 @@ public class DBNPluginStateListener implements PluginStateListener {
         }
 
         PluginConflictManager conflictManager = PluginConflictManager.getInstance();
-        conflictManager.setConflictResolved(false);
+        conflictManager.setConflictPrompted(false);
         conflictManager.setFileTypesClaimed(false);
     }
 }

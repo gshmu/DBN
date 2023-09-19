@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.project;
 import com.dci.intellij.dbn.common.component.EagerService;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
-import com.dci.intellij.dbn.debugger.ExecutionConfigManager;
 import com.dci.intellij.dbn.editor.DatabaseEditorStateManager;
 import com.dci.intellij.dbn.editor.DatabaseFileEditorManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -15,9 +15,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager;
 import com.dci.intellij.dbn.options.ProjectSettingsProvider;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
-import com.dci.intellij.dbn.vfs.DatabaseFileManager;
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunManagerListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.DumbAware;
@@ -41,32 +38,14 @@ public class ProjectComponentsInitializer extends ProjectComponentBase implement
     public ProjectComponentsInitializer(Project project) {
         super(project, COMPONENT_NAME);
         ProjectSettingsProvider.init(project);
+        ConnectionBundleSettings.init(project);
         ProjectEvents.subscribe(FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, componentInitializer());
-        ProjectEvents.subscribe(RunManagerListener.TOPIC, runConfigurationCleaner());
-
-        reopenDatabaseEditors();
-    }
-
-    private RunManagerListener runConfigurationCleaner() {
-        return new RunManagerListener() {
-            @Override
-            public void stateLoaded(@NotNull RunManager runManager, boolean isFirstLoadState) {
-                ExecutionConfigManager configManager = ExecutionConfigManager.getInstance(getProject());
-                configManager.removeRunConfigurations();
-            }
-        };
     }
 
     @NotNull
     public static ProjectComponentsInitializer getInstance(@NotNull Project project) {
         return projectService(project, ProjectComponentsInitializer.class);
     }
-
-    private void reopenDatabaseEditors() {
-        DatabaseFileManager fileManager = DatabaseFileManager.getInstance(getProject());
-        fileManager.reopenDatabaseEditors();
-    }
-
 
     private FileEditorManagerListener.Before componentInitializer() {
         return new FileEditorManagerListener.Before() {

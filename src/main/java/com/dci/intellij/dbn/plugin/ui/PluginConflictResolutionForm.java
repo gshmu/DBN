@@ -22,6 +22,7 @@ public class PluginConflictResolutionForm extends DBNFormBase {
     private JRadioButton disablePluginRadioButton;
     private JRadioButton continueLimitedRadioButton;
     private JRadioButton continueFeaturedRadioButton;
+    private JRadioButton decideLaterRadioButton;
     private JLabel selectOptionLabel;
     private JPanel hintPanel;
     private final Alarm selectOptionAlarm;
@@ -47,12 +48,14 @@ public class PluginConflictResolutionForm extends DBNFormBase {
                 case DISABLE_PLUGIN: dialog.renameAction("Disable DBN and restart"); break;
                 case CONTINUE_FEATURED: dialog.renameAction("Continue with full DBN support"); break;
                 case CONTINUE_LIMITED: dialog.renameAction("Continue with limited DBN support"); break;
+                case DECIDE_LATER: dialog.renameAction("Continue"); break;
                 default:
             }
         };
         disablePluginRadioButton.addActionListener(selectionListener);
         continueFeaturedRadioButton.addActionListener(selectionListener);
         continueLimitedRadioButton.addActionListener(selectionListener);
+        decideLaterRadioButton.addActionListener(selectionListener);
     }
 
 
@@ -72,6 +75,7 @@ public class PluginConflictResolutionForm extends DBNFormBase {
         if (disablePluginRadioButton.isSelected()) return PluginConflictResolution.DISABLE_PLUGIN;
         if (continueLimitedRadioButton.isSelected()) return PluginConflictResolution.CONTINUE_LIMITED;
         if (continueFeaturedRadioButton.isSelected()) return PluginConflictResolution.CONTINUE_FEATURED;
+        if (decideLaterRadioButton.isSelected()) return PluginConflictResolution.DECIDE_LATER;
         return null;
     }
 }

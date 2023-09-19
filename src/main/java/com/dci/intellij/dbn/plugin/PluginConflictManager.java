@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.common.project.Projects;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.plugin.ui.PluginConflictResolutionDialog;
@@ -16,6 +18,7 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import lombok.Getter;
@@ -24,16 +27,14 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.applicationService;
-import static com.dci.intellij.dbn.common.options.setting.Settings.getBoolean;
-import static com.dci.intellij.dbn.common.options.setting.Settings.setBoolean;
+import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.plugin.DBPluginStatus.*;
 import static com.dci.intellij.dbn.plugin.PluginConflictManager.COMPONENT_NAME;
+import static java.lang.System.arraycopy;
 
 @Getter
 @Setter
@@ -43,60 +44,70 @@ import static com.dci.intellij.dbn.plugin.PluginConflictManager.COMPONENT_NAME;
 )
 public class PluginConflictManager extends ApplicationComponentBase implements PersistentState {
     public static final String COMPONENT_NAME = "DBNavigator.Application.PluginConflictManager";
+
     private boolean fileTypesClaimed;
-    private boolean conflictResolved;
+    private boolean conflictPrompted;
+    private DBPluginStatus dbnPluginStatus = UNKNOWN;
+    private DBPluginStatus sqlPluginStatus = UNKNOWN;
 
     public PluginConflictManager() {
         super(COMPONENT_NAME);
-        Projects.projectOpened(project -> assesPluginConflict());
     }
 
     public static PluginConflictManager getInstance() {
         return applicationService(PluginConflictManager.class);
     }
 
-    public void assesPluginConflict() {
-        if (conflictResolved) return;
-        conflictResolved = true;
+    public void assesPluginConflict(Project project) {
+        if (conflictPrompted) return;
 
-        DBPluginStatus sqlPluginStatus = getSqlPluginStatus();
-        DBPluginStatus dbnPluginStatus = getDbnPluginStatus();
+        // make sure connections are loaded latest here
+        ConnectionBundleSettings.getInstance(project);
+
+        sqlPluginStatus = evaluateSqlPluginStatus();
+        dbnPluginStatus = evaluateDbnPluginStatus();
 
         if (dbnPluginStatus == ACTIVE)  {
             if (sqlPluginStatus == ACTIVE) {
-                // happy mixed user, no change required
-                conflictResolved = true;
+                showConflictResolutionDialog();
             } else {
                 // missing or passive SQL plugin - favor DBN
-                claimFileAssociations();
+                claimFileAssociations(false);
             }
         } else if (dbnPluginStatus == PASSIVE) {
             if (sqlPluginStatus == ACTIVE) {
                 // SQL plugin user - restore default file associations
                 restoreFileAssociations();
+                
             } else if (sqlPluginStatus == PASSIVE) {
                 showConflictResolutionDialog();
-            } else {
-                // missing or passive SQL plugin - favor DBN
-                claimFileAssociations();
+                
+            } else if (sqlPluginStatus == MISSING) {
+                // missing SQL plugin - favor DBN
+                claimFileAssociations(false);
             }
         }
     }
 
     private void showConflictResolutionDialog() {
+        conflictPrompted = true;
         Dispatch.run(() -> PluginConflictResolutionDialog.open());
     }
 
     public void applyConflictResolution(PluginConflictResolution resolution) {
         switch (resolution) {
             case DISABLE_PLUGIN: disablePlugin(); return;
-            case CONTINUE_FEATURED: claimFileAssociations(); return;
+            case CONTINUE_FEATURED: claimFileAssociations(true); return;
             case CONTINUE_LIMITED: restoreFileAssociations(); return;
+            case DECIDE_LATER: conflictPrompted = false; return;
             default:
         }
     }
 
-    private void claimFileAssociations() {
+    private void claimFileAssociations(boolean force) {
+        // do not claim again if already claimed once (even if no longer associated with DBN)
+        if (fileTypesClaimed && !force) return;
+
         FileTypeService fileTypeService = FileTypeService.getInstance();
 
         try {
@@ -105,8 +116,14 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
             fileTypeService.claimFileAssociations(PSQLFileType.INSTANCE);
         } finally {
             fileTypeService.setSilentFileChangeContext(false);
-            fileTypesClaimed = true;
+            if (force) fileTypesClaimed = true;
         }
+    }
+
+    private boolean areFileTypesClaimed() {
+        FileTypeService fileTypeService = FileTypeService.getInstance();
+        FileType fileType = fileTypeService.getCurrentFileType("sql");
+        return fileType instanceof DBLanguageFileType;
     }
 
     private void restoreFileAssociations() {
@@ -116,33 +133,24 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
             fileTypeService.restoreFileAssociations();
         } finally {
             fileTypeService.setSilentFileChangeContext(false);
-            fileTypesClaimed = false;
         }
     }
+
 
     private void disablePlugin() {
         String pluginId = DatabaseNavigator.DBN_PLUGIN_ID.getIdString();
         PluginManager.disablePlugin(pluginId);
         ApplicationManagerEx.getApplicationEx().restart(true);
+
+        // prompt again if needed on reinstall
+        conflictPrompted = false;
     }
 
-    @Override
-    public Element getComponentState() {
-        Element element = new Element("state");
-        setBoolean(element, "plugin-conflict-resolved", conflictResolved);
-        setBoolean(element, "file-types-claimed", fileTypesClaimed);
-        return element;
-    }
+    public DBPluginStatus evaluateDbnPluginStatus() {
+        // do not change if already recorded as ACTIVE
+        if (dbnPluginStatus == ACTIVE) return ACTIVE;
 
-    @Override
-    public void loadComponentState(@NotNull Element element) {
-        fileTypesClaimed = getBoolean(element, "file-types-claimed", false);
-        conflictResolved = getBoolean(element, "plugin-conflict-resolved", false);
-    }
-
-    public DBPluginStatus getDbnPluginStatus() {
-        List<Project> projects = getRelevantProjects();
-        for (Project project : projects) {
+        for (Project project : getRelevantProjects()) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
             List<ConnectionHandler> connections = connectionManager.getConnectionBundle().getAllConnections();
             if (!connections.isEmpty()) return ACTIVE;
@@ -151,7 +159,10 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
         return PASSIVE;
     }
 
-    public DBPluginStatus getSqlPluginStatus() {
+    public DBPluginStatus evaluateSqlPluginStatus() {
+        // do not change if already recorded as ACTIVE
+        if (sqlPluginStatus == ACTIVE) return ACTIVE;
+
         IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(DatabaseNavigator.DB_PLUGIN_ID);
         if (pluginDescriptor == null) return MISSING; // not installed
 
@@ -162,8 +173,7 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
             Class<?> psiFacadeClass = pluginClassLoader.loadClass("com.intellij.database.psi.DbPsiFacade");
             Method getInstanceMethod = psiFacadeClass.getMethod("getInstance", Project.class);
 
-            List<Project> projects = getRelevantProjects();
-            for (Project project : projects) {
+            for (Project project : getRelevantProjects()) {
                 Object psiFacade = getInstanceMethod.invoke(psiFacadeClass, project);
                 Method getDataSourcesMethod = psiFacadeClass.getMethod("getDataSources");
                 List configs = (List) getDataSourcesMethod.invoke(psiFacade);
@@ -178,9 +188,39 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
     }
 
     @NotNull
-    private List<Project> getRelevantProjects() {
-        List<Project> projects = new ArrayList<>(Arrays.asList(Projects.getOpenProjects()));
-        projects.add(ProjectManager.getInstance().getDefaultProject());
+    private Project[] getRelevantProjects() {
+
+        Project[] openProjects = Projects.getOpenProjects();
+        Project[] projects = new Project[openProjects.length + 1];
+        arraycopy(openProjects, 0, projects, 0, openProjects.length);
+
+        Project defaultProject = ProjectManager.getInstance().getDefaultProject();
+        projects[projects.length - 1] = defaultProject;
         return projects;
     }
+
+    /**************************************************************************
+     *                       PersistentStateComponent                         *
+     **************************************************************************/
+
+    @Override
+    public Element getComponentState() {
+        Element element = new Element("state");
+        setBoolean(element, "plugin-conflict-prompted", conflictPrompted);
+        setBoolean(element, "file-types-claimed", fileTypesClaimed);
+        getEnum(element, "sql-plugin-status", sqlPluginStatus);
+        getEnum(element, "sbn-plugin-status", dbnPluginStatus);
+
+        return element;
+    }
+
+    @Override
+    public void loadComponentState(@NotNull Element element) {
+        conflictPrompted = getBoolean(element, "plugin-conflict-prompted", conflictPrompted);
+        fileTypesClaimed = getBoolean(element, "file-types-claimed", fileTypesClaimed);
+        sqlPluginStatus = getEnum(element, "sql-plugin-status", sqlPluginStatus);
+        dbnPluginStatus = getEnum(element, "sbn-plugin-status", dbnPluginStatus);
+    }
+
+
 }
