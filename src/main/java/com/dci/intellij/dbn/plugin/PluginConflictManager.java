@@ -208,8 +208,8 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
         Element element = new Element("state");
         setBoolean(element, "plugin-conflict-prompted", conflictPrompted);
         setBoolean(element, "file-types-claimed", fileTypesClaimed);
-        getEnum(element, "sql-plugin-status", sqlPluginStatus);
-        getEnum(element, "sbn-plugin-status", dbnPluginStatus);
+        setEnum(element, "sql-plugin-status", sqlPluginStatus);
+        setEnum(element, "sbn-plugin-status", dbnPluginStatus);
 
         return element;
     }
