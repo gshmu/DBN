@@ -43,7 +43,8 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
 
     private FileTypeService() {
         super(COMPONENT_NAME);
-        ApplicationEvents.subscribe(this, FileTypeManager.TOPIC, createFileTypeListener());
+        ApplicationEvents.subscribe(this, FileTypeManager.TOPIC, snapshotFileTypeListener());
+        ApplicationEvents.subscribe(this, FileTypeManager.TOPIC, toolbarsFileTypeListener());
     }
 
     public static FileTypeService getInstance() {
@@ -71,7 +72,7 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
     }
 
     @NotNull
-    private FileTypeListener createFileTypeListener() {
+    private FileTypeListener snapshotFileTypeListener() {
         return new FileTypeListener() {
             @Override
             public void beforeFileTypesChanged(@NotNull FileTypeEvent event) {
@@ -80,6 +81,17 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
             }
         };
     }
+
+
+    private FileTypeListener toolbarsFileTypeListener() {
+        return new FileTypeListener() {
+            @Override
+            public void fileTypesChanged(@NotNull FileTypeEvent event) {
+                // TODO plugin conflict resolution - show / hide toolbars
+            }
+        };
+    }
+
 
     private void captureFileAssociations(DBLanguageFileType fileType) {
         String[] extensions = fileType.getSupportedExtensions();
@@ -117,7 +129,7 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
         }
     }
 
-    private static void associate(FileType fileType, String extension) {
+    private void associate(FileType fileType, String extension) {
         FileType currentFileType = getCurrentFileType(extension);
         if (currentFileType == fileType) return;
 
@@ -129,7 +141,7 @@ public class FileTypeService extends ApplicationComponentBase implements Persist
     }
 
     @NotNull
-    private static FileType getCurrentFileType(String extension) {
+    public FileType getCurrentFileType(String extension) {
         return Unsafe.silent(UnknownFileType.INSTANCE, extension, e -> FileTypeManager.getInstance().getFileTypeByExtension(e));
     }
 

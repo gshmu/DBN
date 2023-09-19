@@ -570,6 +570,7 @@
     </projectListeners>
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="DBNavigator.NotificationGroup" displayType="BALLOON" key="DBNavigator"/>
+        <postStartupActivity implementation="com.dci.intellij.dbn.project.ProjectStartupActivity"/>
         <!--<postStartupActivity implementation="com.dci.intellij.dbn.project.ProjectComponentsInitializer" order="last"/>-->
         <!--<applicationInitializedListener implementation="com.dci.intellij.dbn.init.DatabaseNavigatorInitializer"/>-->
         <virtualFileSystem implementationClass="com.dci.intellij.dbn.vfs.DatabaseFileSystem" key="db" physical="false"/>
