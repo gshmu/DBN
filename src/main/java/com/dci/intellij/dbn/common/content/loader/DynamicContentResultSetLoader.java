@@ -34,6 +34,7 @@ import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNA
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlTimeoutException;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
+import static com.dci.intellij.dbn.connection.Resources.markClosed;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 import static com.dci.intellij.dbn.diagnostics.data.Activity.LOAD;
@@ -141,6 +142,8 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                     } catch (ProcessCanceledException e) {
                         conditionallyLog(e);
                         return;
+                    } catch (SQLRecoverableException e) {
+                        throw e;
                     } catch (Throwable e) {
                         conditionallyLog(e);
                         log.warn("Failed to create element", e);
@@ -183,16 +186,18 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
             postLoadContentFailure(content, debugInfo, e);
             throw e;
 
+        } catch (SQLRecoverableException e) {
+            conditionallyLog(e);
+            markClosed(conn);
+            throw e;
         } catch (SQLException e) {
             conditionallyLog(e);
             postLoadContentFailure(content, debugInfo, e);
 
             DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
             boolean modelException = messageParserInterface.isModelException(e);
-            if (modelException) {
-                throw new SQLFeatureNotSupportedException(e);
-            }
-            throw e;
+            throw modelException ? new SQLFeatureNotSupportedException(e) : e;
+
         } catch (Throwable e) {
             conditionallyLog(e);
             postLoadContentFailure(content, debugInfo, e);
