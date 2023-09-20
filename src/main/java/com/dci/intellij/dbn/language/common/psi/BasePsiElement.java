@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ref.WeakRefCache;
@@ -207,8 +208,8 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
 
     @Nullable
     public ConnectionHandler getConnection() {
-        DBLanguagePsiFile file = getFile();
-        return file.getConnection();
+        DBLanguagePsiFile file = Failsafe.guarded(null, this, e -> e.getFile());
+        return file == null ? null : file.getConnection();
     }
 
     @Nullable

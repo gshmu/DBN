@@ -103,6 +103,9 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
                     for (DBSourceCodeVirtualFile sourceCodeFile : databaseFile.getSourceCodeFiles()) {
                         updateEditorNotification(sourceCodeFile.getProject(), sourceCodeFile);
                     }
+                } else if (virtualFile instanceof DBSourceCodeVirtualFile) {
+                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+                    updateEditorNotification(sourceCodeFile.getProject(), sourceCodeFile);
                 }
             }
         };
