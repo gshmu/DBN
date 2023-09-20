@@ -48,6 +48,12 @@ public class ConnectionDebuggerSettingsForm extends ConfigurationEditorForm<Conn
     @Override
     public void applyFormChanges() throws ConfigurationException {
         ConnectionDebuggerSettings configuration = getConfiguration();
+        applyFormChanges(configuration);
+    }
+
+
+    @Override
+    public void applyFormChanges(ConnectionDebuggerSettings configuration) throws ConfigurationException {
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
         configuration.setTcpDriverTunneling(tcpDriverTunnelingCheckBox.isSelected());
         configuration.setTcpHostAddress(tcpHostTextBox.getText());

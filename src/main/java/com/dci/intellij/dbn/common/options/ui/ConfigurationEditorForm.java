@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ import java.awt.event.ItemListener;
 import static com.dci.intellij.dbn.common.ui.util.ClientProperty.REGISTERED;
 import static com.dci.intellij.dbn.common.ui.util.TextFields.addDocumentListener;
 
+@Slf4j
 public abstract class ConfigurationEditorForm<E extends BasicConfiguration> extends DBNFormBase {
     private ItemListener itemListener;
     private ActionListener actionListener;
@@ -36,7 +38,12 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
     }
 
     public abstract void applyFormChanges() throws ConfigurationException;
-    public void applyFormChanges(E configuration) throws ConfigurationException {throw new UnsupportedOperationException("Not implemented by default");}
+
+    public void applyFormChanges(E configuration) throws ConfigurationException {
+        log.error("Cannot apply form changes for {}",
+                configuration.getClass().getSimpleName(),
+                new UnsupportedOperationException("Not implemented"));
+    }
     public abstract void resetFormChanges();
 
     protected DocumentListener createDocumentListener() {
