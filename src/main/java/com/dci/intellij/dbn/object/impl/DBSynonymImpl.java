@@ -23,7 +23,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public class DBSynonymImpl extends DBSchemaObjectImpl<DBSynonymMetadata> implements DBSynonym {
+class DBSynonymImpl extends DBSchemaObjectImpl<DBSynonymMetadata> implements DBSynonym {
     private DBObjectRef<DBObject> underlyingObject;
 
     DBSynonymImpl(DBSchema schema, DBSynonymMetadata resultSet) throws SQLException {

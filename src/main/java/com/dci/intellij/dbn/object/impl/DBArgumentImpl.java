@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements DBArgument {
+class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements DBArgument {
     private DBDataType dataType;
     private short overload;
     private short position;

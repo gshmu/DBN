@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.common.content.loader;
 
+import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.util.Commons;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,17 +19,32 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.dci.intellij.dbn.common.content.DynamicContentType.NULL;
 
 @Slf4j
+@Getter
 public abstract class DynamicContentLoaderImpl<
                 T extends DynamicContentElement,
                 M extends DBObjectMetadata>
         implements DynamicContentLoader<T, M>{
 
     private static final Map<DynamicContentType, Map<DynamicContentType, DynamicContentLoader>> LOADERS = new ConcurrentHashMap<>();
+    private final String identifier;
 
-    public DynamicContentLoaderImpl(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register) {
-        if (register) {
-            register(parentContentType, contentType, this);
-        }
+    DynamicContentLoaderImpl(String identifier, @Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register) {
+        this.identifier = identifier;
+        if (register) register(parentContentType, contentType, this);
+    }
+
+    public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<T, M> create(
+            String identifier,
+            @Nullable DynamicContentType parentContentType,
+            @NotNull DynamicContentType contentType,
+            boolean register,
+            ParametricRunnable<DynamicContent<T>, SQLException> loader) {
+        return new DynamicContentLoaderImpl<T, M>(identifier, parentContentType, contentType, register) {
+            @Override
+            public void loadContent(DynamicContent<T> content) throws SQLException {
+                loader.run(content);
+            }
+        };
     }
 
     private static void register(
@@ -74,16 +89,5 @@ public abstract class DynamicContentLoaderImpl<
         }
 
         throw new UnsupportedOperationException("No entry found for content type "+ lookupParentContentType + " / " + contentType);
-    }
-
-    @Nullable
-    protected static String getObjectName(DBObject object) {
-        return Safe.call(object, o -> o.getName());
-    }
-
-    @Nullable
-    protected static String getSchemaName(DBSchemaObject object) {
-        DBSchema schema = object == null ? null : object.getSchema();
-        return schema == null ? null : schema.getName();
     }
 }

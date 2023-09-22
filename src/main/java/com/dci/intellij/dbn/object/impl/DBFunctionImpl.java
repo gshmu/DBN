@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.sql.SQLException;
 
-public class DBFunctionImpl extends DBMethodImpl<DBFunctionMetadata> implements DBFunction {
+class DBFunctionImpl extends DBMethodImpl<DBFunctionMetadata> implements DBFunction {
     DBFunctionImpl(DBSchemaObject parent, DBFunctionMetadata metadata) throws SQLException {
         // type functions are not editable independently
         super(parent, metadata);

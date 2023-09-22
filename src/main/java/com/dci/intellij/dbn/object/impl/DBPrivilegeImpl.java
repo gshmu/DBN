@@ -1,9 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBPrivilegeMetadata;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
@@ -14,14 +11,13 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentProperty.MASTER;
-import static com.dci.intellij.dbn.object.type.DBObjectType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectType.ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.USER;
 
-public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBRootObjectImpl<M> implements DBPrivilege {
+abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBRootObjectImpl<M> implements DBPrivilege {
 
     DBPrivilegeImpl(ConnectionHandler connection, M metadata) throws SQLException {
         super(connection, metadata);
@@ -65,46 +61,5 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBR
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-
-    static {
-        new DynamicContentLoaderImpl<DBUser, DBObjectMetadata>(PRIVILEGE, USER, true) {
-
-            @Override
-            public void loadContent(DynamicContent<DBUser> content) {
-                DBPrivilege privilege = content.ensureParentEntity();
-                List<DBUser> users = privilege.getObjectBundle().getUsers();
-                if (users == null) return;
-
-                List<DBUser> grantees = new ArrayList<>();
-                for (DBUser user : users) {
-                    if (user.hasPrivilege(privilege)) {
-                        grantees.add(user);
-                    }
-                }
-                content.setElements(grantees);
-                content.set(MASTER, false);
-            }
-        };
-
-        new DynamicContentLoaderImpl<DBRole, DBObjectMetadata>(PRIVILEGE, ROLE, true) {
-
-            @Override
-            public void loadContent(DynamicContent<DBRole> content) {
-                DBPrivilege privilege = content.ensureParentEntity();
-                List<DBRole> roles = privilege.getObjectBundle().getRoles();
-                if (roles == null) return;
-
-                List<DBRole> grantees = new ArrayList<>();
-                for (DBRole role : roles) {
-                    if (role.hasPrivilege(privilege)) {
-                        grantees.add(role);
-                    }
-                }
-                content.setElements(grantees);
-                content.set(MASTER, false);
-            }
-        };
     }
 }

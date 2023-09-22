@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class DBNestedTableColumnImpl extends DBObjectImpl<DBObjectMetadata> implements DBNestedTableColumn {
+class DBNestedTableColumnImpl extends DBObjectImpl<DBObjectMetadata> implements DBNestedTableColumn {
 
     public DBNestedTableColumnImpl(DBNestedTable parent, DBObjectMetadata metadata) throws SQLException {
         super(parent, metadata);

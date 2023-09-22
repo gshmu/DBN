@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.sql.SQLException;
 
-public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTrigger {
+class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTrigger {
     DBDatabaseTriggerImpl(DBSchema schema, DBTriggerMetadata metadata) throws SQLException {
         super(schema, metadata);
     }

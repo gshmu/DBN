@@ -55,7 +55,7 @@ public class OracleDataDefinitionInterface extends DatabaseDataDefinitionInterfa
         String sourceCode = content.getText().toString();
         if (StringUtil.isNotEmpty(sourceCode)) {
             if (objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER || objectTypeId == DatabaseObjectTypeId.DATABASE_TRIGGER) {
-                if (sourceCode.length() > 0) {
+                if (!sourceCode.isEmpty()) {
                     int startIndex = StringUtil.indexOfIgnoreCase(sourceCode, objectName, 0) + objectName.length();
                     int headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "declare", startIndex);
                     if (headerEndOffset == -1) headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "begin", startIndex);
@@ -69,10 +69,12 @@ public class OracleDataDefinitionInterface extends DatabaseDataDefinitionInterfa
                 int nameIndex = StringUtil.indexOfIgnoreCase(sourceCode, objectName, 0);
                 if (nameIndex > -1) {
                     int guardedBlockEndOffset = nameIndex + objectName.length();
-                    if (sourceCode.charAt(guardedBlockEndOffset) == '"'){
-                        guardedBlockEndOffset++;
+                    if (guardedBlockEndOffset < sourceCode.length()) {
+                        if (sourceCode.charAt(guardedBlockEndOffset) == '"'){
+                            guardedBlockEndOffset++;
+                        }
+                        content.getOffsets().addGuardedBlock(0, guardedBlockEndOffset);
                     }
-                    content.getOffsets().addGuardedBlock(0, guardedBlockEndOffset);
                 }
             }
         }

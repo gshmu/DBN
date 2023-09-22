@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 
-public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
+class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
     DBDatasetTriggerImpl(DBDataset dataset, DBTriggerMetadata metadata) throws SQLException {
         super(dataset, metadata);
     }

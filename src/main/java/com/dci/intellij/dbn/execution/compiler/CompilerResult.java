@@ -36,14 +36,14 @@ public class CompilerResult implements Disposable, NotificationSupport {
     private CompilerAction compilerAction;
     private boolean error = false;
 
-    public CompilerResult(CompilerAction compilerAction, ConnectionHandler connection, DBSchema schema, DBObjectType objectType, String objectName) {
+    public CompilerResult(CompilerAction compilerAction, ConnectionHandler connection, DBSchema schema, DBObjectType objectType, String objectName, @Nullable DBNConnection conn) {
         object = new DBObjectRef<>(schema.ref(), objectType, objectName);
-        init(connection, schema, objectName, objectType, compilerAction);
+        init(connection, schema, objectName, objectType, compilerAction, conn);
     }
 
-    public CompilerResult(CompilerAction compilerAction, DBSchemaObject object) {
+    public CompilerResult(CompilerAction compilerAction, DBSchemaObject object, @Nullable DBNConnection conn) {
         this.object = DBObjectRef.of(object);
-        init(object.getConnection(), object.getSchema(), object.getName(), object.getObjectType(), compilerAction);
+        init(object.getConnection(), object.getSchema(), object.getName(), object.getObjectType(), compilerAction, conn);
     }
 
     public CompilerResult(CompilerAction compilerAction, DBSchemaObject object, DBContentType contentType, String errorMessage) {
@@ -53,19 +53,23 @@ public class CompilerResult implements Disposable, NotificationSupport {
         compilerMessages.add(compilerMessage);
     }
 
-    private void init(ConnectionHandler connection, DBSchema schema, String objectName, DBObjectType objectType, CompilerAction compilerAction) {
+    private void init(ConnectionHandler connection, DBSchema schema, String objectName, DBObjectType objectType, CompilerAction compilerAction, @Nullable DBNConnection conn) {
         this.compilerAction = compilerAction;
         DBContentType contentType = compilerAction.getContentType();
         String qualifiedObjectName = Naming.getQualifiedObjectName(objectType, objectName, schema);
 
         try {
-            DatabaseInterfaceInvoker.execute(HIGH,
-                    "Loading compiler data",
-                    "Loading compile results for " + qualifiedObjectName,
-                    connection.getProject(),
-                    connection.getConnectionId(),
-                    conn -> loadCompilerErrors(connection, schema, objectName, contentType, conn));
-
+            if (conn == null) {
+                DatabaseInterfaceInvoker.execute(HIGH,
+                        "Loading compiler data",
+                        "Loading compile results for " + qualifiedObjectName,
+                        connection.getProject(),
+                        connection.getConnectionId(),
+                        c -> loadCompilerErrors(connection, schema, objectName, contentType, c));
+            } else {
+                // already inside an interface thread
+                loadCompilerErrors(connection, schema, objectName, contentType, conn);
+            }
         } catch (SQLException e) {
             conditionallyLog(e);
             sendErrorNotification(
@@ -74,7 +78,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
         }
 
 
-        if (compilerMessages.size() == 0) {
+        if (compilerMessages.isEmpty()) {
             String contentDesc =
                     contentType == DBContentType.CODE_SPEC ? "spec of " :
                     contentType == DBContentType.CODE_BODY ? "body of " : "";

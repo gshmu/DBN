@@ -28,7 +28,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView {
+class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView {
     private DBObjectRef<DBType> type;
     DBViewImpl(DBSchema schema, DBViewMetadata metadata) throws SQLException {
         super(schema, metadata);

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class DBClusterImpl extends DBSchemaObjectImpl<DBClusterMetadata> implements DBCluster {
+class DBClusterImpl extends DBSchemaObjectImpl<DBClusterMetadata> implements DBCluster {
     DBClusterImpl(DBSchema parent, DBClusterMetadata resultSet) throws SQLException {
         super(parent, resultSet);
     }

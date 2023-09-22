@@ -3,13 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.common.metadata.def.DBNestedTableMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTableMetadata;
-import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -22,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +26,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.TEMPO
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTable {
+class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTable {
     private static final List<DBColumn> EMPTY_COLUMN_LIST = Collections.unmodifiableList(new ArrayList<>());
 
     DBTableImpl(DBSchema schema, DBTableMetadata metadata) throws SQLException {
@@ -190,30 +183,5 @@ public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTab
             properties.add(0, new SimplePresentableProperty("Attributes", "temporary"));
         }
         return properties;
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        DynamicSubcontentLoader.create(TABLE, NESTED_TABLE,
-                new DynamicContentResultSetLoader<DBNestedTable, DBNestedTableMetadata>(TABLE, NESTED_TABLE, false, true) {
-
-                    @Override
-                    public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
-                        DBTable table = dynamicContent.getParentEntity();
-                        return metadata.loadNestedTables(
-                                getSchemaName(table),
-                                getObjectName(table),
-                                connection);
-                    }
-
-                    @Override
-                    public DBNestedTable createElement(DynamicContent<DBNestedTable> content, DBNestedTableMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBTable table = content.getParentEntity();
-                        return new DBNestedTableImpl(table, metadata);
-                    }
-                });
     }
 }

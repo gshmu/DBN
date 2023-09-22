@@ -7,13 +7,17 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 public class CompilerAction {
     private final CompilerActionSource source;
     private final DBContentType contentType;
-    private WeakRef<VirtualFile> virtualFileRef;
-    private WeakRef<FileEditor> fileEditorRef;
+    private WeakRef<VirtualFile> virtualFile;
+    private WeakRef<FileEditor> fileEditor;
     private EditorProviderId editorProviderId;
     private int sourceStartOffset;
 
@@ -25,26 +29,17 @@ public class CompilerAction {
     public CompilerAction(CompilerActionSource source, DBContentType contentType, @Nullable VirtualFile virtualFile, @Nullable FileEditor fileEditor) {
         this.source = source;
         this.contentType = contentType;
-        this.virtualFileRef = WeakRef.of(virtualFile);
-        this.fileEditorRef = fileEditor == null ? null : WeakRef.of(fileEditor);
         this.editorProviderId = contentType.getEditorProviderId();
+        setVirtualFile(virtualFile);
+        setFileEditor(fileEditor);
     }
 
-    @Nullable
-    public EditorProviderId getEditorProviderId() {
-        return editorProviderId;
+    public void setVirtualFile(VirtualFile virtualFile) {
+        this.virtualFile = WeakRef.of(virtualFile);
     }
 
-    public DBContentType getContentType() {
-        return contentType;
-    }
-
-    public void setSourceStartOffset(int sourceStartOffset) {
-        this.sourceStartOffset = sourceStartOffset;
-    }
-
-    public CompilerActionSource getSource() {
-        return source;
+    public void setFileEditor(FileEditor fileEditor) {
+        this.fileEditor = WeakRef.of(fileEditor);
     }
 
     public boolean isDDL() {
@@ -65,22 +60,19 @@ public class CompilerAction {
 
     @Nullable
     public VirtualFile getVirtualFile() {
-        return virtualFileRef == null ? null : virtualFileRef.get();
+        return WeakRef.get(virtualFile);
     }
 
     @Nullable
     public FileEditor getFileEditor() {
-        FileEditor fileEditor = this.fileEditorRef == null ? null : this.fileEditorRef.get();
+        FileEditor fileEditor = WeakRef.get(this.fileEditor);
         if (fileEditor != null) {
             Editor editor = Editors.getEditor(fileEditor);
             if (editor != null) {
-                this.fileEditorRef = null;
+                // TODO why?
+                this.fileEditor = null;
             }
         }
         return fileEditor;
-    }
-
-    public int getSourceStartOffset() {
-        return sourceStartOffset;
     }
 }

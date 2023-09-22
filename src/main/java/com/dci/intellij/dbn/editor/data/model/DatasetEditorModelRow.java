@@ -51,7 +51,7 @@ public class DatasetEditorModelRow
     void updateStatusFromRow(DatasetEditorModelRow oldRow) {
         if (oldRow == null) return;
 
-        replace(oldRow);
+        inherit(oldRow);
         setIndex(oldRow.getIndex());
         if (oldRow.is(RecordStatus.MODIFIED)) {
             for (int i=1; i<getCells().size(); i++) {

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 
 @Getter
-public class DBCharsetImpl extends DBRootObjectImpl<DBCharsetMetadata> implements DBCharset {
+class DBCharsetImpl extends DBRootObjectImpl<DBCharsetMetadata> implements DBCharset {
     private String displayName;
     private boolean deprecated;
     private int maxLength;

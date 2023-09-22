@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
 
-public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction {
+class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction {
     DBTypeFunctionImpl(DBType type, DBFunctionMetadata metadata) throws SQLException {
         super(type, metadata);
     }

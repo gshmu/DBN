@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.object.common;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -17,6 +16,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +24,7 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObjectBundle{
     private final VirtualConnectionHandler connection;
     private final DBDataTypeBundle dataTypes;
@@ -31,12 +32,6 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     public DBVirtualObjectBundle(@NotNull VirtualConnectionHandler connection) {
         this.connection = connection;
         this.dataTypes = new DBDataTypeBundle(connection);
-    }
-
-    @NotNull
-    @Override
-    public DBDataTypeBundle getDataTypes() {
-        return dataTypes;
     }
 
     @Override
@@ -166,11 +161,6 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
-    public void refreshObjectsStatus(DBSchemaObject requester) {
-
-    }
-
-    @Override
     public DBObjectListContainer getObjectLists() {
         return null;
     }
@@ -190,12 +180,6 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @Override
     public ConnectionId getConnectionId() {
         return connection.getConnectionId();
-    }
-
-    @NotNull
-    @Override
-    public ConnectionHandler getConnection() {
-        return connection;
     }
 
     @Override

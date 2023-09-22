@@ -19,10 +19,10 @@ public abstract class DynamicSubcontentCustomLoader<
         implements DynamicContentLoader<T, M> {
 
     public DynamicSubcontentCustomLoader(
-            @Nullable DynamicContentType parentContentType,
+            String identifier, @Nullable DynamicContentType parentContentType,
             @NotNull DynamicContentType contentType) {
 
-        super(parentContentType, contentType, true);
+        super(identifier, parentContentType, contentType, true);
     }
 
     protected abstract T resolveElement(DynamicContent<T> dynamicContent, DynamicContentElement sourceElement);

@@ -19,12 +19,11 @@ public class LinkedContentDependency extends ContentDependency {
     @Override
     @NotNull
     public DynamicContent getSourceContent() {
-        if (sourceContentOwner != null) {
-            DynamicContent sourceContent = sourceContentOwner.getDynamicContent(sourceContentType);
-            if (sourceContent != null) {
-                return sourceContent;
-            }
-        }
+        if (sourceContentOwner == null) return VoidDynamicContent.INSTANCE;
+
+        DynamicContent sourceContent = sourceContentOwner.getDynamicContent(sourceContentType);
+        if (sourceContent != null) return sourceContent;
+
         return VoidDynamicContent.INSTANCE;
     }
 

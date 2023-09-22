@@ -27,7 +27,7 @@ public final class Timeout {
         try {
             Threads.delay(lock);
             seconds = Diagnostics.timeoutAdjustment(seconds);
-            ThreadInfo invoker = ThreadMonitor.current();
+            ThreadInfo invoker = ThreadInfo.copy();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
             AtomicReference<Throwable> exception = new AtomicReference<>();
             Future<T> future = executorService.submit(
@@ -70,7 +70,7 @@ public final class Timeout {
         try {
             Threads.delay(lock);
             seconds = Diagnostics.timeoutAdjustment(seconds);
-            ThreadInfo invoker = ThreadMonitor.current();
+            ThreadInfo invoker = ThreadInfo.copy();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
             AtomicReference<Throwable> exception = new AtomicReference<>();
             Future<?> future = executorService.submit(

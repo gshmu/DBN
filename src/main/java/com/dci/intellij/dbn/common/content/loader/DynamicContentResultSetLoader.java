@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.exception.ElementSkippedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
@@ -15,6 +16,7 @@ import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMessageParserInterface;
+import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
@@ -29,11 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlException;
 import static com.dci.intellij.dbn.common.exception.Exceptions.toSqlTimeoutException;
 import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 import static com.dci.intellij.dbn.connection.Resources.markClosed;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
@@ -47,15 +51,48 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
 
     private final boolean master;
 
-    public DynamicContentResultSetLoader(
+    private DynamicContentResultSetLoader(
+            String identifier,
             @Nullable DynamicContentType<?> parentContentType,
             @NotNull DynamicContentType<?> contentType,
             boolean register,
             boolean master) {
 
-        super(parentContentType, contentType, register);
+        super(identifier, parentContentType, contentType, register);
         this.master = master;
     }
+
+    public static <E extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<E, M> create(
+            @NotNull String identifier,
+            @Nullable DynamicContentType<?> parentContentType,
+            @NotNull DynamicContentType<?> contentType,
+            boolean register,
+            boolean master,
+            ResultSetFactory resultSetFactory,
+            ElementFactory<E, M> elementFactory) {
+        return new DynamicContentResultSetLoader<E, M>(identifier, parentContentType, contentType, register, master) {
+            @Override
+            public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                return resultSetFactory.create(dynamicContent, connection, dynamicContent.getMetadataInterface());
+            }
+
+            @Override
+            public E createElement(DynamicContent<E> content, M metadata, LoaderCache cache) throws SQLException {
+                return elementFactory.create(content, cache, metadata);
+            }
+        };
+    }
+
+    @FunctionalInterface
+    public interface ResultSetFactory {
+        ResultSet create(DynamicContent dynamicContent, DBNConnection conn, DatabaseMetadataInterface mdi) throws SQLException;
+    }
+
+    @FunctionalInterface
+    public interface ElementFactory<E extends DynamicContentElement, M extends DBObjectMetadata> {
+        E create(DynamicContent content, LoaderCache cache, M md) throws SQLException;
+    }
+
 
     public abstract ResultSet createResultSet(DynamicContent<E> dynamicContent, DBNConnection connection) throws SQLException;
     public abstract E createElement(DynamicContent<E> content, M metadata, LoaderCache cache) throws SQLException;
@@ -139,6 +176,8 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
                     E element = null;
                     try {
                         element = createElement(content, metadata, loaderCache);
+                    } catch (ElementSkippedException e) {
+                        conditionallyLog(e);
                     } catch (ProcessCanceledException e) {
                         conditionallyLog(e);
                         return;
@@ -209,17 +248,25 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
     }
 
     public static class LoaderCache {
-        private String name;
+        private String key;
         private DBObject object;
-        public DBObject getObject(String name) {
-            if (Objects.equals(name, this.name)) {
-                return object;
+        public <T extends DBObject> T get(String name) {
+            if (Objects.equals(this.key, name)) {
+                return cast(object);
             }
             return null;
         }
 
-        public void setObject(String name, DBObject object) {
-            this.name = name;
+        public <T extends DBObject> T get(String name, Supplier<DBObject> loader) {
+            if (!Objects.equals(this.key, name)) {
+                this.key = name;
+                this.object = loader.get();
+            }
+            return cast(object);
+        }
+
+        public void set(String key, DBObject object) {
+            this.key = key;
             this.object = object;
         }
     }

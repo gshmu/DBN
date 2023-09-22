@@ -4,15 +4,11 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.database.common.metadata.def.*;
-import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -30,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +33,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBTypeImpl
+class DBTypeImpl
         extends DBProgramImpl<DBTypeMetadata, DBTypeProcedure, DBTypeFunction, DBType>
         implements DBType {
 
@@ -223,71 +218,6 @@ public class DBTypeImpl
             settings.isVisible(ATTRIBUTE) ||
             settings.isVisible(PROCEDURE) ||
             settings.isVisible(FUNCTION);
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        DynamicSubcontentLoader.create(TYPE, TYPE_ATTRIBUTE,
-                new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(TYPE, TYPE_ATTRIBUTE, false, true) {
-
-                    @Override
-                    public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
-                        DBType type = dynamicContent.getParentEntity();
-                        return metadata.loadTypeAttributes(
-                                getSchemaName(type),
-                                getObjectName(type),
-                                connection);
-                    }
-
-                    @Override
-                    public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> content, DBTypeAttributeMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBTypeImpl type = content.getParentEntity();
-                        return new DBTypeAttributeImpl(type, metadata);
-                    }
-                });
-
-        DynamicSubcontentLoader.create(TYPE, TYPE_FUNCTION,
-                new DynamicContentResultSetLoader<DBTypeFunction, DBFunctionMetadata>(TYPE, TYPE_FUNCTION, false, true) {
-                    @Override
-                    public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
-                        DBType type = dynamicContent.getParentEntity();
-                        return metadata.loadTypeFunctions(
-                                getSchemaName(type),
-                                getObjectName(type),
-                                connection);
-                    }
-
-                    @Override
-                    public DBTypeFunction createElement(DynamicContent<DBTypeFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBType type = content.getParentEntity();
-                        return new DBTypeFunctionImpl(type, metadata);
-                    }
-                });
-
-        DynamicSubcontentLoader.create(TYPE, TYPE_PROCEDURE,
-                new DynamicContentResultSetLoader<DBTypeProcedure, DBProcedureMetadata>(TYPE, TYPE_PROCEDURE, false, true) {
-                    @Override
-                    public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadata = dynamicContent.getMetadataInterface();
-                        DBType type = dynamicContent.getParentEntity();
-                        return metadata.loadTypeProcedures(
-                                getSchemaName(type),
-                                getObjectName(type),
-                                connection);
-                    }
-
-                    @Override
-                    public DBTypeProcedure createElement(DynamicContent<DBTypeProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
-                        DBType type = content.getParentEntity();
-                        return new DBTypeProcedureImpl(type, metadata);
-                    }
-                });
-
-        DynamicSubcontentLoader.create(TYPE, TYPE, null/*TODO*/);
     }
 
     @Override

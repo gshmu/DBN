@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class DBDimensionImpl extends DBSchemaObjectImpl<DBDimensionMetadata> implements DBDimension {
+class DBDimensionImpl extends DBSchemaObjectImpl<DBDimensionMetadata> implements DBDimension {
 
     DBDimensionImpl(DBSchema schema, DBDimensionMetadata metadata) throws SQLException {
         super(schema, metadata);

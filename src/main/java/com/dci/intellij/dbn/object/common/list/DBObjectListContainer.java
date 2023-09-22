@@ -186,7 +186,7 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
         return objectType.isSupported(owner);
     }
 
-    public DBObject getObjectNoLoad(String name, short overload) {
+    public <T extends DBObject> T getObjectNoLoad(String name, short overload) {
         if (objects == null) return null;
 
         for (DBObjectList<?> objectList : objects) {
@@ -197,13 +197,13 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
 
             DatabaseEntity owner = getOwner();
             if (owner.isObjectBundle()) {
-                return object;
+                return cast(object);
             }
 
             if (owner.isObject()) {
                 DBObject ownerObject = (DBObject) owner;
                 if (ownerObject.isParentOf(object)) {
-                    return object;
+                    return cast(object);
                 }
             }
         }

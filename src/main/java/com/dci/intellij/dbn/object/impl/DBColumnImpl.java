@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.list.*;
-import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -31,7 +30,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_C
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBColumn {
+class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBColumn {
     private DBDataType dataType;
     private short position;
 
@@ -324,14 +323,6 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
         properties.add(0, new DBDataTypePresentableProperty(dataType));
 
         return properties;
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        DBObjectListFromRelationListLoader.create(COLUMN, CONSTRAINT);
-        DBObjectListFromRelationListLoader.create(COLUMN, INDEX);
     }
 
     /*********************************************************
