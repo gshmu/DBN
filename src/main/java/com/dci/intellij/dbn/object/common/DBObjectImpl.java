@@ -401,11 +401,11 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
         return objects == null ? null : objects.getObjectForParentType(getObjectType(), name, overload);
     }
 
-    public DBObject getChildObjectNoLoad(String name) {
+    public <T extends DBObject> T getChildObjectNoLoad(String name) {
         return getChildObjectNoLoad(name, (short) 0);
     }
 
-    public DBObject getChildObjectNoLoad(String name, short overload) {
+    public <T extends DBObject> T getChildObjectNoLoad(String name, short overload) {
         DBObjectListContainer childObjects = getChildObjects();
         return childObjects == null ? null : childObjects.getObjectNoLoad(name, overload);
     }

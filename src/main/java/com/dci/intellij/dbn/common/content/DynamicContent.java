@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.DatabaseEntity;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -101,4 +103,22 @@ public interface DynamicContent<T extends DynamicContentElement> extends
     DynamicContentLoader getLoader();
 
     ContentDependencyAdapter getDependencyAdapter();
+
+    default String getParentSchemaName() {
+        DatabaseEntity entity = getParentEntity();
+        if (entity instanceof DBObject) {
+            DBObject object = (DBObject) entity;
+            DBSchema schema = object.getSchema();
+            if (schema != null) return schema.getName();
+        }
+        return null;
+    }
+    default String getParentObjectName() {
+        DatabaseEntity entity = getParentEntity();
+        if (entity instanceof DBObject) {
+            DBObject object = (DBObject) entity;
+            return object.getName();
+        }
+        return null;
+    }
 }

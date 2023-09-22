@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProcedure {
+class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProcedure {
     DBTypeProcedureImpl(DBType type, DBProcedureMetadata metadata) throws SQLException {
         super(type, metadata);
     }
@@ -26,7 +26,7 @@ public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProced
 
     @Override
     public DBType getType() {
-        return (DBType) getParentObject();
+        return getParentObject();
     }
 
     @Override

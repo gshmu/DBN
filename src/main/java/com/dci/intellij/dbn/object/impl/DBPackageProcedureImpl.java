@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
 
-public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackageProcedure {
+class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackageProcedure {
     DBPackageProcedureImpl(DBPackage packagee, DBProcedureMetadata metadata) throws SQLException {
         super(packagee, metadata);
     }

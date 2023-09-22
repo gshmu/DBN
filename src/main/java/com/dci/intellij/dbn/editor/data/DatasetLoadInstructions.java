@@ -13,7 +13,7 @@ public class DatasetLoadInstructions extends PropertyHolderBase.IntStore<Dataset
 
     public static DatasetLoadInstructions clone(DatasetLoadInstructions source) {
         DatasetLoadInstructions instructions = new DatasetLoadInstructions();
-        instructions.replace(source);
+        instructions.inherit(source);
         return instructions;
     }
 

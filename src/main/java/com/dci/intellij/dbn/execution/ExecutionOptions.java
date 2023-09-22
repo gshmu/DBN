@@ -11,7 +11,7 @@ public class ExecutionOptions extends PropertyHolderBase.IntStore<ExecutionOptio
 
     public static ExecutionOptions clone(ExecutionOptions source) {
         ExecutionOptions options = new ExecutionOptions();
-        options.replace(source);
+        options.inherit(source);
         return options;
     }
 

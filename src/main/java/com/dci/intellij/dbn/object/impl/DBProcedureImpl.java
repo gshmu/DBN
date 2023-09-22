@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.sql.SQLException;
 
-public class DBProcedureImpl extends DBMethodImpl<DBProcedureMetadata> implements DBProcedure {
+class DBProcedureImpl extends DBMethodImpl<DBProcedureMetadata> implements DBProcedure {
     DBProcedureImpl(DBSchemaObject parent, DBProcedureMetadata metadata) throws SQLException {
         // type functions are not editable independently
         super(parent, metadata);

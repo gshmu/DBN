@@ -18,7 +18,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
+class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
     DBMaterializedViewImpl(DBSchema schema, DBMaterializedViewMetadata metadata) throws SQLException {
         super(schema, metadata);
     }

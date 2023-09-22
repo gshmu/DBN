@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationImpl;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 
-public class DBUserRoleRelation extends DBObjectRelationImpl<DBUser, DBGrantedRole> {
+class DBUserRoleRelation extends DBObjectRelationImpl<DBUser, DBGrantedRole> {
     public DBUserRoleRelation(DBUser user, DBGrantedRole role) {
         super(DBObjectRelationType.USER_ROLE, user, role);
     }

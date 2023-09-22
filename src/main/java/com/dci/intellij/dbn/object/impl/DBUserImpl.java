@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -32,9 +31,9 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_PRIVILE
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUser {
+class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUser {
 
-    public DBUserImpl(ConnectionHandler connection, DBUserMetadata metadata) throws SQLException {
+    DBUserImpl(ConnectionHandler connection, DBUserMetadata metadata) throws SQLException {
         super(connection, metadata);
     }
 
@@ -188,13 +187,5 @@ public class DBUserImpl extends DBRootObjectImpl<DBUserMetadata> implements DBUs
         return
             settings.isVisible(ROLE) ||
             settings.isVisible(PRIVILEGE);
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        DBObjectListFromRelationListLoader.create(USER, GRANTED_ROLE);
-        DBObjectListFromRelationListLoader.create(USER, GRANTED_PRIVILEGE);
     }
 }

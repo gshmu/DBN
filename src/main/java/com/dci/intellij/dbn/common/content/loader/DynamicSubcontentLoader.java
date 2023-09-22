@@ -24,16 +24,16 @@ public class DynamicSubcontentLoader<T extends DynamicContentElement, M extends 
 
     private DynamicContentLoader<T, M> alternativeLoader;
 
-    private DynamicSubcontentLoader(@NotNull DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
-        super(parentContentType, contentType, true);
+    private DynamicSubcontentLoader(String identifier, @NotNull DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
+        super(identifier, parentContentType, contentType, true);
     }
 
     public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicSubcontentLoader<T, M> create(
-            @NotNull DynamicContentType parentContentType,
+            String identifier, @NotNull DynamicContentType parentContentType,
             @NotNull DynamicContentType contentType,
             @Nullable DynamicContentLoader<T, M> alternativeLoader) {
 
-        DynamicSubcontentLoader<T, M> loader = new DynamicSubcontentLoader<>(parentContentType, contentType);
+        DynamicSubcontentLoader<T, M> loader = new DynamicSubcontentLoader<>(identifier, parentContentType, contentType);
         loader.alternativeLoader = alternativeLoader;
         return loader;
     }

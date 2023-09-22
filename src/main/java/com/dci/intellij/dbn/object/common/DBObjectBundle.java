@@ -81,8 +81,6 @@ public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
 
     void lookupChildObjectsOfType(Consumer<? super DBObject> consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema);
 
-    void refreshObjectsStatus(DBSchemaObject requester);
-
     DBObjectListContainer getObjectLists();
 
     <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType);

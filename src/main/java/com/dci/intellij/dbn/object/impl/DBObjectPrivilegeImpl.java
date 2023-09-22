@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-public class DBObjectPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> implements DBObjectPrivilege {
+class DBObjectPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> implements DBObjectPrivilege {
 
-    public DBObjectPrivilegeImpl(ConnectionHandler connection, DBPrivilegeMetadata metadata) throws SQLException {
+    DBObjectPrivilegeImpl(ConnectionHandler connection, DBPrivilegeMetadata metadata) throws SQLException {
         super(connection, metadata);
     }
 

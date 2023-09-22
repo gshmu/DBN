@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationImpl;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 
-public class DBIndexColumnRelation extends DBObjectRelationImpl<DBIndex, DBColumn> {
+class DBIndexColumnRelation extends DBObjectRelationImpl<DBIndex, DBColumn> {
     DBIndexColumnRelation(DBIndex index, DBColumn column) {
         super(DBObjectRelationType.INDEX_COLUMN, index, column);
     }

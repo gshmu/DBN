@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,11 +20,11 @@ public final class Safe {
     }
 
     @Nullable
-    public static <R, S> R call(@Nullable S target, @NotNull Function<S, R> supplier){
+    public static <R, S, E extends Throwable> R call(@Nullable S target, @NotNull ParametricCallable<S, R, E> supplier) throws E{
         if (target == null) {
             return null;
         } else {
-            return supplier.apply(target);
+            return supplier.call(target);
         }
     }
 

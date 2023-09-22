@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
-import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.operation.DatabaseOperationManager;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
@@ -21,6 +20,7 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 import com.dci.intellij.dbn.object.type.DBConstraintType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,8 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_C
 import static com.dci.intellij.dbn.object.type.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.CONSTRAINT;
 
-public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> implements DBConstraint {
+@Getter
+class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> implements DBConstraint {
     private DBConstraintType constraintType;
     private DBObjectRef<DBConstraint> foreignKeyConstraint;
 
@@ -118,11 +119,6 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     }
 
     @Override
-    public DBConstraintType getConstraintType() {
-        return constraintType;
-    }
-
-    @Override
     public boolean isPrimaryKey() {
         return constraintType == DBConstraintType.PRIMARY_KEY;
     }
@@ -135,10 +131,6 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     @Override
     public boolean isUniqueKey() {
         return constraintType == DBConstraintType.UNIQUE_KEY;
-    }
-
-    public String getCheckCondition() {
-        return checkCondition;
     }
 
     @Override
@@ -270,13 +262,6 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        DBObjectListFromRelationListLoader.create(CONSTRAINT, COLUMN);
     }
 
     @Override

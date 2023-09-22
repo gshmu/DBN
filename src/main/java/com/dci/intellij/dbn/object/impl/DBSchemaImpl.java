@@ -1,27 +1,16 @@
 package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
-import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
-import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.Resources;
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.common.metadata.def.*;
-import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
-import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.database.common.metadata.def.DBSchemaMetadata;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
@@ -38,11 +27,9 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import static com.dci.intellij.dbn.common.Priority.LOW;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.HIDDEN;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
@@ -53,11 +40,11 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_C
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements DBSchema {
+class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements DBSchema {
     private Latent<List<DBColumn>> primaryKeyColumns;
     private Latent<List<DBColumn>> foreignKeyColumns;
 
-    public DBSchemaImpl(ConnectionHandler connection, DBSchemaMetadata metadata) throws SQLException {
+    DBSchemaImpl(ConnectionHandler connection, DBSchemaMetadata metadata) throws SQLException {
         super(connection, metadata);
     }
 
@@ -408,131 +395,47 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
     }
 
     @Override
-    public void refreshObjectsStatus() throws SQLException {
-        Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
-
-        DatabaseInterfaceInvoker.schedule(LOW,
-                "Refreshing object status",
-                "Refreshing object status for " + getQualifiedNameWithType(),
-                getProject(),
-                getConnectionId(),
-                conn -> {
-                    refreshValidStatus(refreshNodes, conn);
-                    refreshDebugStatus(refreshNodes, conn);
-                    Background.run(getProject(), () ->
-                            refreshNodes.forEach(n -> ProjectEvents.notify(getProject(), BrowserTreeEventListener.TOPIC,
-                                    listener -> listener.nodeChanged(n, TreeEventType.NODES_CHANGED))));
-                });
-
-
-    }
-
-    private void refreshValidStatus(Set<BrowserTreeNode> refreshNodes, DBNConnection c) throws SQLException {
-        ResultSet resultSet = null;
-        try {
-            DatabaseMetadataInterface metadata = getMetadataInterface();
-            resultSet = metadata.loadInvalidObjects(getName(), c);
-            while (resultSet != null && resultSet.next()) {
-                String objectName = resultSet.getString("OBJECT_NAME");
-                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                if (schemaObject != null && schemaObject.is(INVALIDABLE)) {
-                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                    boolean statusChanged;
-
-                    if (schemaObject.getContentType().isBundle()) {
-                        String objectType = resultSet.getString("OBJECT_TYPE");
-                        statusChanged = objectType.contains("BODY") ?
-                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.VALID, false) :
-                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, false);
-                    } else {
-                        statusChanged = objectStatus.set(DBObjectStatus.VALID, false);
-                    }
-                    if (statusChanged) {
-                        refreshNodes.add(schemaObject.getParent());
-                    }
-                }
-            }
-        } finally {
-            Resources.close(resultSet);
-        }
-    }
-
-    private void refreshDebugStatus(Set<BrowserTreeNode> refreshNodes, DBNConnection c) throws SQLException {
-        ResultSet resultSet = null;
-        try {
-            DatabaseMetadataInterface metadata = getMetadataInterface();
-            resultSet = metadata.loadDebugObjects(getName(), c);
-            while (resultSet != null && resultSet.next()) {
-                String objectName = resultSet.getString("OBJECT_NAME");
-                DBSchemaObject schemaObject = (DBSchemaObject) getChildObjectNoLoad(objectName);
-                if (schemaObject != null && schemaObject.is(DEBUGABLE)) {
-                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                    boolean statusChanged;
-
-                    if (schemaObject.getContentType().isBundle()) {
-                        String objectType = resultSet.getString("OBJECT_TYPE");
-                        statusChanged = objectType.contains("BODY") ?
-                                objectStatus.set(DBContentType.CODE_BODY, DBObjectStatus.DEBUG, true) :
-                                objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.DEBUG, true);
-                    } else {
-                        statusChanged = objectStatus.set(DBObjectStatus.DEBUG, true);
-                    }
-                    if (statusChanged) {
-                        refreshNodes.add(schemaObject.getParent());
-                    }
-                }
-            }
-        } finally {
-            Resources.close(resultSet);
-        }
-    }
-
-    @Override
     public SchemaId getIdentifier() {
         return SchemaId.get(getName());
     }
 
-    private Set<BrowserTreeNode> resetObjectsStatus() {
+    public Set<DatabaseEntity> resetObjectsStatus() {
         ObjectStatusUpdater updater = new ObjectStatusUpdater();
         ensureChildObjects().visit(updater, true);
         return updater.getRefreshNodes();
     }
 
     @Getter
-    static class ObjectStatusUpdater extends StatefulDisposableBase implements DBObjectListVisitor {
-        private final Set<BrowserTreeNode> refreshNodes = new HashSet<>();
+    static class ObjectStatusUpdater implements DBObjectListVisitor {
+        private final Set<DatabaseEntity> refreshNodes = new HashSet<>();
 
         @Override
         public void visit(DBObjectList<?> objectList) {
-            if (objectList.isLoaded() && !objectList.isDirty() && !objectList.isLoading()) {
-                List<DBObject> objects = cast(objectList.getObjects());
-                for (DBObject object : objects) {
-                    checkDisposed();
-                    ProgressMonitor.checkCancelled();
+            if (objectList.isDirty()) return;
+            if (objectList.isLoading()) return;
+            if (!objectList.isLoaded()) return;
 
-                    if (object instanceof DBSchemaObject) {
-                        DBSchemaObject schemaObject = (DBSchemaObject) object;
-                        DBObjectStatusHolder objectStatus = schemaObject.getStatus();
-                        if (schemaObject.is(INVALIDABLE)) {
-                            if (objectStatus.set(DBObjectStatus.VALID, true)) {
-                                refreshNodes.add(object.getParent());
-                            }
+            List<DBObject> objects = cast(objectList.getObjects());
+            for (DBObject object : objects) {
+                ProgressMonitor.checkCancelled();
+
+                if (object instanceof DBSchemaObject) {
+                    DBSchemaObject schemaObject = (DBSchemaObject) object;
+                    DBObjectStatusHolder objectStatus = schemaObject.getStatus();
+                    if (schemaObject.is(INVALIDABLE)) {
+                        if (objectStatus.set(DBObjectStatus.VALID, true)) {
+                            refreshNodes.add(object.getParent());
                         }
-                        if (schemaObject.is(DEBUGABLE)) {
-                            if (objectStatus.set(DBObjectStatus.DEBUG, false)) {
-                                refreshNodes.add(object.getParent());
-                            }
-                        }
-                    } else {
-                        break;
                     }
+                    if (schemaObject.is(DEBUGABLE)) {
+                        if (objectStatus.set(DBObjectStatus.DEBUG, false)) {
+                            refreshNodes.add(object.getParent());
+                        }
+                    }
+                } else {
+                    break;
                 }
             }
-        }
-
-        @Override
-        protected void disposeInner() {
-            nullify();
         }
     }
 
@@ -582,569 +485,5 @@ public class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements 
             settings.isVisible(DIMENSION) ||
             settings.isVisible(CLUSTER) ||
             settings.isVisible(DBLINK);
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        new DynamicContentResultSetLoader<DBTable, DBTableMetadata>(SCHEMA, TABLE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBTable> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadTables(schema.getName(), connection);
-            }
-
-            @Override
-            public DBTable createElement(DynamicContent<DBTable> content, DBTableMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBTableImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBView, DBViewMetadata>(SCHEMA, VIEW, true, true){
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBView> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadViews(schema.getName(), connection);
-            }
-
-            @Override
-            public DBView createElement(DynamicContent<DBView> content, DBViewMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBViewImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBMaterializedView, DBMaterializedViewMetadata>(SCHEMA, MATERIALIZED_VIEW, true, true){
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBMaterializedView> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadMaterializedViews(schema.getName(), connection);
-            }
-
-            @Override
-            public DBMaterializedView createElement(DynamicContent<DBMaterializedView> content, DBMaterializedViewMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBMaterializedViewImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBSynonym, DBSynonymMetadata>(SCHEMA, SYNONYM, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBSynonym> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadSynonyms(schema.getName(), connection);
-            }
-
-            @Override
-            public DBSynonym createElement(DynamicContent<DBSynonym> content, DBSynonymMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBSynonymImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBSequence, DBSequenceMetadata>(SCHEMA, SEQUENCE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBSequence> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadSequences(schema.getName(), connection);
-            }
-
-            @Override
-            public DBSequence createElement(DynamicContent<DBSequence> content, DBSequenceMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBSequenceImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBProcedure, DBProcedureMetadata>(SCHEMA, PROCEDURE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBProcedure> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadProcedures(schema.getName(), connection);
-            }
-
-            @Override
-            public DBProcedure createElement(DynamicContent<DBProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBProcedureImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBFunction, DBFunctionMetadata>(SCHEMA, FUNCTION, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBFunction> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadFunctions(schema.getName(), connection);
-            }
-            @Override
-            public DBFunction createElement(DynamicContent<DBFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBFunctionImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBPackage, DBPackageMetadata>(SCHEMA, PACKAGE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBPackage> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadPackages(schema.getName(), connection);
-            }
-
-            @Override
-            public DBPackage createElement(DynamicContent<DBPackage> content, DBPackageMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBPackageImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBType, DBTypeMetadata>(SCHEMA, TYPE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBType> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadTypes(schema.getName(), connection);
-            }
-
-            @Override
-            public DBType createElement(DynamicContent<DBType> content, DBTypeMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBTypeImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBDatabaseTrigger, DBTriggerMetadata>(SCHEMA, DATABASE_TRIGGER, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBDatabaseTrigger> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadDatabaseTriggers(schema.getName(), connection);
-            }
-
-            @Override
-            public DBDatabaseTrigger createElement(DynamicContent<DBDatabaseTrigger> content, DBTriggerMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBDatabaseTriggerImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBDimension, DBDimensionMetadata>(SCHEMA, DIMENSION, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBDimension> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadDimensions(schema.getName(), connection);
-            }
-
-            @Override
-            public DBDimension createElement(DynamicContent<DBDimension> content, DBDimensionMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBDimensionImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBCluster, DBClusterMetadata>(SCHEMA, CLUSTER, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBCluster> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadClusters(schema.getName(), connection);
-            }
-
-            @Override
-            public DBCluster createElement(DynamicContent<DBCluster> content, DBClusterMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBClusterImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBDatabaseLink, DBDatabaseLinkMetadata>(SCHEMA, DBLINK, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBDatabaseLink> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadDatabaseLinks(schema.getName(), connection);
-            }
-
-            @Override
-            public DBDatabaseLink createElement(DynamicContent<DBDatabaseLink> content, DBDatabaseLinkMetadata metadata, LoaderCache cache) throws SQLException {
-                DBSchema schema = content.getParentEntity();
-                return new DBDatabaseLinkImpl(schema, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBColumn, DBColumnMetadata>(SCHEMA, COLUMN, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBColumn> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllColumns(schema.getName(), connection);
-            }
-
-            @Override
-            public DBColumn createElement(DynamicContent<DBColumn> content, DBColumnMetadata provider, LoaderCache cache) throws SQLException {
-                String datasetName = provider.getDatasetName();
-
-                DBDataset dataset = (DBDataset) cache.getObject(datasetName);
-                if (dataset == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    dataset = schema.getDataset(datasetName);
-                    cache.setObject(datasetName, dataset);
-                }
-
-                // dataset may be null if cluster column!!
-                return dataset == null ? null : new DBColumnImpl(dataset, provider);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBConstraint, DBConstraintMetadata>(SCHEMA, CONSTRAINT, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBConstraint> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllConstraints(schema.getName(), connection);
-            }
-
-            @Override
-            public DBConstraint createElement(DynamicContent<DBConstraint> content, DBConstraintMetadata metadata, LoaderCache cache) throws SQLException {
-                String datasetName = metadata.getDatasetName();
-
-                DBDataset dataset = (DBDataset) cache.getObject(datasetName);
-                if (dataset == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    dataset = schema.getDataset(datasetName);
-                    cache.setObject(datasetName, dataset);
-                }
-
-                return dataset == null ? null : new DBConstraintImpl(dataset, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBIndex, DBIndexMetadata>(SCHEMA, INDEX, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBIndex> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllIndexes(schema.getName(), connection);
-            }
-
-            @Override
-            public DBIndex createElement(DynamicContent<DBIndex> content, DBIndexMetadata metadata, LoaderCache cache) throws SQLException {
-                String datasetName = metadata.getTableName();
-
-                DBDataset dataset = (DBDataset) cache.getObject(datasetName);
-                if (dataset == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    dataset = schema.getDataset(datasetName);
-                    cache.setObject(datasetName, dataset);
-                }
-
-                return dataset == null ? null : new DBIndexImpl(dataset, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBDatasetTrigger, DBTriggerMetadata>(SCHEMA, DATASET_TRIGGER, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllDatasetTriggers(schema.getName(), connection);
-            }
-
-            @Override
-            public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> content, DBTriggerMetadata metadata, LoaderCache cache) throws SQLException {
-                String datasetName = metadata.getDatasetName();
-                DBDataset dataset = (DBDataset) cache.getObject(datasetName);
-                if (dataset == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    dataset = schema.getDataset(datasetName);
-                    cache.setObject(datasetName, dataset);
-                }
-                return dataset == null ? null : new DBDatasetTriggerImpl(dataset, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBNestedTable, DBNestedTableMetadata>(SCHEMA, NESTED_TABLE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBNestedTable> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllNestedTables(schema.getName(), connection);
-            }
-
-            @Override
-            public DBNestedTable createElement(DynamicContent<DBNestedTable> content, DBNestedTableMetadata metadata, LoaderCache cache) throws SQLException {
-                String tableName = metadata.getTableName();
-                DBTable table = (DBTable) cache.getObject(tableName);
-                if (table == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    table = schema.getTable(tableName);
-                    cache.setObject(tableName, table);
-                }
-                return table == null ? null : new DBNestedTableImpl(table, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBPackageFunction, DBFunctionMetadata>(SCHEMA, PACKAGE_FUNCTION, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBPackageFunction> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllPackageFunctions(schema.getName(), connection);
-            }
-
-            @Override
-            public DBPackageFunction createElement(DynamicContent<DBPackageFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
-                String packageName = metadata.getPackageName();
-                DBPackage packagee = (DBPackage) cache.getObject(packageName);
-                if (packagee == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    packagee = schema.getPackage(packageName);
-                    cache.setObject(packageName, packagee);
-                }
-                return packagee == null ? null : new DBPackageFunctionImpl(packagee, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBPackageProcedure, DBProcedureMetadata>(SCHEMA, PACKAGE_PROCEDURE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBPackageProcedure> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllPackageProcedures(schema.getName(), connection);
-            }
-
-            @Override
-            public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
-                String packageName = metadata.getPackageName();
-                DBPackage packagee = (DBPackage) cache.getObject(packageName);
-                if (packagee == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    packagee = schema.getPackage(packageName);
-                    cache.setObject(packageName, packagee);
-                }
-                return packagee == null ? null : new DBPackageProcedureImpl(packagee, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBPackageType, DBTypeMetadata>(SCHEMA, PACKAGE_TYPE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBPackageType> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllPackageTypes(schema.getName(), connection);
-            }
-
-            @Override
-            public DBPackageType createElement(DynamicContent<DBPackageType> content, DBTypeMetadata metadata, LoaderCache cache) throws SQLException {
-                String packageName = metadata.getPackageName();
-                DBPackage packagee = (DBPackage) cache.getObject(packageName);
-                if (packagee == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    packagee = schema.getPackage(packageName);
-                    cache.setObject(packageName, packagee);
-                }
-                return packagee == null ? null : new DBPackageTypeImpl(packagee, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(SCHEMA, TYPE_ATTRIBUTE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBTypeAttribute> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllTypeAttributes(schema.getName(), connection);
-            }
-
-            @Override
-            public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> content, DBTypeAttributeMetadata provider, LoaderCache cache) throws SQLException {
-                String typeName = provider.getTypeName();
-                DBType type = (DBType) cache.getObject(typeName);
-                if (type == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    type = schema.getType(typeName);
-                    cache.setObject(typeName, type);
-                }
-                return type == null ? null : new DBTypeAttributeImpl(type, provider);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBTypeFunction, DBFunctionMetadata>(SCHEMA, TYPE_FUNCTION, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBTypeFunction> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllTypeFunctions(schema.getName(), connection);
-            }
-
-            @Override
-            public DBTypeFunction createElement(DynamicContent<DBTypeFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
-                String typeName = metadata.getTypeName();
-                DBType type = (DBType) cache.getObject(typeName);
-                if (type == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    type = schema.getType(typeName);
-                    cache.setObject(typeName, type);
-                }
-                return type == null ?  null : new DBTypeFunctionImpl(type, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBTypeProcedure, DBProcedureMetadata>(SCHEMA, TYPE_PROCEDURE, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBTypeProcedure> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllTypeProcedures(schema.getName(), connection);
-            }
-
-            @Override
-            public DBTypeProcedure createElement(DynamicContent<DBTypeProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
-                String typeName = metadata.getTypeName();
-                DBType type = (DBType) cache.getObject(typeName);
-                if (type == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    type = schema.getType(typeName);
-                    cache.setObject(typeName, type);
-                }
-                return type == null ? null : new DBTypeProcedureImpl(type, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBArgument, DBArgumentMetadata>(SCHEMA, ARGUMENT, true, true) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBArgument> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllMethodArguments(schema.getName(), connection);
-            }
-
-            @Override
-            public DBArgument createElement(DynamicContent<DBArgument> content, DBArgumentMetadata metadata, LoaderCache cache) throws SQLException {
-                String programName = metadata.getProgramName();
-                String methodName = metadata.getMethodName();
-                String methodType = metadata.getMethodType();
-                short overload = metadata.getOverload();
-                DBSchema schema = content.ensureParentEntity();
-                DBProgram program = programName == null ? null : schema.getProgram(programName);
-
-                String cacheKey = methodName + methodType + overload;
-                DBMethod method = (DBMethod) cache.getObject(cacheKey);
-                DBObjectType objectType = get(methodType);
-
-                if (method == null || method.getProgram() != program || method.getOverload() != overload) {
-                    if (programName == null) {
-                        method = schema.getMethod(methodName, objectType, overload);
-                    } else {
-                        method = program == null ? null : program.getMethod(methodName, overload);
-                    }
-                    cache.setObject(cacheKey, method);
-                }
-                return method == null ? null : new DBArgumentImpl(method, metadata);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata>(SCHEMA, CONSTRAINT_COLUMN, true, false) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBConstraintColumnRelation> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllConstraintRelations(schema.getName(), connection);
-            }
-
-            @Override
-            public DBConstraintColumnRelation createElement(DynamicContent<DBConstraintColumnRelation> content, DBConstraintColumnMetadata metadata, LoaderCache cache) throws SQLException {
-                String datasetName = metadata.getDatasetName();
-                String columnName = metadata.getColumnName();
-                String constraintName = metadata.getConstraintName();
-                short position = metadata.getPosition();
-
-/*
-            DBSchema schema = (DBSchema) dynamicContent.getParent();
-            DBObjectList<DBConstraint> constraints = schema.getObjectLists().getObjectList(DBObjectType.CONSTRAINT);
-            DBConstraint constraint = constraints.getObject(constraintName, datasetName);
-
-            if (constraint != null) {
-                DBObjectList<DBColumn> columns = schema.getObjectLists().getHiddenObjectList(DBObjectType.COLUMN);
-                DBColumn column = columns.getObject(columnName, datasetName);
-
-                if (column != null) {
-                    return new DBConstraintColumnRelation(constraint, column, position);
-                }
-            }
-*/
-                DBDataset dataset = (DBDataset) cache.getObject(datasetName);
-                if (dataset == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    dataset = schema.getDataset(datasetName);
-                    cache.setObject(datasetName, dataset);
-                }
-
-                if (dataset != null) {
-                    DBConstraint constraint = dataset.getConstraint(constraintName);
-                    DBColumn column = dataset.getColumn(columnName);
-                    if (column != null && constraint != null) {
-                        return new DBConstraintColumnRelation(constraint, column, position);
-                    }
-                }
-
-                return null;
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBIndexColumnRelation, DBIndexColumnMetadata>(SCHEMA, INDEX_COLUMN, true, false) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBIndexColumnRelation> content, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadata = content.getMetadataInterface();
-                DBSchema schema = content.ensureParentEntity();
-                return metadata.loadAllIndexRelations(schema.getName(), connection);
-            }
-
-            @Override
-            public DBIndexColumnRelation createElement(DynamicContent<DBIndexColumnRelation> content, DBIndexColumnMetadata metadata, LoaderCache cache) throws SQLException {
-                String datasetName = metadata.getTableName();
-                String columnName = metadata.getColumnName();
-                String indexName = metadata.getIndexName();
-
-            /*DBSchema schema = (DBSchema) dynamicContent.getParent();
-            DBObjectList<DBIndex> indexes = schema.getObjectLists().getObjectList(DBObjectType.INDEX);
-            DBIndex index = indexes.getObject(indexName, tableName);
-
-            if (index != null) {
-                DBObjectList<DBColumn> columns = schema.getObjectLists().getHiddenObjectList(DBObjectType.COLUMN);
-                DBColumn column = columns.getObject(columnName, tableName);
-
-                if (column != null) {
-                    return new DBIndexColumnRelation(index, column);
-                }
-            }*/
-
-                DBDataset dataset = (DBDataset) cache.getObject(datasetName);
-                if (dataset == null) {
-                    DBSchema schema = content.ensureParentEntity();
-                    dataset = schema.getDataset(datasetName);
-                    cache.setObject(datasetName, dataset);
-                }
-
-                if (dataset != null) {
-                    DBIndex index = dataset.getIndex(indexName);
-                    DBColumn column = dataset.getColumn(columnName);
-
-                    if (column != null && index != null) {
-                        return new DBIndexColumnRelation(index, column);
-                    }
-                }
-                return null;
-            }
-        };
     }
 }

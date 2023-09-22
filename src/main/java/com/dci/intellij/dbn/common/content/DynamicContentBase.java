@@ -358,15 +358,22 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
         if (isLoaded() && !isDirty()) return elements;
         if (isDisposed()) return elements;
 
-        if (canLoadFast() ||
-                ThreadMonitor.isBackgroundProcess() ||
-                ThreadMonitor.isProgressProcess() ||
-                ThreadMonitor.isModalProcess()) {
+        if (allowSyncLoad()) {
             load();
-        } else{
+        } else {
             loadInBackground();
         }
+
         return elements;
+    }
+
+    private boolean allowSyncLoad() {
+        if (ThreadMonitor.isDispatchThread()) return false;
+        if (ThreadMonitor.isBackgroundProcess()) return true;
+        if (ThreadMonitor.isProgressProcess()) return true;
+        if (ThreadMonitor.isModalProcess()) return true;
+        if (canLoadFast()) return true;
+        return false;
     }
 
     @Override

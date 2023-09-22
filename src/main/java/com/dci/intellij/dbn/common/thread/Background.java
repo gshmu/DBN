@@ -22,7 +22,7 @@ public final class Background {
     public static void run(Project project, ThrowableRunnable<Throwable> runnable) {
         try {
             Threads.delay(lock);
-            ThreadInfo threadInfo = ThreadMonitor.current();
+            ThreadInfo threadInfo = ThreadInfo.copy();
             ExecutorService executorService = Threads.backgroundExecutor();
             executorService.submit(() -> {
                 try {
@@ -51,7 +51,7 @@ public final class Background {
             if (current != null) {
                 current.interrupt();
             }
-            ThreadInfo threadInfo = ThreadMonitor.current();
+            ThreadInfo threadInfo = ThreadInfo.copy();
             ExecutorService executorService = Threads.backgroundExecutor();
             executorService.submit(() -> {
                 try {

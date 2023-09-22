@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEFAULT_ROLE;
 
-public class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> implements DBGrantedRole {
+class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> implements DBGrantedRole {
     private DBObjectRef<DBRole> role;
 
     public DBGrantedRoleImpl(DBRoleGrantee grantee, DBGrantedRoleMetadata metadata) throws SQLException {

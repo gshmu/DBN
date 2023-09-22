@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBRootObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILE
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRole {
+class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRole {
 
     public DBRoleImpl(ConnectionHandler connection, DBRoleMetadata metadata) throws SQLException {
         super(connection, metadata);
@@ -134,13 +133,5 @@ public class DBRoleImpl extends DBRootObjectImpl<DBRoleMetadata> implements DBRo
         return
             settings.isVisible(PRIVILEGE) ||
             settings.isVisible(ROLE);
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        DBObjectListFromRelationListLoader.create(ROLE, GRANTED_PRIVILEGE);
-        DBObjectListFromRelationListLoader.create(ROLE, GRANTED_ROLE);
     }
 }

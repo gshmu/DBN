@@ -119,7 +119,7 @@ public abstract class PropertyHolderBase<T extends Property> implements Property
             super(properties);
         }
 
-        protected void replace(IntStore<T> source) {
+        public void inherit(IntStore<T> source) {
             this.computed = source.computed;
         }
 
