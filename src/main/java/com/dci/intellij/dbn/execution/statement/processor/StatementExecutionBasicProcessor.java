@@ -634,10 +634,10 @@ public class StatementExecutionBasicProcessor extends StatefulDisposableBase imp
             if (schema != null && subjectPsiElement != null) {
                 DBObjectType objectType = subjectPsiElement.getObjectType();
                 String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                compilerResult = new CompilerResult(compilerAction, connection, schema, objectType, objectName);
+                compilerResult = new CompilerResult(compilerAction, connection, schema, objectType, objectName, null);
             }
         } else {
-            compilerResult = new CompilerResult(compilerAction, object);
+            compilerResult = new CompilerResult(compilerAction, object, null);
         }
 
         if (compilerResult == null) return false;

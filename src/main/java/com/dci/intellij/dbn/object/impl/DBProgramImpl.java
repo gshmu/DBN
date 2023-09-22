@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBProcedure, F extends DBFunction, T extends DBType>
+abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBProcedure, F extends DBFunction, T extends DBType>
         extends DBSchemaObjectImpl<M> implements DBProgram<P, F, T> {
 
     DBProgramImpl(DBSchemaObject parent, M metadata) throws SQLException {

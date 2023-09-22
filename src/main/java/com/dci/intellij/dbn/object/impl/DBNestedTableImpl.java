@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBNestedTableImpl extends DBObjectImpl<DBNestedTableMetadata> implements DBNestedTable {
+class DBNestedTableImpl extends DBObjectImpl<DBNestedTableMetadata> implements DBNestedTable {
     private List<DBNestedTableColumn> columns;
     private DBObjectRef<DBType> typeRef;
 

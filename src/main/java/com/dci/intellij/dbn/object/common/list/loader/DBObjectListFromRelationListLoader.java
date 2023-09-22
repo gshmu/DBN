@@ -17,14 +17,14 @@ public class DBObjectListFromRelationListLoader<
                 M extends DBObjectMetadata>
         extends DynamicSubcontentCustomLoader<T, M> {
 
-    private DBObjectListFromRelationListLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
-        super(parentContentType, contentType);
+    private DBObjectListFromRelationListLoader(String identifier, @Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
+        super(identifier, parentContentType, contentType);
     }
 
     public static <T extends DynamicContentElement, M extends DBObjectMetadata> DBObjectListFromRelationListLoader<T, M> create(
-            @Nullable DynamicContentType parentContentType,
+            String identifier, @Nullable DynamicContentType parentContentType,
             @NotNull DynamicContentType contentType) {
-        return new DBObjectListFromRelationListLoader<>(parentContentType, contentType);
+        return new DBObjectListFromRelationListLoader<>(identifier, parentContentType, contentType);
     }
 
     @Override

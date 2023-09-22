@@ -13,21 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
+import static com.dci.intellij.dbn.common.thread.ThreadInfo.current;
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.*;
 
 @UtilityClass
 public class ThreadMonitor {
-    private static final ThreadLocal<ThreadInfo> THREAD_INFO = new ThreadLocal<>();
     private static final Map<ThreadProperty, AtomicInteger> PROCESS_COUNTERS = new ConcurrentHashMap<>();
-
-    public static ThreadInfo current() {
-        ThreadInfo threadInfo = THREAD_INFO.get();
-        if (threadInfo == null) {
-            threadInfo = new ThreadInfo();
-            THREAD_INFO.set(threadInfo);
-        }
-        return threadInfo;
-    }
 
     @Nullable
     public static Project getProject() {
@@ -165,7 +156,7 @@ public class ThreadMonitor {
     }
 
     public static <E extends Throwable> void wrap(@NotNull ThreadProperty threadProperty, ThrowableRunnable<E> runnable) throws E {
-        ThreadInfo threadInfo = ThreadMonitor.current();
+        ThreadInfo threadInfo = current();
         boolean original = threadInfo.is(threadProperty);
         try {
             threadInfo.set(threadProperty, true);
@@ -177,7 +168,7 @@ public class ThreadMonitor {
     }
 
     public static <R, E extends Throwable> R wrap(@NotNull ThreadProperty threadProperty, ThrowableCallable<R, E> callable) throws E {
-        ThreadInfo threadInfo = ThreadMonitor.current();
+        ThreadInfo threadInfo = current();
         boolean original = threadInfo.is(threadProperty);
         try {
             threadInfo.set(threadProperty, true);

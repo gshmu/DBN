@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN
 import static com.dci.intellij.dbn.object.type.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.INDEX;
 
-public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements DBIndex {
+class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements DBIndex {
     DBIndexImpl(DBDataset dataset, DBIndexMetadata metadata) throws SQLException {
         super(dataset, metadata);
     }
@@ -111,12 +110,5 @@ public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements 
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        DBObjectListFromRelationListLoader.create(INDEX, COLUMN);
     }
 }

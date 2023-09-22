@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.object;
 
+import com.dci.intellij.dbn.connection.DatabaseEntity;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.object.common.DBRootObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 public interface DBSchema extends DBRootObject {
     boolean isPublicSchema();
@@ -47,9 +48,9 @@ public interface DBSchema extends DBRootObject {
     DBCluster getCluster(String name);
     DBDatabaseLink getDatabaseLink(String name);
 
-    void refreshObjectsStatus() throws SQLException;
-
     @Override
     DBObjectRef<DBSchema> ref();
     SchemaId getIdentifier();
+
+    Set<DatabaseEntity> resetObjectsStatus();
 }

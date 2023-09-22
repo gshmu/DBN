@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
-public class DBSequenceImpl extends DBSchemaObjectImpl<DBSequenceMetadata> implements DBSequence {
+class DBSequenceImpl extends DBSchemaObjectImpl<DBSequenceMetadata> implements DBSequence {
     DBSequenceImpl(DBSchema schema, DBSequenceMetadata resultSet) throws SQLException {
         super(schema, resultSet);
     }

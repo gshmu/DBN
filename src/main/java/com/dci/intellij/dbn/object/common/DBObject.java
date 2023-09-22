@@ -113,6 +113,8 @@ public interface DBObject extends
         return null;
     }
 
+    <T extends DBObject> T getChildObjectNoLoad(String objectName);
+
     List<String> getChildObjectNames(DBObjectType objectType);
 
     List<DBObjectNavigationList> getNavigationLists();

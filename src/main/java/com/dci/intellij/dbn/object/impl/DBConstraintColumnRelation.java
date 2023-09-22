@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import lombok.Getter;
 
 @Getter
-public class DBConstraintColumnRelation extends DBObjectRelationImpl<DBConstraint, DBColumn> {
+class DBConstraintColumnRelation extends DBObjectRelationImpl<DBConstraint, DBColumn> {
     private final short position;
 
     DBConstraintColumnRelation(DBConstraint constraint, DBColumn column, short position) {

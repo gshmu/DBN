@@ -60,6 +60,7 @@ public class ObjectNavigationListActionGroup extends DefaultActionGroup {
         }
 
         if (!showFullList && objects.size() > MAX_ITEMS) {
+            addSeparator();
             add(new ObjectNavigationListShowAllAction(parentObject, navigationList));
         }
     }

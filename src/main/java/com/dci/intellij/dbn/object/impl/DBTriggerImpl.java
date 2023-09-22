@@ -23,7 +23,7 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBTriggerEvent.*;
 import static com.dci.intellij.dbn.object.type.DBTriggerType.*;
 
-public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata> implements DBTrigger {
+abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata> implements DBTrigger {
     private DBTriggerType triggerType;
     private DBTriggerEvent[] triggerEvents;
 

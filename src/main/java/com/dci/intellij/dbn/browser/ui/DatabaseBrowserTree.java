@@ -357,19 +357,29 @@ public final class DatabaseBrowserTree extends DBNTree implements Borderless {
                         actionGroup = new ObjectListActionGroup(objectList);
                     } else if (lastPathEntity instanceof DBObject) {
                         DBObject object = (DBObject) lastPathEntity;
-                        actionGroup = new ObjectActionGroup(object);
+                        Progress.modal(
+                                getProject(),
+                                object,
+                                true,
+                                "Loading object properties",
+                                "Loading properties of " + object.getQualifiedNameWithType(),
+                                progress -> showPopupMenu(e, new ObjectActionGroup(object)));
                     } else if (lastPathEntity instanceof DBObjectBundle) {
                         DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
                         ConnectionHandler connection = objectsBundle.getConnection();
                         actionGroup = new ConnectionActionGroup(connection);
                     }
 
-                    if (actionGroup != null) {
-                        ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
-                        JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                        popupMenu.show(DatabaseBrowserTree.this, e.getX(), e.getY());
-                    }
+                    showPopupMenu(e, actionGroup);
                 });
+    }
+
+    private void showPopupMenu(MouseEvent e, ActionGroup actionGroup) {
+        if (actionGroup == null) return;
+        ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
+        JPopupMenu popupMenu = actionPopupMenu.getComponent();
+
+        Dispatch.run(() -> popupMenu.show(DatabaseBrowserTree.this, e.getX(), e.getY()));
     }
 
     /********************************************************

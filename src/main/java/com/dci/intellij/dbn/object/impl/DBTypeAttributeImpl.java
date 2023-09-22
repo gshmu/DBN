@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> implements DBTypeAttribute {
+class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> implements DBTypeAttribute {
     private DBDataType dataType;
     private short position;
 

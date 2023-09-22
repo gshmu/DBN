@@ -15,7 +15,7 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
 
-public class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetadata> implements DBGrantedPrivilege {
+class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetadata> implements DBGrantedPrivilege {
     private DBObjectRef<DBPrivilege> privilege;
 
     public DBGrantedPrivilegeImpl(DBPrivilegeGrantee grantee, DBGrantedPrivilegeMetadata metadata) throws SQLException {

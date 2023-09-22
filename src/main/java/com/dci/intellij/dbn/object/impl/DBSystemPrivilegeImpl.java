@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
 
-public class DBSystemPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> implements DBSystemPrivilege {
+class DBSystemPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> implements DBSystemPrivilege {
 
 
 

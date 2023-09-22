@@ -25,7 +25,7 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     private final long startTimestamp = System.currentTimeMillis();
-    private final ThreadInfo invoker = ThreadMonitor.current();
+    private final ThreadInfo invoker = ThreadInfo.copy();
 
     private final DBNConnection connection;
     private final int timeout;

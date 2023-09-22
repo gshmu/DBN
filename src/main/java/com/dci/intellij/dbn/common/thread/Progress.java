@@ -25,7 +25,7 @@ public final class Progress {
         if (isNotValid(project)) return;
         title = Titles.suffixed(title, context);
 
-        ThreadInfo invoker = ThreadMonitor.current();
+        ThreadInfo invoker = ThreadInfo.copy();
         Task task = new Backgroundable(project, title, cancellable, ALWAYS_BACKGROUND) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
@@ -43,7 +43,7 @@ public final class Progress {
         if (isNotValid(project)) return;
         title = Titles.suffixed(title, context);
 
-        ThreadInfo invoker = ThreadMonitor.current();
+        ThreadInfo invoker = ThreadInfo.copy();
         Task task = new Task.Backgroundable(project, title, cancellable, DEAF) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
@@ -72,7 +72,7 @@ public final class Progress {
         if (isNotValid(project)) return;
         title = Titles.suffixed(title, context);
 
-        ThreadInfo invoker = ThreadMonitor.current();
+        ThreadInfo invoker = ThreadInfo.copy();
         Task task = new Task.Modal(project, title, cancellable) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
@@ -90,7 +90,7 @@ public final class Progress {
         if (!allValid(task, task.getProject())) return;
 
         ProgressManager progressManager = ProgressManager.getInstance();
-        progressManager.run(task);
+        Dispatch.run(() -> progressManager.run(task));
     }
 
     public static double progressOf(int is, int should) {

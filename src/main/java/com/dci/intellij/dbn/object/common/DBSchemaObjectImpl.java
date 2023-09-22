@@ -1,13 +1,9 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
-import com.dci.intellij.dbn.database.common.metadata.def.DBObjectDependencyMetadata;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dci.intellij.dbn.database.interfaces.DatabaseMetadataInterface;
@@ -19,7 +15,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
@@ -36,7 +31,8 @@ import static com.dci.intellij.dbn.common.Priority.HIGHEST;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.DEPENDENCY;
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
-import static com.dci.intellij.dbn.object.type.DBObjectType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectType.INCOMING_DEPENDENCY;
+import static com.dci.intellij.dbn.object.type.DBObjectType.OUTGOING_DEPENDENCY;
 
 
 @Getter
@@ -190,67 +186,6 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                     DatabaseDataDefinitionInterface dataDefinition = connection.getDataDefinitionInterface();
                     dataDefinition.updateObject(getName(), getObjectType().getName(), oldCode, newCode, conn);
                 });
-    }
-
-    /*********************************************************
-     *                         Loaders                       *
-     *********************************************************/
-    static {
-        new DynamicContentResultSetLoader<DBObject, DBObjectDependencyMetadata>(null, INCOMING_DEPENDENCY, true, false) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = dynamicContent.ensureParentEntity();
-                return metadataInterface.loadReferencedObjects(schemaObject.getSchemaName(), schemaObject.getName(), connection);
-            }
-
-            @Override
-            public DBObject createElement(DynamicContent<DBObject> content, DBObjectDependencyMetadata metadata, LoaderCache cache) throws SQLException {
-                String objectOwner = metadata.getObjectOwner();
-                String objectName = metadata.getObjectName();
-                String objectTypeName = metadata.getObjectType();
-                DBObjectType objectType = get(objectTypeName);
-                if (objectType == PACKAGE_BODY) objectType = PACKAGE;
-                if (objectType == TYPE_BODY) objectType = TYPE;
-
-                DBSchema schema = (DBSchema) cache.getObject(objectOwner);
-
-                if (schema == null) {
-                    DBSchemaObject schemaObject = content.ensureParentEntity();
-                    schema = schemaObject.getObjectBundle().getSchema(objectOwner);
-                    cache.setObject(objectOwner,  schema);
-                }
-
-                return schema == null ? null : schema.getChildObject(objectType, objectName, (short) 0, true);
-            }
-        };
-
-        new DynamicContentResultSetLoader<DBObject, DBObjectDependencyMetadata>(null, OUTGOING_DEPENDENCY, true, false) {
-            @Override
-            public ResultSet createResultSet(DynamicContent<DBObject> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBSchemaObject schemaObject = dynamicContent.ensureParentEntity();
-                return metadataInterface.loadReferencingObjects(schemaObject.getSchemaName(), schemaObject.getName(), connection);
-            }
-
-            @Override
-            public DBObject createElement(DynamicContent<DBObject> content, DBObjectDependencyMetadata metadata, LoaderCache cache) throws SQLException {
-                String objectOwner = metadata.getObjectOwner();
-                String objectName = metadata.getObjectName();
-                String objectTypeName = metadata.getObjectType();
-                DBObjectType objectType = get(objectTypeName);
-                if (objectType == PACKAGE_BODY) objectType = PACKAGE;
-                if (objectType == TYPE_BODY) objectType = TYPE;
-
-                DBSchema schema = (DBSchema) cache.getObject(objectOwner);
-                if (schema == null) {
-                    DBSchemaObject schemaObject = content.ensureParentEntity();
-                    schema = schemaObject.getObjectBundle().getSchema(objectOwner);
-                    cache.setObject(objectOwner,  schema);
-                }
-                return schema == null ? null : schema.getChildObject(objectType, objectName, (short) 0, true);
-            }
-        };
     }
 
 }
