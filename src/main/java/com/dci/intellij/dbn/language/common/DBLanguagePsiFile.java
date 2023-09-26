@@ -341,8 +341,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
         if (underlyingObject != null) {
             DBObject parentObject = underlyingObject.getParentObject();
             return DBObjectPsiCache.asPsiDirectory(parentObject);
-
         }
+        return Read.call(this, f -> f.getSuperParent());
+    }
+
+    private PsiDirectory getSuperParent() {
         return super.getParent();
     }
 
