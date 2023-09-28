@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.editor.text.ui;
 
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -41,8 +42,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     }
 
     public static void show(Project project, DataEditorComponent textEditorAdapter) {
-        TextEditorDialog dialog = new TextEditorDialog(project, textEditorAdapter);
-        dialog.show();
+        Dialogs.show(() -> new TextEditorDialog(project, textEditorAdapter));
     }
 
     @Override

@@ -16,8 +16,8 @@ import java.awt.event.ActionEvent;
 public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrowserForm> implements Disposable {
     private SelectAction selectAction;
     private DBObjectRef<DBMethod> methodRef;  // TODO dialog result - Disposable.nullify(...)
-    private ObjectTreeModel objectTreeModel;
-    private boolean debug;
+    private final ObjectTreeModel objectTreeModel;
+    private final boolean debug;
 
     public MethodExecutionBrowserDialog(Project project, ObjectTreeModel objectTreeModel, boolean debug) {
         super(project, "Method browser", true);

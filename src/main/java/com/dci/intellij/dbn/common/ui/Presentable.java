@@ -31,6 +31,10 @@ public interface Presentable extends Named {
         return null;
     }
 
+    default boolean isSecondary() {
+        return false;
+    }
+
     Presentable UNKNOWN = new Presentable() {
         @NotNull
         @Override

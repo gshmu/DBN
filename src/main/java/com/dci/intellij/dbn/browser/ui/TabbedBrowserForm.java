@@ -166,12 +166,10 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     public void selectElement(BrowserTreeNode treeNode, boolean focus, boolean scroll) {
         ConnectionId connectionId = treeNode.getConnectionId();
         SimpleBrowserForm browserForm = getBrowserForm(connectionId);
-        if (browserForm != null) {
-            getConnectionTabs().select(browserForm.getComponent(), focus);
-            if (scroll) {
-                browserForm.selectElement(treeNode, focus, true);
-            }
-        }
+        if (browserForm == null) return;
+
+        getConnectionTabs().select(browserForm.getComponent(), focus);
+        if (scroll) browserForm.selectElement(treeNode, focus, true);
     }
 
     @Override

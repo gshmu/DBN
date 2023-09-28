@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.ProjectAction;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -130,7 +129,7 @@ public class SQLConsoleOpenAction extends ProjectAction {
                 DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(connection.getProject());
                 consoleManager.showCreateConsoleDialog(connection, consoleType);
             } else {
-                ConnectionHandler connection = Failsafe.nn(console.getConnection());
+                ConnectionHandler connection = console.ensureConnection();
                 Editors.openFile(connection.getProject(), console.getVirtualFile(), true);
             }
         }

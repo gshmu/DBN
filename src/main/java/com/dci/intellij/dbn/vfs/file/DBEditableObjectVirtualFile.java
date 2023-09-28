@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
@@ -140,9 +141,8 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @NotNull
     public FileType getFileType() {
         return guarded(SQLFileType.INSTANCE, this, f -> {
-            DBSchemaObject object = f.getObject();
-            DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
-            DDLFileType type = ddlFileManager.getDDLFileType(object.getObjectType(), f.getMainContentType());
+            DDLFileManager ddlFileManager = DDLFileManager.getInstance(getProject());
+            DDLFileType type = ddlFileManager.getDDLFileType(getObjectType(), f.getMainContentType());
             return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
         });
     }
@@ -209,6 +209,8 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @Override
     public void invalidate() {
+        DatabaseFileSystem.getInstance().invalidateDatabaseFile(object);
+
         List<DBContentVirtualFile> contentVirtualFiles = contentFiles.value();
         if (contentVirtualFiles != null) {
             for (DBContentVirtualFile virtualFile : contentVirtualFiles) {

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.ref.WeakRef;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.RenameExecutionResultDialog;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
@@ -50,16 +51,14 @@ public class ExecutionConsolePopupActionGroup extends DefaultActionGroup {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             TabInfo tabInfo = getTabInfo(e);
-            if (tabInfo != null) {
-                Object object = tabInfo.getObject();
-                if (object instanceof StatementExecutionResultForm) {
-                    StatementExecutionResultForm resultForm = (StatementExecutionResultForm) object;
-                    StatementExecutionCursorResult executionResult = resultForm.getExecutionResult();
-                    RenameExecutionResultDialog dialog = new RenameExecutionResultDialog(executionResult);
-                    dialog.show();
-                    tabInfo.setText(executionResult.getName());
-                }
-            }
+            if (tabInfo == null) return;
+
+            Object object = tabInfo.getObject();
+            if (!(object instanceof StatementExecutionResultForm)) return;
+
+            StatementExecutionResultForm resultForm = (StatementExecutionResultForm) object;
+            StatementExecutionCursorResult executionResult = resultForm.getExecutionResult();
+            Dialogs.show(() -> new RenameExecutionResultDialog(executionResult), (dialog, exitCode) -> tabInfo.setText(executionResult.getName()));
         }
     };
 

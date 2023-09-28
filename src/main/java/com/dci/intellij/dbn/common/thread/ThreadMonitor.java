@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.dci.intellij.dbn.common.util.Traces;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import lombok.experimental.UtilityClass;
@@ -27,35 +28,31 @@ public class ThreadMonitor {
 
     public static <E extends Throwable> void surround(
             @Nullable Project project,
-            @NotNull ThreadProperty property,
+            @Nullable ThreadProperty property,
             ThrowableRunnable<E> runnable) throws E {
-        ThreadInfo threadInfo = current();
-        Project originalProject = threadInfo.getProject();
 
-        try {
-            threadInfo.set(property, true);
-            threadInfo.setProject(project);
-            guarded(runnable);
-        } finally {
-            threadInfo.set(property, false);
-            threadInfo.setProject(originalProject);
-        }
+        surround(project, property, () -> {
+            runnable.run();
+            return null;
+        });
     }
 
     public static <T, E extends Throwable> T surround(
             @Nullable Project project,
-            @NotNull ThreadProperty property,
+            @Nullable ThreadProperty property,
             ThrowableCallable<T, E> callable) throws E {
         ThreadInfo threadInfo = current();
         Project originalProject = threadInfo.getProject();
 
         try {
-            threadInfo.set(property, true);
+            if (property != null) threadInfo.set(property, true);
             threadInfo.setProject(project);
+            threadInfo.setCallStack(Traces.diagnosticsCallStack());
             return guarded(null, callable, c -> c.call());
         } finally {
-            threadInfo.set(property, false);
+            if (property != null) threadInfo.set(property, false);
             threadInfo.setProject(originalProject);
+            threadInfo.setCallStack(null);
         }
     }
 
@@ -63,51 +60,55 @@ public class ThreadMonitor {
     public static <E extends Throwable> void surround(
             @Nullable Project project,
             @Nullable ThreadInfo invoker,
-            @NotNull ThreadProperty property,
+            @Nullable ThreadProperty property,
             ThrowableRunnable<E> runnable) throws E {
 
-        ThreadInfo threadInfo = current();
-        boolean originalProperty = threadInfo.is(property);
-        Project originalProject = threadInfo.getProject();
-
-        AtomicInteger processCounter = getProcessCounter(property);
-        try {
-            processCounter.incrementAndGet();
-            threadInfo.set(property, true);
-            threadInfo.setProject(project);
-            threadInfo.merge(invoker);
-            guarded(runnable);
-        } finally {
-            threadInfo.set(property, originalProperty);
-            threadInfo.setProject(originalProject);
-            threadInfo.unmerge(invoker);
-            processCounter.decrementAndGet();
-        }
+        surround(project, invoker, property, null, () -> {
+            runnable.run();
+            return null;
+        });
     }
 
     public static <T, E extends Throwable> T surround(
             @Nullable Project project,
             @Nullable ThreadInfo invoker,
-            @NotNull ThreadProperty property,
+            @Nullable ThreadProperty property,
             T defaultValue,
             ThrowableCallable<T, E> callable) throws E {
 
         ThreadInfo threadInfo = current();
-        boolean originalProperty = threadInfo.is(property);
         Project originalProject = threadInfo.getProject();
 
-        AtomicInteger processCounter = getProcessCounter(property);
+        boolean originalProperty = false;
+        AtomicInteger processCounter = null;
+
+        if (property != null) {
+            originalProperty = threadInfo.is(property);
+            processCounter = getProcessCounter(property);
+        }
+
         try {
-            processCounter.incrementAndGet();
-            threadInfo.set(property, true);
-            threadInfo.setProject(project);
             threadInfo.merge(invoker);
+            if (property != null) {
+                processCounter.incrementAndGet();
+                threadInfo.set(property, true);
+            }
+
+            threadInfo.setProject(project);
+            threadInfo.setInvoker(invoker);
+            threadInfo.setCallStack(Traces.diagnosticsCallStack());
             return guarded(defaultValue, callable, c -> c.call());
+
         } finally {
-            threadInfo.set(property, originalProperty);
-            threadInfo.setProject(originalProject);
+            if (property != null)  {
+                processCounter.decrementAndGet();
+                threadInfo.set(property, originalProperty);
+            }
             threadInfo.unmerge(invoker);
-            processCounter.decrementAndGet();
+
+            threadInfo.setProject(originalProject);
+            threadInfo.setInvoker(null);
+            threadInfo.setCallStack(null);
         }
     }
 

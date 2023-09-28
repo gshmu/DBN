@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -302,16 +303,16 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
             @NotNull Consumer<CompileType> callback) {
 
         if (compileType == CompileType.ASK) {
-            CompilerTypeSelectionDialog dialog = new CompilerTypeSelectionDialog(getProject(), program);
-            dialog.show();
-            if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                compileType = dialog.getSelection();
+            Dialogs.show(() -> new CompilerTypeSelectionDialog(getProject(), program), (dialog, exitCode) -> {
+                if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
+
+                CompileType selectedCompileType = dialog.getSelection();
                 if (dialog.isRememberSelection()) {
                     OperationSettings operationSettings = OperationSettings.getInstance(getProject());
-                    operationSettings.getCompilerSettings().setCompileType(compileType);
+                    operationSettings.getCompilerSettings().setCompileType(selectedCompileType);
                 }
-                callback.accept(compileType);
-            }
+                callback.accept(selectedCompileType);
+            });
         } else {
             callback.accept(compileType);
         }

@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.content.DynamicContentProperty;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.exception.ElementSkippedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadInfo;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -136,7 +138,8 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
 
     @Override
     public void loadContent(DynamicContent<E> content) throws SQLException {
-        Priority priority = content.is(INTERNAL) ? Priority.LOW : Priority.MEDIUM;
+        // TODO "computeThreadPriority" utility - handle more thread info cases
+        Priority priority = content.is(INTERNAL) ? Priority.LOW : ThreadInfo.current().is(ThreadProperty.MODAL) ? Priority.HIGH : Priority.MEDIUM;
         DatabaseInterfaceInvoker.execute(priority,
                 "Loading data dictionary",
                 "Loading " + content.getContentDescription(),

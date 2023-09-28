@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.file.FileTypeService;
 import com.dci.intellij.dbn.common.project.Projects;
-import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -91,7 +91,7 @@ public class PluginConflictManager extends ApplicationComponentBase implements P
 
     private void showConflictResolutionDialog() {
         conflictPrompted = true;
-        Dispatch.run(() -> PluginConflictResolutionDialog.open());
+        Dialogs.show(() -> new PluginConflictResolutionDialog());
     }
 
     public void applyConflictResolution(PluginConflictResolution resolution) {

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.options.setting.Settings;
-import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ui.ObjectDependencyTreeDialog;
@@ -42,10 +42,7 @@ public class ObjectDependencyManager extends ProjectComponentBase implements Per
 
     public void openDependencyTree(DBSchemaObject schemaObject) {
         ConnectionAction.invoke("opening object dependency tree", false, schemaObject,
-                (action) -> Dispatch.run(() -> {
-                    ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
-                    dependencyTreeDialog.show();
-                }));
+                action -> Dialogs.show(() -> new ObjectDependencyTreeDialog(getProject(), schemaObject)));
     }
 
     @Override

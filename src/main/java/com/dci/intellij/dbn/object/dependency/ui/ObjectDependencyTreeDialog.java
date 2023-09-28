@@ -6,13 +6,14 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Action;
+import javax.swing.*;
 
 public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeForm> {
-    private DBObjectRef<DBSchemaObject> objectRef;
+    private final DBObjectRef<DBSchemaObject> object;
+
     public ObjectDependencyTreeDialog(Project project, DBSchemaObject object) {
         super(project, "Object dependency tree", true);
-        this.objectRef = DBObjectRef.of(object);
+        this.object = DBObjectRef.of(object);
         setModal(false);
         setResizable(true);
         renameAction(getCancelAction(), "Close");
@@ -22,7 +23,7 @@ public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeFo
     @NotNull
     @Override
     protected ObjectDependencyTreeForm createForm() {
-        DBSchemaObject object = DBObjectRef.get(objectRef);
+        DBSchemaObject object = DBObjectRef.get(this.object);
         return new ObjectDependencyTreeForm(this, object);
     }
 

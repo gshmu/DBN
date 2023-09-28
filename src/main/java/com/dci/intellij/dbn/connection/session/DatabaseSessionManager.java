@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -60,15 +60,9 @@ public class DatabaseSessionManager extends ProjectComponentBase implements Pers
             @Nullable DatabaseSession session,
             @Nullable Consumer<DatabaseSession> consumer) {
 
-        Dispatch.run(() -> {
-            CreateRenameSessionDialog dialog = session == null ?
-                    new CreateRenameSessionDialog(connection) :
-                    new CreateRenameSessionDialog(connection, session);
-            dialog.setModal(true);
-            dialog.show();
-            if (consumer != null) {
-                consumer.accept(dialog.getSession());
-            }
+        Dialogs.show(() -> new CreateRenameSessionDialog(connection, session), (dialog, exitCode) -> {
+            if (consumer == null) return;
+            consumer.accept(dialog.getSession());
         });
     }
 

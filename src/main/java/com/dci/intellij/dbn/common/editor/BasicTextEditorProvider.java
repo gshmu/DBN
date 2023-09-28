@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -39,10 +38,8 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, Nam
     }
 
     protected void updateTabIcon(final DBEditableObjectVirtualFile databaseFile, final BasicTextEditor textEditor, final Icon icon) {
-        Dispatch.run(() -> {
-            Project project = Failsafe.nn(databaseFile.getProject());
-            Editors.setEditorProviderIcon(project, databaseFile, textEditor, icon);
-        });
+        Project project = databaseFile.getProject();
+        Dispatch.run(() -> Editors.setEditorProviderIcon(project, databaseFile, textEditor, icon));
     }
 
     @NotNull

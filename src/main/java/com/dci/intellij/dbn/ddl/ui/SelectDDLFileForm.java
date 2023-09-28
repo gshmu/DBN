@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import com.dci.intellij.dbn.common.file.VirtualFileInfo;
+import com.dci.intellij.dbn.common.file.ui.FileListCellRenderer;
 import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.form.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.form.DBNHintForm;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -15,12 +16,12 @@ import java.util.List;
 
 public class SelectDDLFileForm extends DBNFormBase {
     private JPanel mainPanel;
-    private JList<VirtualFile> filesList;
+    private JList<VirtualFileInfo> filesList;
     private JPanel headerPanel;
     private JCheckBox doNotPromptCheckBox;
     private JPanel hintPanel;
 
-    SelectDDLFileForm(DBNDialog<?> parent, DBSchemaObject object, List<VirtualFile> virtualFiles, TextContent hint, boolean isFileOpenEvent) {
+    SelectDDLFileForm(DBNDialog<?> parent, DBSchemaObject object, List<VirtualFileInfo> fileInfos, TextContent hint, boolean isFileOpenEvent) {
         super(parent);
         DBNHeaderForm headerForm = new DBNHeaderForm(this, object);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
@@ -28,18 +29,18 @@ public class SelectDDLFileForm extends DBNFormBase {
         DBNHintForm hintForm = new DBNHintForm(this, hint, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
-        DefaultListModel<VirtualFile> listModel = new DefaultListModel<>();
-        for (VirtualFile virtualFile : virtualFiles) {
-            listModel.addElement(virtualFile);
+        DefaultListModel<VirtualFileInfo> listModel = new DefaultListModel<>();
+        for (VirtualFileInfo fileInfo : fileInfos) {
+            listModel.addElement(fileInfo);
         }
         filesList.setModel(listModel);
-        filesList.setCellRenderer(new FileListCellRenderer(getProject()));
+        filesList.setCellRenderer(new FileListCellRenderer());
         filesList.setSelectedIndex(0);
 
         if (!isFileOpenEvent) mainPanel.remove(doNotPromptCheckBox);
     }
 
-    public List<VirtualFile> getSelection() {
+    public List<VirtualFileInfo> getSelection() {
         return filesList.getSelectedValuesList();
     }
 

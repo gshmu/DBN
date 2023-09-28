@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposableBase;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ref.WeakRef;
+import com.dci.intellij.dbn.common.thread.ThreadInfo;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.DatabaseOpenFileDescriptor;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
@@ -50,6 +52,10 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
         textEditor = (TextEditor) textEditorProvider.createEditor(project, virtualFile);
 
         Disposer.register(this, textEditor);
+    }
+
+    private boolean isWorkspaceRestore() {
+        return ThreadInfo.current().is(ThreadProperty.WORKSPACE_RESTORE);
     }
 
     @Override

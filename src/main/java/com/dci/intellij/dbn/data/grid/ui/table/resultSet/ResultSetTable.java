@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.grid.ui.table.resultSet;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.util.Borderless;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.record.ResultSetRecordViewerDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -27,8 +28,7 @@ public class ResultSetTable<T extends ResultSetDataModel<?, ?>> extends Sortable
     }
 
     public void showRecordViewDialog() {
-        ResultSetRecordViewerDialog dialog = new ResultSetRecordViewerDialog(this, showRecordViewDataTypes());
-        dialog.show();
+        Dialogs.show(() -> new ResultSetRecordViewerDialog(this, showRecordViewDataTypes()));
     }
 
     protected boolean showRecordViewDataTypes() {

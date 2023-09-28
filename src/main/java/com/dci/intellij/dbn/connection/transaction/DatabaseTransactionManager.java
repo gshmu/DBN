@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ProgressRunnable;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.InternalApi;
 import com.dci.intellij.dbn.common.util.Messages;
@@ -19,7 +20,6 @@ import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDetailD
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -272,20 +272,15 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
 
 
     public void showResourceMonitorDialog() {
-        ResourceMonitorDialog resourceMonitorDialog = new ResourceMonitorDialog(getProject());
-        resourceMonitorDialog.show();
+        Dialogs.show(() -> new ResourceMonitorDialog(getProject()));
     }
 
-    public boolean showPendingTransactionsOverviewDialog(@Nullable TransactionAction additionalOperation) {
-        PendingTransactionsDialog executionDialog = new PendingTransactionsDialog(getProject(), additionalOperation);
-        executionDialog.show();
-        return executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE;
+    public void showPendingTransactionsOverviewDialog(@Nullable TransactionAction additionalOperation) {
+        Dialogs.show(() -> new PendingTransactionsDialog(getProject(), additionalOperation));
     }
 
-    public boolean showPendingTransactionsDialog(ConnectionHandler connection, @Nullable TransactionAction additionalOperation) {
-        PendingTransactionsDetailDialog executionDialog = new PendingTransactionsDetailDialog(connection, additionalOperation, false);
-        executionDialog.show();
-        return executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE;
+    public void showPendingTransactionsDialog(ConnectionHandler connection, @Nullable TransactionAction additionalOperation) {
+        Dialogs.show(() -> new PendingTransactionsDetailDialog(connection, additionalOperation, false));
     }
 
     public void toggleAutoCommit(ConnectionHandler connection) {

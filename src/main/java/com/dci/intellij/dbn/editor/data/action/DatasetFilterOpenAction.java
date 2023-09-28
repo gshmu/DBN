@@ -20,7 +20,8 @@ public class DatasetFilterOpenAction extends DumbAwareAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         if (datasetEditor != null) {
             DBDataset dataset = datasetEditor.getDataset();
-            DatasetFilterManager.getInstance(dataset.getProject()).openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
+            DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
+            filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
         }
     }
 

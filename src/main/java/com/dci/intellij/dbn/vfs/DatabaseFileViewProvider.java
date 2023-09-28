@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<>("CACHED_VIEW_PROVIDER");
@@ -56,9 +57,11 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             if (virtualFile instanceof DBConsoleVirtualFile) {
                 // do not use psi facade
             } else  if (virtualFile instanceof DBObjectVirtualFile) {
-                DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
-                DBObject object = objectFile.getObject();
-                return DBObjectPsiCache.asPsiFile(object);
+                return guarded(null, () -> {
+                    DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
+                    DBObject object = objectFile.getObject();
+                    return DBObjectPsiCache.asPsiFile(object);
+                });
             }
 
             Language baseLanguage = getBaseLanguage();

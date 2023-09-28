@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.data.export.ui.ExportDataDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -16,10 +17,11 @@ public class CursorResultExportAction extends MethodExecutionCursorResultAction 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ResultSetTable<?> resultSetTable = getResultSetTable(e);
+        if (resultSetTable == null) return;
+
         DBArgument methodArgument = getMethodArgument(e);
-        if (resultSetTable != null && methodArgument != null) {
-            ExportDataDialog dialog = new ExportDataDialog(resultSetTable, methodArgument);
-            dialog.show();
-        }
+        if (methodArgument == null) return;
+
+        Dialogs.show(() -> new ExportDataDialog(resultSetTable, methodArgument));
     }
 }

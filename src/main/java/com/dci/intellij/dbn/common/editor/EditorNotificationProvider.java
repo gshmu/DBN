@@ -24,7 +24,7 @@ public abstract class EditorNotificationProvider<T extends JComponent> extends L
     public void updateEditorNotification(@NotNull Project project, @Nullable DBContentVirtualFile databaseContentFile) {
         Dispatch.run(() -> {
             EditorNotifications notifications = Editors.getNotifications(project);
-            if (databaseContentFile ==  null) {
+            if (databaseContentFile == null) {
                 notifications.updateAllNotifications();
             } else {
                 notifications.updateNotifications(databaseContentFile.getMainDatabaseFile());

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.export.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ref.WeakRef;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.data.export.ui.ExportDataDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -22,7 +23,6 @@ public class ExportDataAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        ExportDataDialog dialog = new ExportDataDialog(table.ensure(), dataset.ensure());
-        dialog.show();
+        Dialogs.show(() -> new ExportDataDialog(table.ensure(), dataset.ensure()));
     }
 }

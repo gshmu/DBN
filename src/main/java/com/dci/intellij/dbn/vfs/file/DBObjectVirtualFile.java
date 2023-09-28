@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ref.WeakRefCache;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -91,7 +92,15 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
 
     @Override
     public boolean isValid() {
-        return super.isValid() && object.get() != null;
+        if (!super.isValid()) return false;
+
+        T object = this.object.value();
+        if (object != null && object.isDisposed()) return false; // loaded but disposed meanwhile
+        if (ThreadMonitor.isTimeSensitiveThread()) return true; // assume valid without loading
+
+        boolean valid = this.object.get() != null;
+        if (!valid) invalidate();
+        return valid;
     }
 
     @NotNull

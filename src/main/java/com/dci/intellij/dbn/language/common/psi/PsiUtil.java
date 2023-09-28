@@ -299,9 +299,10 @@ public class PsiUtil {
 
     @Nullable
     public static PsiFile getPsiFile(Project project, Document document) {
-        PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
-        return psiDocumentManager == null ? null : psiDocumentManager.getPsiFile(document);
+        PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+        return Read.call(documentManager, m -> m.getPsiFile(document));
     }
+
 
     @Nullable
     public static <T extends PsiFile> T getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {

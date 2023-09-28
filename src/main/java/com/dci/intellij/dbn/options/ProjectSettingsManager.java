@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.component.Components;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.tns.TnsImportData;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -111,45 +111,23 @@ public class ProjectSettingsManager extends ProjectComponentBase implements Pers
     }
 
     public void openDefaultProjectSettings() {
-        Project project = ProjectManager.getInstance().getDefaultProject();
-        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-        globalSettingsDialog.show();
+        Dialogs.show(() -> new ProjectSettingsDialog(ProjectManager.getInstance().getDefaultProject()));
     }
 
     public void openProjectSettings(ConfigId configId) {
-        Project project = getProject();
-        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
-        settingsDialog.selectSettings(configId);
-        settingsDialog.show();
+        Dialogs.show(() -> new ProjectSettingsDialog(getProject(), configId));
     }
 
     public void openConnectionSettings(@Nullable ConnectionId connectionId) {
-        Project project = getProject();
-        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
-        settingsDialog.selectConnectionSettings(connectionId);
-        settingsDialog.show();
+        Dialogs.show(() -> new ProjectSettingsDialog(getProject(), connectionId));
     }
 
     public void createConnection(@NotNull DatabaseType databaseType, @NotNull ConnectionConfigType configType) {
-        Project project = getProject();
-        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
-        ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
-        if (settingsEditor != null) {
-            ConnectionId connectionId = settingsEditor.createNewConnection(databaseType, configType);
-            settingsDialog.selectConnectionSettings(connectionId);
-            settingsDialog.show();
-        }
+        Dialogs.show(() -> new ProjectSettingsDialog(getProject(), databaseType, configType));
     }
 
     public void createConnections(TnsImportData importData) {
-        Project project = getProject();
-        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
-        ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
-        if (settingsEditor != null) {
-            settingsEditor.importTnsNames(importData);
-            settingsDialog.selectConnectionSettings(null);
-            settingsDialog.show();
-        }
+        Dialogs.show(() -> new ProjectSettingsDialog(getProject(), importData));
     }
 
     /****************************************

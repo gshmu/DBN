@@ -69,13 +69,9 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
 
 
     private void showCreateRenameConsoleDialog(ConnectionHandler connection, DBConsole console, DBConsoleType consoleType) {
-        Dispatch.run(() -> {
-            CreateRenameConsoleDialog createConsoleDialog = console == null ?
-                    new CreateRenameConsoleDialog(connection, consoleType) :
-                    new CreateRenameConsoleDialog(connection, console);
-            createConsoleDialog.setModal(true);
-            createConsoleDialog.show();
-        });
+        Dialogs.show(() -> console == null ?
+                new CreateRenameConsoleDialog(connection, consoleType) :
+                new CreateRenameConsoleDialog(connection, console));
     }
 
     public void createConsole(ConnectionHandler connection, String name, DBConsoleType type) {

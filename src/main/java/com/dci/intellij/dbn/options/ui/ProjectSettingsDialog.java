@@ -4,6 +4,10 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
+import com.dci.intellij.dbn.connection.config.tns.TnsImportData;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -12,17 +16,47 @@ import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Alarm;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@Getter
 public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
-    private JButton bApply;
+    private JButton applyButton;
     private final ProjectSettings projectSettings;
+
+    public ProjectSettingsDialog(Project project, ConfigId configId) {
+        this(project);
+        selectSettings(configId);
+    }
+
+    public ProjectSettingsDialog(Project project, @Nullable ConnectionId connectionId) {
+        this(project);
+        selectConnectionSettings(connectionId);
+    }
+
+    public ProjectSettingsDialog(Project project, @NotNull DatabaseType databaseType, @NotNull ConnectionConfigType configType) {
+        this(project);
+        ConnectionId connectionId = getConnectionSettingsEditor().createNewConnection(databaseType, configType);
+        selectConnectionSettings(connectionId);
+    }
+
+    public ProjectSettingsDialog(Project project, @NotNull TnsImportData importData) {
+        this(project);
+        getConnectionSettingsEditor().importTnsNames(importData);
+        selectConnectionSettings(null);
+    }
+
+    @NotNull
+    private ConnectionBundleSettingsForm getConnectionSettingsEditor() {
+        return nd(projectSettings.getConnectionSettings().getSettingsEditor());
+    }
 
     public ProjectSettingsDialog(Project project) {
         super(project, project.isDefault() ? "Default Settings" : "Settings", true);
@@ -43,10 +77,6 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
         return projectSettings.ensureSettingsEditor();
     }
 
-    public ProjectSettings getProjectSettings() {
-        return projectSettings;
-    }
-
     @Override
     @NotNull
     protected final Action[] createActions() {
@@ -61,10 +91,10 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
     @Override
     protected JButton createJButtonForAction(Action action) {
         if (action instanceof ApplyAction) {
-            bApply = new JButton();
-            bApply.setAction(action);
-            bApply.setEnabled(false);
-            return bApply;
+            applyButton = new JButton();
+            applyButton.setAction(action);
+            applyButton.setEnabled(false);
+            return applyButton;
         }
         return super.createJButtonForAction(action);
     }
@@ -92,7 +122,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
     public void doApplyAction() {
         try {
             projectSettings.apply();
-            bApply.setEnabled(false);
+            applyButton.setEnabled(false);
             setCancelButtonText("Close");
         } catch (ConfigurationException e) {
             conditionallyLog(e);
@@ -112,7 +142,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
             public void run() {
                 if (isShowing()) {
                     boolean isModified = projectSettings.isModified();
-                    bApply.setEnabled(isModified);
+                    applyButton.setEnabled(isModified);
                     //setCancelButtonText(isModified ? "Cancel" : "Close");
                     addReloadRequest();
                 }

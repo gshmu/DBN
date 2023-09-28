@@ -5,9 +5,14 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.file.VirtualFileInfo;
 import com.dci.intellij.dbn.common.file.util.FileSearchRequest;
 import com.dci.intellij.dbn.common.file.util.VirtualFiles;
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.util.Lists;
+import com.dci.intellij.dbn.common.util.Dialogs;
+import com.dci.intellij.dbn.common.util.Dialogs.DialogCallback;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -35,6 +40,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.SelectFromListDialog;
@@ -64,6 +70,7 @@ import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.isFileOpened;
 
 @State(
     name = DDLFileAttachmentManager.COMPONENT_NAME,
@@ -208,20 +215,19 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         return false;
     }
 
-    public int showFileAttachDialog(DBSchemaObject object, List<VirtualFile> virtualFiles, boolean showLookupOption) {
-        AttachDDLFileDialog dialog = new AttachDDLFileDialog(virtualFiles, object, showLookupOption);
-        dialog.show();
-        return dialog.getExitCode();
+    public void showFileAttachDialog(DBSchemaObject object, List<VirtualFileInfo> fileInfos, boolean showLookupOption, DialogCallback<AttachDDLFileDialog> callback) {
+        Dialogs.show(() -> new AttachDDLFileDialog(fileInfos, object, showLookupOption), callback);
     }
 
-    public static int showFileDetachDialog(DBSchemaObject object, List<VirtualFile> virtualFiles) {
-        DetachDDLFileDialog dialog = new DetachDDLFileDialog(virtualFiles, object);
-        dialog.show();
-        return dialog.getExitCode();
+    public void showFileDetachDialog(DBSchemaObject object, List<VirtualFileInfo> fileInfos, DialogCallback<DetachDDLFileDialog> callback) {
+        Dialogs.show(() -> new DetachDDLFileDialog(fileInfos, object), callback);
     }
 
     public void attachDDLFile(DBObjectRef<DBSchemaObject> objectRef, VirtualFile virtualFile) {
         if (objectRef == null) return;
+
+        // avoid initialising inside editor creation (slow operation assertions since 23.3)
+        Documents.cacheDocument(virtualFile);
 
         mappings.put(virtualFile.getUrl(), objectRef);
         Project project = getProject();
@@ -364,73 +370,77 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     }
 
     public void attachDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
-        DDLFileNameProvider ddlFileNameProvider = getDDLFileNameProvider(objectRef);
-        if (ddlFileNameProvider == null) return;
-
-        List<VirtualFile> virtualFiles = lookupDetachedDDLFiles(objectRef);
-        if (virtualFiles.isEmpty()) {
-            List<String> fileUrls = getAttachedFileUrls(objectRef);
-
-            StringBuilder message = new StringBuilder();
-            message.append(fileUrls.isEmpty() ?
-                    "No DDL Files were found in " :
-                    "No additional DDL Files were found in ");
-            message.append("project scope.");
-
-            if (!fileUrls.isEmpty()) {
-                message.append("\n\nFollowing files are already attached to ");
-                message.append(objectRef.getQualifiedNameWithType());
-                message.append(':');
-                for (String fileUrl : fileUrls) {
-                    message.append('\n');
-                    message.append(VirtualFiles.ensureFilePath(fileUrl));
-                }
-            }
-
-            String[] options = {"Create New...", "Cancel"};
-            Messages.showInfoDialog(getProject(),
-                    "No DDL files found",
-                    message.toString(), options, 0,
-                    option -> when(option == 0, () -> createDDLFile(objectRef)));
-        } else {
-            DBSchemaObject object = objectRef.ensure();
-            int exitCode = showFileAttachDialog(object, virtualFiles, false);
-            if (exitCode != DialogWrapper.CANCEL_EXIT_CODE) {
-                Project project = object.getProject();
-                DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
-                editorManager.reopenEditor(object);
-            }
-        }
-    }
-
-    public void showMissingFileAssociations(DBObjectRef<DBSchemaObject> objectRef) {
-        Messages.showWarningDialog(
+        Progress.prompt(
                 getProject(),
-                "No DDL File Type Association",
-                "No DDL file type is configured for database " + objectRef.getObjectType().getListName() +
-                        ".\nPlease check the DDL file association in Project Settings > DB Navigator > DDL File Settings.",
-                options("Open Settings...", "Cancel"), 0,
-                option -> when(option == 0, () -> {
-                    ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
-                    settingsManager.openProjectSettings(ConfigId.DDL_FILES);
-                }));
+                objectRef, true,
+                "Attaching DDL Files",
+                "Attaching DDL files to " + objectRef.getQualifiedNameWithType(), t -> {
+                    DDLFileNameProvider ddlFileNameProvider = getDDLFileNameProvider(objectRef);
+                    if (ddlFileNameProvider == null) return;
+
+                    List<VirtualFile> files = lookupDetachedDDLFiles(objectRef);
+                    if (files.isEmpty()) {
+                        List<String> fileUrls = getAttachedFileUrls(objectRef);
+
+                        StringBuilder message = new StringBuilder();
+                        message.append(fileUrls.isEmpty() ?
+                                "No DDL Files were found in " :
+                                "No additional DDL Files were found in ");
+                        message.append("project scope.");
+
+                        if (!fileUrls.isEmpty()) {
+                            message.append("\n\nFollowing files are already attached to ");
+                            message.append(objectRef.getQualifiedNameWithType());
+                            message.append(':');
+                            for (String fileUrl : fileUrls) {
+                                message.append('\n');
+                                message.append(VirtualFiles.ensureFilePath(fileUrl));
+                            }
+                        }
+
+                        String[] options = {"Create New...", "Cancel"};
+                        Messages.showInfoDialog(getProject(),
+                                "No DDL files found",
+                                message.toString(), options, 0,
+                                option -> when(option == 0, () -> createDDLFile(objectRef)));
+                    } else {
+                        List<VirtualFileInfo> fileInfos = VirtualFileInfo.fromFiles(files, getProject());
+                        DBSchemaObject object = objectRef.ensure();
+                        showFileAttachDialog(object, fileInfos, false, (dialog, exitCode) -> {
+                            if (exitCode == DialogWrapper.CANCEL_EXIT_CODE) return;
+
+                            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(object.getProject());
+                            editorManager.reopenEditor(object);
+                        });
+                    }
+                });
+
     }
 
     public void detachDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
-        List<VirtualFile> virtualFiles = getAttachedDDLFiles(objectRef);
-        DBSchemaObject object = objectRef.ensure();
-        int exitCode = showFileDetachDialog(object, virtualFiles);
-        if (exitCode != DialogWrapper.CANCEL_EXIT_CODE) {
-            Project project = object.getProject();
-            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(project);
-            editorManager.reopenEditor(object);
-        }
+        Progress.prompt(
+                getProject(),
+                objectRef, true,
+                "Detaching DDL Files",
+                "Detaching DDL files from " + objectRef.getQualifiedNameWithType(), t -> {
+                    List<VirtualFile> files = getAttachedDDLFiles(objectRef);
+                    if (files == null) return;
+
+                    List<VirtualFileInfo> fileInfos = VirtualFileInfo.fromFiles(files, getProject());
+                    DBSchemaObject object = objectRef.ensure();
+                    showFileDetachDialog(object, fileInfos, (dialog, exitCode) -> {
+                            if (exitCode == DialogWrapper.CANCEL_EXIT_CODE) return;
+
+                            DatabaseFileEditorManager editorManager = DatabaseFileEditorManager.getInstance(object.getProject());
+                            editorManager.reopenEditor(object);
+                        });
+        });
     }
 
     @Nullable
     private DDLFileNameProvider getDDLFileNameProvider(DBObjectRef<DBSchemaObject> objectRef) {
         List<DDLFileType> ddlFileTypes = getDdlFileTypes(objectRef);
-        if (ddlFileTypes.size() == 0) {
+        if (ddlFileTypes.isEmpty()) {
             showMissingFileAssociations(objectRef);
 
         } else if (ddlFileTypes.size() == 1 && ddlFileTypes.get(0).getExtensions().size() == 1) {
@@ -446,21 +456,35 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
                 }
             }
 
-            SelectFromListDialog fileTypeDialog = new SelectFromListDialog(
-                    getProject(),
-                    fileNameProviders.toArray(),
-                    Lists.BASIC_TO_STRING_ASPECT,
-                    "Select DDL file type",
-                    ListSelectionModel.SINGLE_SELECTION);
-            JList list = Failsafe.nd((JList) fileTypeDialog.getPreferredFocusedComponent());
-            list.setCellRenderer(new DDLFileNameListCellRenderer());
-            fileTypeDialog.show();
-            Object[] selectedFileTypes = fileTypeDialog.getSelection();
-            if (selectedFileTypes != null) {
-                return (DDLFileNameProvider) selectedFileTypes[0];
-            }
+            return Dispatch.call(() -> {
+                SelectFromListDialog fileTypeDialog = new SelectFromListDialog(
+                        getProject(),
+                        fileNameProviders.toArray(),
+                        Lists.BASIC_TO_STRING_ASPECT,
+                        "Select DDL File Type",
+                        ListSelectionModel.SINGLE_SELECTION);
+                JList list = Failsafe.nd((JList) fileTypeDialog.getPreferredFocusedComponent());
+                list.setCellRenderer(new DDLFileNameListCellRenderer());
+                fileTypeDialog.show();
+                Object[] selection = fileTypeDialog.getSelection();
+                if (selection == null) throw new ProcessCanceledException();
+                return (DDLFileNameProvider) selection[0];
+            });
         }
         return null;
+    }
+
+    public void showMissingFileAssociations(DBObjectRef<DBSchemaObject> objectRef) {
+        Messages.showWarningDialog(
+                getProject(),
+                "No DDL File Type Association",
+                "No DDL file type is configured for database " + objectRef.getObjectType().getListName() +
+                        ".\nPlease check the DDL file association in Project Settings > DB Navigator > DDL File Settings.",
+                options("Open Settings...", "Cancel"), 0,
+                option -> when(option == 0, () -> {
+                    ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
+                    settingsManager.openProjectSettings(ConfigId.DDL_FILES);
+                }));
     }
 
     private List<String> getAttachedFileUrls(DBObjectRef<DBSchemaObject> objectRef) {
@@ -538,4 +562,16 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
             }
         }
     }
+
+    public void warmUpAttachedDDLFiles(VirtualFile file) {
+        if (file instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile objectFile = (DBEditableObjectVirtualFile) file;
+            if (isFileOpened(objectFile.getObject())) return;
+
+            List<VirtualFile> files = getAttachedDDLFiles(objectFile.getObjectRef());
+            Documents.cacheDocuments(files);
+        }
+
+    }
+
 }
