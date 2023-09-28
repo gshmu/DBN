@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
 public final class Checks {
@@ -59,5 +60,9 @@ public final class Checks {
         }
 
         return true;
+    }
+
+    public static boolean isTrue(@Nullable Boolean bool) {
+        return bool != null && bool;
     }
 }
