@@ -147,6 +147,7 @@ public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationS
         }
 
         @Override
+        @NotNull
         public String getName() {
             return objectType.getName().toUpperCase();
         }

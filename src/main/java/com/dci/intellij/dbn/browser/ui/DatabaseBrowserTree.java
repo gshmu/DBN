@@ -90,12 +90,11 @@ public final class DatabaseBrowserTree extends DBNTree implements Borderless {
     }
 
     public void expandConnectionManagers() {
-        Dispatch.run(() -> {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
-            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-            TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
-            setExpandedState(treePath, true);
-        });
+        ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
+
+        Dispatch.run(() -> setExpandedState(treePath, true));
     }
 
     public void selectElement(BrowserTreeNode treeNode, boolean focus) {

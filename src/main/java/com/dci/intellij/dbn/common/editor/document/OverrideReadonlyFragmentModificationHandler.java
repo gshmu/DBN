@@ -27,18 +27,18 @@ public class OverrideReadonlyFragmentModificationHandler implements
     @Override
     public void handle(final ReadOnlyFragmentModificationException e) {
         RangeMarker guardedBlock = e.getGuardedBlock();
-        if (guardedBlock != null) {
-            Document document = guardedBlock.getDocument();
-            String message = document.getUserData(GUARDED_BLOCK_REASON);
-            if (message != null) {
-                Messages.showErrorDialog(null, "Action denied", message);
+        if (guardedBlock == null) return;
+
+        Document document = guardedBlock.getDocument();
+        String message = document.getUserData(GUARDED_BLOCK_REASON);
+        if (message != null) {
+            Messages.showErrorDialog(null, "Action denied", message);
+        } else {
+            VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+            if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {
+                //Messages.showErrorDialog("You're not allowed to change name and type of the edited component.", "Action denied");
             } else {
-                VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-                if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {
-                    //Messages.showErrorDialog("You're not allowed to change name and type of the edited component.", "Action denied");
-                } else {
-                    Dispatch.run(() -> originalHandler.handle(e));
-                }
+                Dispatch.run(() -> originalHandler.handle(e));
             }
         }
     }

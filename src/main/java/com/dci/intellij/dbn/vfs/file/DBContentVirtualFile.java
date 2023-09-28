@@ -77,8 +77,13 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
 
     @Override
     public boolean isValid() {
+        if (!super.isValid()) return false;
+
         DBEditableObjectVirtualFile mainDatabaseFile = this.mainDatabaseFile.get();
-        return super.isValid() && mainDatabaseFile != null && mainDatabaseFile.isValid();
+        boolean valid = mainDatabaseFile != null && mainDatabaseFile.isValid();
+
+        if (!valid) invalidate();
+        return valid;
     }
 
     @NotNull
@@ -150,7 +155,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileBase implements 
 
     @Override
     public Icon getIcon() {
-        DBObjectType objectType = getObject().getObjectType();
+        DBObjectType objectType = getObjectRef().getObjectType();
         DBContentType contentType = getContentType();
         return objectType.getIcon(contentType);
     }

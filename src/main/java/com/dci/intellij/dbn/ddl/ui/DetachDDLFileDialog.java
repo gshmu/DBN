@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import com.dci.intellij.dbn.common.file.VirtualFileInfo;
 import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -15,11 +15,11 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.text.TextContent.plain;
 
 public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
-    private final List<VirtualFile> virtualFiles;
+    private final List<VirtualFileInfo> fileInfos;
     private final DBObjectRef<DBSchemaObject> objectRef;
-    public DetachDDLFileDialog(@NotNull List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object) {
+    public DetachDDLFileDialog(@NotNull List<VirtualFileInfo> fileInfos, @NotNull DBSchemaObject object) {
         super(object.getProject(), "Detach DDL files", true);
-        this.virtualFiles = virtualFiles;
+        this.fileInfos = fileInfos;
         this.objectRef = DBObjectRef.of(object);
         renameAction(getOKAction(), "Detach selected");
         setDefaultSize(700, 400);
@@ -33,7 +33,7 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         TextContent hintText = plain(
                 "Following DDL files are currently attached the " + object.getQualifiedNameWithType() + ".\n" +
                 "Select the files to detach from this object.");
-        return new SelectDDLFileForm(this, object, virtualFiles, hintText, false);
+        return new SelectDDLFileForm(this, object, fileInfos, hintText, false);
     }
 
     @Override
@@ -74,9 +74,9 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     @Override
     protected void doOKAction() {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(getProject());
-        List<VirtualFile> virtualFiles = getForm().getSelection();
-        for (VirtualFile virtualFile : virtualFiles) {
-            fileAttachmentManager.detachDDLFile(virtualFile);
+        List<VirtualFileInfo> fileInfos = getForm().getSelection();
+        for (VirtualFileInfo fileInfo : fileInfos) {
+            fileAttachmentManager.detachDDLFile(fileInfo.getFile());
         }
         super.doOKAction();
     }

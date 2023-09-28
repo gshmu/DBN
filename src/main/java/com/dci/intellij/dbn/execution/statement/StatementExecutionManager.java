@@ -413,8 +413,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
         context.set(PROMPTED, true);
         Dispatch.run(() -> {
             try {
-                PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
-                dialog.show();
+                Dialogs.show(() -> new PendingTransactionDialog(executionProcessor));
             } finally {
                 executionProcessor.postExecute();
                 context.set(PROMPTED, false);

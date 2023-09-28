@@ -7,9 +7,9 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.Consumer;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.Commons;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -163,16 +163,17 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
                     }
 
                     if (!progress.isCanceled()) {
-                        Dispatch.run(() -> {
-                            MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);
-                            executionHistoryDialog.show();
-                            MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();
-                            if (newlySelected != null && callback != null) {
-                                if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                        Dialogs.show(
+                                () -> new MethodExecutionHistoryDialog(project, selectedInput, editable, debug),
+                                (dialog, exitCode) -> {
+                                    if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
+
+                                    MethodExecutionInput newlySelected = dialog.getSelectedExecutionInput();
+                                    if (newlySelected == null) return;
+                                    if (callback == null) return;
+
                                     callback.accept(newlySelected);
-                                }
-                            }
-                        });
+                                });
                     }
                 });
     }
@@ -288,16 +289,13 @@ public class MethodExecutionManager extends ProjectComponentBase implements Pers
                             new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getSelectedMethod()) :
                             new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
 
-                    Dispatch.run(() -> {
-                        Failsafe.nn(project);
-                        MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                        browserDialog.show();
-                        if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                            DBMethod method = browserDialog.getSelectedMethod();
-                            MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
-                            if (callback != null && methodExecutionInput != null) {
-                                callback.accept(methodExecutionInput);
-                            }
+
+                    Dialogs.show(() -> new MethodExecutionBrowserDialog(project, objectTreeModel, true), (dialog, exitCode) -> {
+                        if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
+                        DBMethod method = dialog.getSelectedMethod();
+                        MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
+                        if (callback != null && methodExecutionInput != null) {
+                            callback.accept(methodExecutionInput);
                         }
                     });
                 });

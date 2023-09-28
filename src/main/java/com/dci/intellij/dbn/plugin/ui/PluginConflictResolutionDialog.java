@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class PluginConflictResolutionDialog extends DBNDialog<PluginConflictResolutionForm> {
-    private PluginConflictResolutionDialog() {
+    public PluginConflictResolutionDialog() {
         super(null, "Plugin Conflict Resolution", true);
         setModal(true);
         setResizable(false);
@@ -22,10 +22,6 @@ public class PluginConflictResolutionDialog extends DBNDialog<PluginConflictReso
     @Override
     protected String getDimensionServiceKey() {
         return null;
-    }
-
-    public static void open() {
-        new PluginConflictResolutionDialog().show();
     }
 
     @NotNull

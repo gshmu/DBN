@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Callback;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.database.interfaces.DatabaseDataDefinitionInterface;
@@ -65,8 +66,7 @@ public class DatabaseObjectFactory extends ProjectComponentBase {
     public void openFactoryInputDialog(DBSchema schema, DBObjectType objectType) {
         Project project = getProject();
         if (objectType.isOneOf(FUNCTION, PROCEDURE)) {
-            ObjectFactoryInputDialog dialog = new ObjectFactoryInputDialog(project, schema, objectType);
-            dialog.show();
+            Dialogs.show(() -> new ObjectFactoryInputDialog(project, schema, objectType));
         } else {
             Messages.showErrorDialog(project, "Operation not supported", "Creation of " + objectType.getListName() + " is not supported yet.");
         }

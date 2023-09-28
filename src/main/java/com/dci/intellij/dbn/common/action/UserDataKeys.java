@@ -34,6 +34,6 @@ public interface UserDataKeys {
     Key<Integer> BREAKPOINT_ID = Key.create("DBNavigator.BreakpointId");
     Key<VirtualFile> BREAKPOINT_FILE = Key.create("DBNavigator.BreakpointFile");
     Key<LineBreakpoint> LINE_BREAKPOINT = Key.create("DBNavigator.LineBreakpoint");
-    Key<Boolean> EDITOR_FOLDING_STATE = Key.create("DBNavigator.EditorFoldingState");
+    Key<Boolean> SKIP_BROWSER_AUTOSCROLL = Key.create("DBNavigator.SkipEditorScroll");
     Key<Long> LAST_ANNOTATION_REFRESH = Key.create("DBNavigator.LastAnnotationRefresh");
 }

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -107,39 +108,29 @@ public final class Commons {
     }
 
     public static <T> boolean match(@Nullable T value1, @Nullable T value2) {
-        if (value1 == null && value2 == null) {
-            return true;
-        }
-
-        if (value1 == value2) {
-            return true;
-        }
-
-        if (value1 != null && value2 != null) {
-            return value1.equals(value2);
-        }
-
-        if (value1 instanceof String || value2 instanceof String) {
-            return nvl(value1, "").equals(nvl(value2, ""));
-        }
+        if (value1 == null && value2 == null) return true;
+        if (value1 == value2) return true;
+        if (value1 != null && value2 != null) return value1.equals(value2);
+        if (value1 instanceof String || value2 instanceof String) return Objects.equals(
+                nvl(value1, ""),
+                nvl(value2, ""));
 
         return false;
     }
 
     public static <T> boolean match(@Nullable T value1, @Nullable T value2, Function<T, ?> valueProvider) {
-        if (value1 == null && value2 == null) {
-            return true;
-        }
+        if (value1 == null && value2 == null) return true;
+        if (value1 == value2) return true;
+        if (value1 != null) return match(
+                valueProvider.apply(value1),
+                valueProvider.apply(value2));
 
-        if (value1 == value2) {
-            return true;
-        }
-
-        if (value1 != null) {
-            return match(
-                    valueProvider.apply(value1),
-                    valueProvider.apply(value2));
-        }
         return false;
+    }
+
+    public static <T> T firstOrNull(@Nullable T[] array) {
+        if (array == null) return null;
+        if (array.length == 0) return null;
+        return array[0];
     }
 }

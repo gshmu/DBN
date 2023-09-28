@@ -55,14 +55,6 @@ public abstract class DBVirtualFileBase extends VirtualFile implements DBVirtual
         this.fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
     }
 
-    public long getModificationStamp() {
-        return modificationStamp;
-    }
-
-    public long getTimeStamp() {
-        return timeStamp;
-    }
-
     @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
@@ -204,6 +196,7 @@ public abstract class DBVirtualFileBase extends VirtualFile implements DBVirtual
 
         valid = false;
         DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
+
         if (cachedViewProvider != null) {
             DebugUtil.performPsiModification("disposing database view provider", () -> cachedViewProvider.markInvalidated());
             List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();

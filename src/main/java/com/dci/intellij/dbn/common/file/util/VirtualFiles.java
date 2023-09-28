@@ -2,8 +2,11 @@ package com.dci.intellij.dbn.common.file.util;
 
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.thread.Write;
+import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBVirtualFileBase;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -144,5 +147,20 @@ public final class VirtualFiles {
     }
 
 
+    @Nullable
+    public static DBEditableObjectVirtualFile resolveObjectFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            return  (DBEditableObjectVirtualFile) virtualFile;
+        }
+
+        if (virtualFile.isInLocalFileSystem()) {
+            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+            DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(virtualFile);
+            if (schemaObject == null) return null;
+
+            return schemaObject.getEditableVirtualFile();
+        }
+        return null;
+    }
 }
 

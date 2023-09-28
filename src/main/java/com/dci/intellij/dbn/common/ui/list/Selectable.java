@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import javax.swing.*;
+import com.dci.intellij.dbn.common.ui.Presentable;
 
-public interface Selectable<T> extends Comparable<T>{
-    Icon getIcon();
-    String getName();
+public interface Selectable<T> extends Presentable, Comparable<T> {
     String getError();
     boolean isSelected();
     boolean isMasterSelected();

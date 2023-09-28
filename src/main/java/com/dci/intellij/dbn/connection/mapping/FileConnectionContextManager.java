@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
@@ -102,8 +103,7 @@ public class FileConnectionContextManager extends ProjectComponentBase implement
     }
 
     public void openFileConnectionMappings() {
-        FileConnectionMappingDialog dialog = new FileConnectionMappingDialog(getProject());
-        dialog.show();
+        Dialogs.show(() -> new FileConnectionMappingDialog(getProject()));
     }
 
 

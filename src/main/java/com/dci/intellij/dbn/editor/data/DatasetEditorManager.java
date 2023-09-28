@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.util.Context;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
@@ -137,8 +138,7 @@ public class DatasetEditorManager extends ProjectComponentBase implements Persis
     public void openRecordViewer(DatasetFilterInput filterInput) {
         try {
             DatasetRecord record = new DatasetRecord(filterInput);
-            RecordViewerDialog dialog = new RecordViewerDialog(getProject(), record);
-            dialog.show();
+            Dialogs.show(() -> new RecordViewerDialog(getProject(), record));
         } catch (SQLException e) {
             conditionallyLog(e);
             Messages.showErrorDialog(getProject(), "Could not load record details", e);

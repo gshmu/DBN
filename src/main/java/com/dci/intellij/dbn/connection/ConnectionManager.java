@@ -15,10 +15,7 @@ import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Editors;
-import com.dci.intellij.dbn.common.util.Lists;
-import com.dci.intellij.dbn.common.util.Strings;
-import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -350,19 +347,11 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
     }
 
     public static void showConnectionInfoDialog(ConnectionHandler connection) {
-        Dispatch.run(() -> {
-            ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connection);
-            infoDialog.setModal(true);
-            infoDialog.show();
-        });
+        Dialogs.show(() -> new ConnectionInfoDialog(connection));
     }
 
     private static void showConnectionInfoDialog(ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
-        Dispatch.run(() -> {
-            ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(null, connectionInfo, connectionName, environmentType);
-            infoDialog.setModal(true);
-            infoDialog.show();
-        });
+        Dialogs.show(() -> new ConnectionInfoDialog(null, connectionInfo, connectionName, environmentType));
     }
 
     void promptAuthenticationDialog(
@@ -370,31 +359,33 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
             @NotNull AuthenticationInfo authenticationInfo,
             @NotNull Consumer<AuthenticationInfo> consumer) {
 
-        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(getProject(), connection, authenticationInfo);
-        passwordDialog.show();
-        if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            AuthenticationInfo newAuthenticationInfo = passwordDialog.getAuthenticationInfo();
-            if (connection != null) {
-                AuthenticationInfo storedAuthenticationInfo = connection.getAuthenticationInfo();
+        Dialogs.show(
+                () -> new ConnectionAuthenticationDialog(getProject(), connection, authenticationInfo),
+                (dialog, exitCode) -> {
+                    if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
 
-                if (passwordDialog.isRememberCredentials()) {
-                    String oldUser = storedAuthenticationInfo.getUser();
-                    String oldPassword = storedAuthenticationInfo.getPassword();
+                    AuthenticationInfo newAuthenticationInfo = dialog.getAuthenticationInfo();
+                    if (connection != null) {
+                        AuthenticationInfo storedAuthenticationInfo = connection.getAuthenticationInfo();
 
-                    storedAuthenticationInfo.setUser(newAuthenticationInfo.getUser());
-                    storedAuthenticationInfo.setPassword(newAuthenticationInfo.getPassword());
-                    storedAuthenticationInfo.setType(newAuthenticationInfo.getType());
+                        if (dialog.isRememberCredentials()) {
+                            String oldUser = storedAuthenticationInfo.getUser();
+                            String oldPassword = storedAuthenticationInfo.getPassword();
 
-                    storedAuthenticationInfo.updateKeyChain(oldUser, oldPassword);
-                } else {
-                    AuthenticationInfo temporaryAuthenticationInfo = newAuthenticationInfo.clone();
-                    temporaryAuthenticationInfo.setTemporary(true);
-                    connection.setTemporaryAuthenticationInfo(temporaryAuthenticationInfo);
-                }
-                connection.getInstructions().setAllowAutoConnect(true);
-            }
-            consumer.accept(newAuthenticationInfo);
-        }
+                            storedAuthenticationInfo.setUser(newAuthenticationInfo.getUser());
+                            storedAuthenticationInfo.setPassword(newAuthenticationInfo.getPassword());
+                            storedAuthenticationInfo.setType(newAuthenticationInfo.getType());
+
+                            storedAuthenticationInfo.updateKeyChain(oldUser, oldPassword);
+                        } else {
+                            AuthenticationInfo temporaryAuthenticationInfo = newAuthenticationInfo.clone();
+                            temporaryAuthenticationInfo.setTemporary(true);
+                            connection.setTemporaryAuthenticationInfo(temporaryAuthenticationInfo);
+                        }
+                        connection.getInstructions().setAllowAutoConnect(true);
+                    }
+                    consumer.accept(newAuthenticationInfo);
+                });
     }
 
     /*********************************************************
@@ -465,19 +456,17 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
                 List<DBNConnection> connections = c.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 
                 for (DBNConnection conn : connections) {
-                    if (conn.isIdle() && conn.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
-                        int idleMinutes = conn.getIdleMinutes();
-                        int idleMinutesToDisconnect = c.getSettings().getDetailSettings().getIdleMinutesToDisconnect();
-                        if (idleMinutes > idleMinutesToDisconnect) {
-                            if (conn.hasDataChanges()) {
-                                conn.set(ResourceStatus.RESOLVING_TRANSACTION, true);
-                                Dispatch.run(() -> {
-                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(c, conn);
-                                    idleConnectionDialog.show();
-                                });
-                            } else {
-                                transactionManager.execute(c, conn, actions, false, null);
-                            }
+                    if (!conn.isIdle()) continue;
+                    if (conn.is(ResourceStatus.RESOLVING_TRANSACTION)) continue;
+
+                    int idleMinutes = conn.getIdleMinutes();
+                    int idleMinutesToDisconnect = c.getSettings().getDetailSettings().getIdleMinutesToDisconnect();
+                    if (idleMinutes > idleMinutesToDisconnect) {
+                        if (conn.hasDataChanges()) {
+                            conn.set(ResourceStatus.RESOLVING_TRANSACTION, true);
+                            Dialogs.show(() -> new IdleConnectionDialog(c, conn));
+                        } else {
+                            transactionManager.execute(c, conn, actions, false, null);
                         }
                     }
                 }

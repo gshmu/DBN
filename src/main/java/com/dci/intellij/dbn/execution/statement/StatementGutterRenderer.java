@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.compatibility.Workaround;
 import com.dci.intellij.dbn.common.util.Traces;
 import com.dci.intellij.dbn.execution.statement.action.StatementGutterAction;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.intellij.codeInsight.daemon.impl.GutterIntentionMenuContributor;
 import com.intellij.codeInsight.daemon.impl.ShowIntentionsPass;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
@@ -38,9 +37,7 @@ public class StatementGutterRenderer extends GutterIconRenderer {
     @Nullable
     @Workaround // TODO workaround for Idea 15 bug (showing gutter actions as intentions)
     public AnAction getClickAction() {
-        return Traces.isCalledThrough(
-                ShowIntentionsPass.class,
-                GutterIntentionMenuContributor.class) ? null : action;
+        return Traces.isCalledThrough(ShowIntentionsPass.class) ? null : action;
     }
 
     @Override

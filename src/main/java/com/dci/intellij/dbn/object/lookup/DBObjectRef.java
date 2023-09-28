@@ -341,6 +341,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
         return load();
     }
 
+    @Nullable
+    public T value() {
+        return WeakRef.get(reference);
+    }
+
     public T ensure(){
         return nn(get());
     }
@@ -533,7 +538,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     }
 
     public boolean isValid() {
-        return Checks.isValid(reference.get());
+        T object = WeakRef.get(reference);
+        return Checks.isValid(object);
     }
 
 }

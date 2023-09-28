@@ -2,31 +2,25 @@ package com.dci.intellij.dbn.ddl;
 
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import lombok.Getter;
 
+@Getter
 public class DDLFileNameProvider {
-    private DBObjectRef objectRef;
-    private DDLFileType ddlFileType;
-    private String extension;
+    private final DBObjectRef object;
+    private final DDLFileType ddlFileType;
+    private final String extension;
 
-    public DDLFileNameProvider(DBObjectRef objectRef, DDLFileType ddlFileType, String extension) {
-        this.objectRef = objectRef;
+    public DDLFileNameProvider(DBObjectRef object, DDLFileType ddlFileType, String extension) {
+        this.object = object;
         this.ddlFileType = ddlFileType;
         this.extension = extension;
     }
 
     public DBObject getObject() {
-        return objectRef.get();
-    }
-
-    public DDLFileType getDdlFileType() {
-        return ddlFileType;
-    }
-
-    public String getExtension() {
-        return extension;
+        return object.get();
     }
 
     public String getFileName() {
-        return objectRef.getFileName().toLowerCase() + '.' + extension;
+        return object.getFileName().toLowerCase() + '.' + extension;
     }
 }

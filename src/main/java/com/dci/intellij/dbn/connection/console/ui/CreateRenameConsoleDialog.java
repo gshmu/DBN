@@ -19,6 +19,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
         super(connection.getProject(), "Create " + consoleType.getName(), true);
         this.connection = connection.ref();
         this.consoleType = consoleType;
+        setModal(true);
         renameAction(getOKAction(), "Create");
         init();
     }
@@ -27,6 +28,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
         super(connection.getProject(), "Rename " + console.getConsoleType().getName(), true);
         this.connection = connection.ref();
         this.console = console;
+        setModal(true);
         renameAction(getOKAction(), "Rename");
         init();
     }

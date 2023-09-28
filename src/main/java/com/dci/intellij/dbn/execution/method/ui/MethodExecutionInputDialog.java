@@ -5,13 +5,13 @@ import com.dci.intellij.dbn.common.Pair;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialogRegistry;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputForm> {
@@ -33,8 +33,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
     public static void open(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType, @NotNull Runnable executor) {
         Dispatch.run(true, () -> {
             val key = Pair.of(executionInput.getMethodRef(), debuggerType);
-            MethodExecutionInputDialog dialog = DBNDialogRegistry.ensure(key, () -> new MethodExecutionInputDialog(executionInput, debuggerType, executor));
-            dialog.show();
+            Dialogs.show(() -> DBNDialogRegistry.ensure(key, () -> new MethodExecutionInputDialog(executionInput, debuggerType, executor)));
         });
     }
 

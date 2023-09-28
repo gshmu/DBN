@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.database.interfaces;
 
 import com.dci.intellij.dbn.common.Priority;
 import com.dci.intellij.dbn.common.cache.CacheKey;
+import com.dci.intellij.dbn.common.thread.ThreadInfo;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.Callable;
 import com.dci.intellij.dbn.database.interfaces.queue.InterfaceTaskRequest;
@@ -57,9 +59,11 @@ public final class DatabaseInterfaceInvoker {
         ConnectionHandler connection = request.getConnection();
         DatabaseInterfaceQueue interfaceQueue = connection.getInterfaceQueue();
 
+        ThreadInfo threadInfo = ThreadInfo.copy();
         interfaceQueue.scheduleAndWait(request,
                 () -> ConnectionContext.surround(request,
-                        () -> PooledConnection.run(request, runnable)));    }
+                    () -> ThreadMonitor.surround(project, threadInfo, null,
+                        () -> PooledConnection.run(request, runnable))));  }
 
 
     /**
@@ -81,9 +85,12 @@ public final class DatabaseInterfaceInvoker {
         InterfaceTaskRequest request = InterfaceTaskRequest.create(priority, title, text, project, connectionId, null);
         ConnectionHandler connection = request.getConnection();
         DatabaseInterfaceQueue interfaceQueue = connection.getInterfaceQueue();
+
+        ThreadInfo threadInfo = ThreadInfo.copy();
         return interfaceQueue.scheduleAndReturn(request,
                 () -> ConnectionContext.surround(request,
-                        () -> PooledConnection.call(request, callable)));
+                    () -> ThreadMonitor.surround(project, threadInfo, null, null,
+                        () -> PooledConnection.call(request, callable))));
     }
 
     public static <T> T cached(CacheKey<T> key, Callable<T> loader) throws SQLException {

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -14,18 +15,12 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     private final ConnectionRef connection;
     private WeakRef<DatabaseSession> session;
 
-    public CreateRenameSessionDialog(@NotNull ConnectionHandler connection) {
-        super(connection.getProject(), "Create session", true);
-        this.connection = connection.ref();
-        renameAction(getOKAction(), "Create");
-        init();
-    }
-
-    public CreateRenameSessionDialog(ConnectionHandler connection, @NotNull DatabaseSession session) {
-        super(connection.getProject(), "Rename session", true);
+    public CreateRenameSessionDialog(ConnectionHandler connection, @Nullable DatabaseSession session) {
+        super(connection.getProject(), session == null ? "Create session" : "Rename session", true);
         this.connection = connection.ref();
         this.session = WeakRef.of(session);
-        renameAction(getOKAction(), "Rename");
+        renameAction(getOKAction(), session == null ? "Create" : "Rename");
+        setModal(true);
         init();
     }
 

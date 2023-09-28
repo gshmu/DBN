@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
@@ -50,9 +52,9 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
     }
 
     public int openFiltersDialog(DBDataset dataset, boolean isAutomaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
-        DatasetFilterDialog filterDialog = new DatasetFilterDialog(dataset, isAutomaticPrompt, createNewFilter, defaultFilterType);
-        filterDialog.show();
-        return filterDialog.getExitCode();
+        AtomicInteger response = new AtomicInteger();
+        Dialogs.show(() -> new DatasetFilterDialog(dataset, isAutomaticPrompt, createNewFilter, defaultFilterType), (dialog, exitCode) -> response.set(exitCode));
+        return response.get();
     }
 
     public void createBasicFilter(@NotNull DBDataset dataset, String columnName, Object columnValue, ConditionOperator operator, boolean interactive) {
@@ -60,8 +62,7 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
         DatasetBasicFilter filter = filterGroup.createBasicFilter(columnName, columnValue, operator, interactive);
 
         if (interactive) {
-            DatasetFilterDialog filterDialog = new DatasetFilterDialog(dataset, filter);
-            filterDialog.show();
+            Dialogs.show(() -> new DatasetFilterDialog(dataset, filter));
         } else {
             filter.setPersisted(true);
             filter.setTemporary(true);
@@ -112,8 +113,7 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
         filter.generateName();
         filterGroup.setActiveFilter(filter);
         if (interactive) {
-            DatasetFilterDialog filterDialog = new DatasetFilterDialog(dataset, false, false, DatasetFilterType.NONE);
-            filterDialog.show();
+            Dialogs.show(() -> new DatasetFilterDialog(dataset, false, false, DatasetFilterType.NONE));
         } else {
             DatasetEditorManager.getInstance(getProject()).reloadEditorData(dataset);
         }

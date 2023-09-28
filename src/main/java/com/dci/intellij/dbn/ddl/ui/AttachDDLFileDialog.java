@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import com.dci.intellij.dbn.common.file.VirtualFileInfo;
 import com.dci.intellij.dbn.common.text.TextContent;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -17,14 +17,14 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.text.TextContent.plain;
 
 public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
-    private final DBObjectRef<DBSchemaObject> objectRef;
+    private final DBObjectRef<DBSchemaObject> object;
     private final boolean showLookupOption;
-    private final List<VirtualFile> virtualFiles;
+    private final List<VirtualFileInfo> fileInfos;
 
-    public AttachDDLFileDialog(List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object, boolean showLookupOption) {
+    public AttachDDLFileDialog(List<VirtualFileInfo> fileInfos, @NotNull DBSchemaObject object, boolean showLookupOption) {
         super(object.getProject(), "Attach DDL file", true);
-        this.virtualFiles = virtualFiles;
-        this.objectRef = DBObjectRef.of(object);
+        this.fileInfos = fileInfos;
+        this.object = DBObjectRef.of(object);
         this.showLookupOption = showLookupOption;
         renameAction(getOKAction(), "Attach selected");
         setDefaultSize(700, 400);
@@ -40,7 +40,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
                 "Following DDL files were found matching the name of the " + object.getQualifiedName() + ".\n" +
                         "Select the files to attach to this object.\n\n" +
                         "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.");
-        return new SelectDDLFileForm(this, object, virtualFiles, hintText, showLookupOption);
+        return new SelectDDLFileForm(this, object, fileInfos, hintText, showLookupOption);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
 
     @NotNull
     public DBSchemaObject getObject() {
-        return DBObjectRef.ensure(objectRef);
+        return DBObjectRef.ensure(object);
     }
 
     private class SelectAllAction extends AbstractAction {
@@ -94,9 +94,9 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         DBSchemaObject object = getObject();
         Project project = object.getProject();
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-        List<VirtualFile> virtualFiles = component.getSelection();
-        for (VirtualFile virtualFile : virtualFiles) {
-            fileAttachmentManager.attachDDLFile(object.ref(), virtualFile);
+        List<VirtualFileInfo> fileInfos = component.getSelection();
+        for (VirtualFileInfo fileInfo : fileInfos) {
+            fileAttachmentManager.attachDDLFile(object.ref(), fileInfo.getFile());
         }
         if (showLookupOption && component.isDoNotPromptSelected()) {
             ConnectionHandler connection = object.getConnection();

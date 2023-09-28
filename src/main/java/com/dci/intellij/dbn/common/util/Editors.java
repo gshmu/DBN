@@ -3,11 +3,10 @@ package com.dci.intellij.dbn.common.util;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.file.util.VirtualFiles;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
-import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.thread.ThreadMonitor;
-import com.dci.intellij.dbn.common.thread.ThreadProperty;
+import com.dci.intellij.dbn.common.routine.Consumer;
+import com.dci.intellij.dbn.common.thread.*;
 import com.dci.intellij.dbn.common.ui.form.DBNToolbarForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -57,10 +56,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.markSkipBrowserAutoscroll;
+import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.unmarkSkipBrowserAutoscroll;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.util.Commons.firstOrNull;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 @Slf4j
@@ -82,48 +85,33 @@ public class Editors {
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) fileEditor;
                 editorProviderId = basicTextEditor.getEditorProviderId();
-                if (editorProviderId != null) {
-                    fileEditorManager.setSelectedEditor(virtualFile, editorProviderId.getId());
-                }
+                selectEditor(project, virtualFile, editorProviderId);
             }
         } else if (editorProviderId != null) {
-            DBEditableObjectVirtualFile objectFile = null;
-            if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                objectFile = (DBEditableObjectVirtualFile) virtualFile;
-
-            } else if (virtualFile.isInLocalFileSystem()) {
-                DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(virtualFile);
-                if (schemaObject != null) {
-                    objectFile = schemaObject.getEditableVirtualFile();
-                }
-            }
+            DBEditableObjectVirtualFile objectFile = VirtualFiles.resolveObjectFile(project, virtualFile);
 
             if (isValid(objectFile)) {
-                FileEditor[] fileEditors = instructions.isOpen() ?
-                        openFile(project, objectFile, instructions.isFocus()) :
-                        fileEditorManager.getEditors(objectFile);
+                FileEditor[] fileEditors;
+                if (instructions.isOpen()) {
+                    AtomicReference<FileEditor[]> openedEditors = new AtomicReference<>();
+                    openFile(project, objectFile, instructions.isFocus(), editors -> openedEditors.set(editors));
+                    fileEditors = openedEditors.get();
+                } else{
+                    fileEditors = fileEditorManager.getEditors(objectFile);
+                }
 
                 if (fileEditors.length > 0) {
-                    fileEditorManager.setSelectedEditor(objectFile, editorProviderId.getId());
-
-                    for (FileEditor openFileEditor : fileEditors) {
-                        if (openFileEditor instanceof BasicTextEditor) {
-                            BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) openFileEditor;
-                            if (basicTextEditor.getEditorProviderId().equals(editorProviderId)) {
-                                fileEditor = basicTextEditor;
-                                break;
-                            }
-                        }
-                    }
+                    selectEditor(project, objectFile, editorProviderId);
+                    fileEditor = findTextEditor(fileEditors, editorProviderId);
                 }
             }
         } else if (virtualFile.isInLocalFileSystem()) {
-            FileEditor[] fileEditors = instructions.isOpen() ?
-                    openFile(project, virtualFile, instructions.isFocus()) :
-                    fileEditorManager.getEditors(virtualFile);
-            if (fileEditors.length > 0) {
+            if (instructions.isOpen()) {
+                FileEditor[] fileEditors = new FileEditor[1];
+                openFile(project, virtualFile, instructions.isFocus(), editors -> fileEditors[0] = firstOrNull(editors));
                 fileEditor = fileEditors[0];
+            } else {
+                fileEditor = firstOrNull(fileEditorManager.getEditors(virtualFile));
             }
         }
 
@@ -436,11 +424,9 @@ public class Editors {
     public static void focusEditor(@Nullable Editor editor) {
         if (editor == null) return;
 
-        Dispatch.run(() -> {
-            Project project = editor.getProject();
-            IdeFocusManager ideFocusManager = IdeFocusManager.getInstance(project);
-            ideFocusManager.requestFocus(editor.getContentComponent(), true);
-        });
+        Project project = editor.getProject();
+        IdeFocusManager ideFocusManager = IdeFocusManager.getInstance(project);
+        Dispatch.run(() -> ideFocusManager.requestFocus(editor.getContentComponent(), true));
     }
 
     public static VirtualFile getSelectedFile(Project project) {
@@ -512,11 +498,28 @@ public class Editors {
         editorManager.addTopComponent(fileEditor, toolbarComponent);
     }
 
-    public static FileEditor[] openFile(Project project, VirtualFile file, boolean focus) {
-        return ThreadMonitor.surround(project, ThreadProperty.EDITOR_LOAD, () -> {
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            return fileEditorManager.openFile(file, focus);
-        });
+    public static void openFile(Project project, VirtualFile file, boolean focus) {
+        openFile(project, file, focus, null);
+    }
+
+    public static void openFile(Project project, VirtualFile file, boolean focus, @Nullable Consumer<FileEditor[]> callback) {
+        DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
+        attachmentManager.warmUpAttachedDDLFiles(file);
+
+        ThreadInfo threadInfo = ThreadInfo.copy();
+        Dispatch.run(
+                () -> ThreadMonitor.surround(project, threadInfo, ThreadProperty.EDITOR_LOAD,
+                        () -> {
+                            try {
+                                markSkipBrowserAutoscroll(file);
+                                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                                FileEditor[] fileEditors = fileEditorManager.openFile(file, focus);
+                                if (callback != null) callback.accept(fileEditors);
+                            } finally {
+                                unmarkSkipBrowserAutoscroll(file);
+                            }
+                        }));
+
     }
 
 
@@ -526,5 +529,26 @@ public class Editors {
         return  file == null ?
                 cast(editorFactory.createEditor(document, project, fileType, false)) :
                 cast(editorFactory.createEditor(document, project, file, false));
+    }
+
+
+    @Nullable
+    public static BasicTextEditor findTextEditor(FileEditor[] fileEditors, EditorProviderId editorProviderId) {
+        for (FileEditor openFileEditor : fileEditors) {
+            if (openFileEditor instanceof BasicTextEditor) {
+                BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) openFileEditor;
+                if (Objects.equals(basicTextEditor.getEditorProviderId(), editorProviderId)) {
+                    return basicTextEditor;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static void selectEditor(Project project, VirtualFile file, @Nullable EditorProviderId editorProviderId) {
+        if (editorProviderId == null) return;
+
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        Dispatch.run(() -> fileEditorManager.setSelectedEditor(file, editorProviderId.getId()));
     }
 }
