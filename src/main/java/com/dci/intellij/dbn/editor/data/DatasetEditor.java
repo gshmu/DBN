@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.*;
@@ -450,21 +451,18 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         if (row != null) {
             editorTable.stopCellEditing();
             editorTable.selectRow(row.getIndex());
-            DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
-            editorDialog.show();
+            Dialogs.show(() -> new DatasetRecordEditorDialog(getProject(), row));
         }
     }
 
     public void openRecordEditor(int index) {
-        if (index > -1) {
-            DatasetEditorModel model = getTableModel();
-            DatasetEditorModelRow row = model.getRowAtIndex(index);
+        if (index <= -1) return;
 
-            if (row != null) {
-                DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
-                editorDialog.show();
-            }
-        }
+        DatasetEditorModel model = getTableModel();
+        DatasetEditorModelRow row = model.getRowAtIndex(index);
+        if (row == null) return;
+
+        Dialogs.show(() -> new DatasetRecordEditorDialog(getProject(), row));
     }
 
     public DatasetEditorStatusHolder getStatus() {

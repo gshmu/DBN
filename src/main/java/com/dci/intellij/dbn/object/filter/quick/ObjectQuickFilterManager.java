@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.Settings;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
@@ -15,6 +16,8 @@ import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterDialog;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +29,8 @@ import java.util.Map;
 import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
+@Getter
+@Setter
 @State(
     name = ObjectQuickFilterManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -45,8 +50,7 @@ public class ObjectQuickFilterManager extends ProjectComponentBase implements Pe
     }
 
     public void openFilterDialog(DBObjectList<?> objectList) {
-        ObjectQuickFilterDialog dialog = new ObjectQuickFilterDialog(getProject(), objectList);
-        dialog.show();
+        Dialogs.show(() -> new ObjectQuickFilterDialog(getProject(), objectList));
     }
 
     public void applyFilter(DBObjectList<?> objectList, @Nullable ObjectQuickFilter filter) {
@@ -67,15 +71,6 @@ public class ObjectQuickFilterManager extends ProjectComponentBase implements Pe
         ObjectQuickFilterKey key = ObjectQuickFilterKey.from(objectList);
         objectList.setQuickFilter(cast(quickFilters.get(key)));
     }
-
-    public ConditionOperator getLastUsedOperator() {
-        return lastUsedOperator;
-    }
-
-    public void setLastUsedOperator(ConditionOperator lastUsedOperator) {
-        this.lastUsedOperator = lastUsedOperator;
-    }
-
 
     /*********************************************
      *            PersistentStateComponent       *

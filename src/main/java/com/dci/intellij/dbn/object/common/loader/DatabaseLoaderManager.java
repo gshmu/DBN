@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common.loader;
 
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -31,7 +30,7 @@ public class DatabaseLoaderManager extends ProjectComponentBase {
 
     @NotNull
     private ConnectionLoadListener connectionLoadListener(Project project) {
-        return connection -> Dispatch.run(() -> {
+        return connection -> {
             checkDisposed();
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
@@ -48,7 +47,7 @@ public class DatabaseLoaderManager extends ProjectComponentBase {
                     }
                 }
             }
-        });
+        };
     }
 
     @Override

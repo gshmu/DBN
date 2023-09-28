@@ -36,7 +36,7 @@ public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetti
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return objectType.getName().toUpperCase();
     }
 

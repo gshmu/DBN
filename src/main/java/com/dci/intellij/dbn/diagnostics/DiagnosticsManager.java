@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
@@ -62,8 +63,7 @@ public class DiagnosticsManager extends ProjectComponentBase implements Persiste
     }
 
     public void openDiagnosticsSettings() {
-        DiagnosticSettingsDialog settingsDialog = new DiagnosticSettingsDialog(getProject());
-        settingsDialog.show();
+        Dialogs.show(() -> new DiagnosticSettingsDialog(getProject()));
     }
 
     public void showConnectionDiagnostics() {

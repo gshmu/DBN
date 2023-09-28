@@ -10,16 +10,17 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class DDLFileCreateAction extends ProjectAction {
-    private DBObjectRef<DBSchemaObject> objectRef;
+    private final DBObjectRef<DBSchemaObject> object;
+
     public DDLFileCreateAction(DBSchemaObject object) {
         super("Create New...", null, Icons.CODE_EDITOR_DDL_FILE_NEW);
-        this.objectRef = DBObjectRef.of(object);
+        this.object = DBObjectRef.of(object);
     }
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-        fileAttachmentManager.createDDLFile(objectRef);
+        fileAttachmentManager.createDDLFile(object);
     }
 
 }

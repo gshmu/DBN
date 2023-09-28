@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.isSkipBrowserAutoscroll;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.options.setting.Settings.*;
@@ -63,8 +64,6 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
     private final BooleanSetting autoscrollFromEditor = new BooleanSetting("autoscroll-from-editor", true);
     private final BooleanSetting autoscrollToEditor   = new BooleanSetting("autoscroll-to-editor", false);
     private final BooleanSetting showObjectProperties = new BooleanSetting("show-object-properties", true);
-
-    public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<>();
 
     private final transient Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> createToolWindowForm());
 
@@ -152,11 +151,6 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
     /***************************************
      *     FileEditorManagerListener       *
      ***************************************/
-
-    private boolean scroll() {
-        return autoscrollFromEditor.value() && (AUTOSCROLL_FROM_EDITOR.get() == null || AUTOSCROLL_FROM_EDITOR.get());
-    }
-
     public static void scrollToSelectedElement(ConnectionHandler connection) {
         Dispatch.run(() -> {
             Project project = connection.getProject();
@@ -214,7 +208,8 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
         return new FileEditorManagerListener() {
             @Override
             public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-                if (!scroll()) return;
+                if (!autoscrollFromEditor.value()) return;
+                if (isSkipBrowserAutoscroll(file)) return;
 
                 if (file instanceof DBVirtualFile) {
                     DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
@@ -230,11 +225,13 @@ public class DatabaseBrowserManager extends ProjectComponentBase implements Pers
 
             @Override
             public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-                if (!scroll()) return;
+                if (!autoscrollFromEditor.value()) return;
 
                 VirtualFile oldFile = event.getOldFile();
                 VirtualFile newFile = event.getNewFile();
 
+                if (newFile == null) return;
+                if (isSkipBrowserAutoscroll(newFile)) return;
                 if (Objects.equals(oldFile, newFile)) return;
 
                 if (newFile instanceof DBVirtualFile) {

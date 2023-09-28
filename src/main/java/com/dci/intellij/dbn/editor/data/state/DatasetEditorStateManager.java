@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.state;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.ui.DatasetColumnSetupDialog;
 import com.dci.intellij.dbn.editor.data.state.sorting.ui.DatasetEditorSortingDialog;
@@ -33,13 +34,11 @@ public class DatasetEditorStateManager extends ProjectComponentBase implements P
     }
 
     public void openSortingDialog(@NotNull DatasetEditor datasetEditor) {
-        DatasetEditorSortingDialog dialog = new DatasetEditorSortingDialog(datasetEditor);
-        dialog.show();
+        Dialogs.show(() -> new DatasetEditorSortingDialog(datasetEditor));
     }
 
     public void openColumnSetupDialog(@NotNull DatasetEditor datasetEditor) {
-        DatasetColumnSetupDialog dialog = new DatasetColumnSetupDialog(datasetEditor);
-        dialog.show();
+        Dialogs.show(() -> new DatasetColumnSetupDialog(datasetEditor));
     }
 
     /*********************************************

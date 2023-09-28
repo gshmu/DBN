@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.ApplicationComponentBase;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.routine.Consumer;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.config.tns.ui.TnsNamesImportDialog;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -46,12 +47,10 @@ public class TnsImportService extends ApplicationComponentBase implements Persis
         if (virtualFiles.length != 1) return;
 
         File file = new File(virtualFiles[0].getPath());
-        TnsNamesImportDialog dialog = new TnsNamesImportDialog(project, file);
-        dialog.show();
-        int exitCode = dialog.getExitCode();
-        if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
-
-        consumer.accept(dialog.getImportData());
+        Dialogs.show(() -> new TnsNamesImportDialog(project, file), (dialog, exitCode) -> {
+            if (exitCode != DialogWrapper.OK_EXIT_CODE) return;
+            consumer.accept(dialog.getImportData());
+        });
     }
 
     @Override

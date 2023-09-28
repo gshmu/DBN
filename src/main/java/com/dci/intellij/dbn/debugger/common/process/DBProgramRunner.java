@@ -192,6 +192,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             DBRunConfig runConfiguration = (DBRunConfig) environment.getRunProfile();
             CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
             dependenciesDialog.show();
+
             DBObjectRef<DBSchemaObject>[] selectedDependencies =  dependenciesDialog.getSelection();
             if (dependenciesDialog.getExitCode() != OK_EXIT_CODE) return;
 

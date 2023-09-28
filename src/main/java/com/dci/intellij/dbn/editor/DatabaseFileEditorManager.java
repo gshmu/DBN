@@ -1,15 +1,13 @@
 package com.dci.intellij.dbn.editor;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.CompoundIcons;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.file.VirtualFileInfo;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
-import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.*;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -49,7 +47,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.markSkipBrowserAutoscroll;
+import static com.dci.intellij.dbn.browser.DatabaseBrowserUtils.unmarkSkipBrowserAutoscroll;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.allValid;
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
@@ -57,6 +58,7 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.common.util.Editors.getEditorTabInfos;
 import static com.dci.intellij.dbn.editor.DatabaseFileEditorManager.COMPONENT_NAME;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.isFileOpened;
 
 @State(
         name = COMPONENT_NAME,
@@ -152,19 +154,19 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         databaseFile.setSelectedEditorProviderId(editorProviderId);
 
         invokeFileOpen(handle, () -> {
-            if (allValid(object, databaseFile)) {
-                Project project = object.getProject();
+            if (!allValid(object, databaseFile)) return;
 
-                // open / reopen (select) the file
-                if (DatabaseFileSystem.isFileOpened(object) || promptFileOpen(databaseFile)) {
-                    boolean focusEditor = handle.getEditorInstructions().isFocus();
+            Project project = object.getProject();
 
-                    Editors.openFile(project, databaseFile, focusEditor);
-                    NavigationInstructions instructions = NavigationInstructions.create().
-                            with(SCROLL).
-                            with(FOCUS, focusEditor);
-                    Editors.selectEditor(project, null, databaseFile, editorProviderId, instructions);
-                }
+            // open / reopen (select) the file
+            if (isFileOpened(object) || promptFileOpen(databaseFile)) {
+                boolean focusEditor = handle.getEditorInstructions().isFocus();
+
+                Editors.openFile(project, databaseFile, focusEditor);
+                NavigationInstructions instructions = NavigationInstructions.create().
+                        with(SCROLL).
+                        with(FOCUS, focusEditor);
+                Editors.selectEditor(project, null, databaseFile, editorProviderId, instructions);
             }
         });
     }
@@ -182,12 +184,11 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
         invokeFileOpen(handle, () -> {
             if (isNotValid(schemaObject)) return;
+            if (!isFileOpened(schemaObject) && !promptFileOpen(databaseFile)) return;
 
             // open / reopen (select) the file
-            if (DatabaseFileSystem.isFileOpened(schemaObject) || promptFileOpen(databaseFile)) {
-                boolean focusEditor = handle.getEditorInstructions().isFocus();
-                FileEditor[] fileEditors = Editors.openFile(project, databaseFile, focusEditor);
-
+            boolean focusEditor = handle.getEditorInstructions().isFocus();
+            Editors.openFile(project, databaseFile, focusEditor, fileEditors -> {
                 for (FileEditor fileEditor : fileEditors) {
                     if (fileEditor instanceof SourceCodeMainEditor) {
                         SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
@@ -201,7 +202,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                         break;
                     }
                 }
-            }
+            });
         });
     }
 
@@ -209,16 +210,14 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         if (ProgressMonitor.isProgressCancelled()) {
             handle.release();
         } else {
-            Dispatch.run(() -> {
-                try {
-                    boolean scrollBrowser = handle.getBrowserInstructions().isScroll();
-                    DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
-                    opener.run();
-                } finally {
-                    DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(true);
-                    handle.release();
-                }
-            });
+            DBObjectVirtualFile file = handle.getObject().getVirtualFile();
+            try {
+                markSkipBrowserAutoscroll(file);
+                opener.run();
+            } finally {
+                unmarkSkipBrowserAutoscroll(file);
+                handle.release();
+            }
         }
     }
 
@@ -247,6 +246,9 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
             List<VirtualFile> attachedDDLFiles = databaseFile.getAttachedDDLFiles();
             if (attachedDDLFiles != null && !attachedDDLFiles.isEmpty()) return true;
 
+            // do not prompt ddl file attachments during workspace restore
+            if (ThreadInfo.current().is(ThreadProperty.WORKSPACE_RESTORE)) return true;
+
             DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
             DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.of(object);
             List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(objectRef);
@@ -260,8 +262,10 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
                 }
             } else {
-                int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
-                return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
+                AtomicBoolean cancelled = new AtomicBoolean();
+                List<VirtualFileInfo> fileInfos = VirtualFileInfo.fromFiles(virtualFiles, project);
+                fileAttachmentManager.showFileAttachDialog(object, fileInfos, true, (dialog, exitCode) -> cancelled.set(exitCode == DialogWrapper.CANCEL_EXIT_CODE));
+                return !cancelled.get();
             }
         }
 

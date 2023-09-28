@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -98,8 +99,10 @@ public class CheckBoxList<T extends Selectable> extends JList {
 
             //entry.errorLabel.setText(error != null && actions.isEnabled() ? " - " + error : "");
 
+            boolean secondary = entry.getPresentable().isSecondary();
+            boolean selected = entry.isSelected();
             if (mutable) {
-                Color foreground = isSelected ? Colors.getListSelectionForeground(true) : entry.isSelected() ? Colors.getListForeground() : UIUtil.getMenuItemDisabledForeground();
+                Color foreground = isSelected ? Colors.getListSelectionForeground(true) : selected && !secondary ? Colors.getListForeground() : UIUtil.getMenuItemDisabledForeground();
                 Color background = isSelected ? Colors.getListSelectionBackground(true) : Colors.getTextFieldBackground();
                 entry.textPanel.setBackground(background);
                 entry.checkBox.setBackground(background);
@@ -110,7 +113,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
                 entry.textPanel.setBackground(background);
                 entry.checkBox.setBackground(background);
                 entry.setBorder(new LineBorder(background));
-                entry.label.setForeground(presentable.isMasterSelected() && entry.isSelected() ? Colors.getListForeground() : UIUtil.getMenuItemDisabledForeground());
+                entry.label.setForeground(presentable.isMasterSelected() && selected && !secondary ? Colors.getListForeground() : UIUtil.getMenuItemDisabledForeground());
             }
 
             return entry;
@@ -166,6 +169,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
     }
 
 
+    @Getter
     private class Entry<T extends Selectable> extends JPanel implements Comparable<Entry<T>> {
         private final JPanel textPanel;
         private final JCheckBox checkBox;
@@ -178,15 +182,14 @@ public class CheckBoxList<T extends Selectable> extends JList {
             label.addMouseListener(l);
         }
 
-        private Entry(T presentable) {
+        private Entry(T selectable) {
             super(new BorderLayout());
             setBackground(Colors.getListBackground());
-            this.presentable = presentable;
-            checkBox = new JCheckBox("", presentable.isSelected());
+            this.presentable = selectable;
+            checkBox = new JCheckBox("", selectable.isSelected());
             checkBox.setBackground(Colors.getListBackground());
 
-            label = new JLabel(presentable.getName(), presentable.getIcon(), SwingConstants.LEFT);
-            //label.setForeground(error != null ? Color.RED : GUIUtil.getListForeground());
+            label = new JLabel(selectable.getName(), selectable.getIcon(), SwingConstants.LEFT);
             errorLabel = new JLabel();
             errorLabel.setForeground(JBColor.RED);
             add(checkBox, BorderLayout.WEST);
@@ -203,10 +206,6 @@ public class CheckBoxList<T extends Selectable> extends JList {
             boolean changed = presentable.isSelected() != checkBox.isSelected();
             presentable.setSelected(checkBox.isSelected());
             return changed;
-        }
-
-        public T getPresentable() {
-            return presentable;
         }
 
         public boolean isSelected() {

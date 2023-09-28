@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.ProjectAction;
+import com.dci.intellij.dbn.common.util.Dialogs;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionFilterSettingsDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -29,9 +30,8 @@ public class ConnectionFilterSettingsOpenAction extends ProjectAction {
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
         ConnectionHandler activeConnection = browserManager.getActiveConnection();
-        if (activeConnection != null) {
-            ConnectionFilterSettingsDialog filterSettingsDialog = new ConnectionFilterSettingsDialog(activeConnection);
-            filterSettingsDialog.show();
-        }
+        if (activeConnection == null) return;
+
+        Dialogs.show(() -> new ConnectionFilterSettingsDialog(activeConnection));
     }
 }

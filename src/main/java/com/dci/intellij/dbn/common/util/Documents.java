@@ -35,6 +35,7 @@ import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.createGuardedBlock;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.removeGuardedBlocks;
 import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
+import static com.intellij.openapi.fileEditor.impl.FileDocumentManagerBase.HARD_REF_TO_DOCUMENT_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @UtilityClass
@@ -89,7 +90,7 @@ public class Documents {
 
         Project project = psiFile.getProject();
         DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
-        daemonCodeAnalyzer.restart(psiFile);
+        Read.run(() -> daemonCodeAnalyzer.restart(psiFile));
     }
 
     public static Document createDocument(CharSequence text) {
@@ -186,5 +187,15 @@ public class Documents {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             fileDocumentManager.saveDocument(document);
         });
+    }
+
+    public static void cacheDocuments(List<VirtualFile> files) {
+        if (files == null || files.isEmpty()) return;
+        files.forEach(f -> cacheDocument(f));
+    }
+
+    public static void cacheDocument(VirtualFile file) {
+        Document document = getDocument(file);
+        file.putUserData(HARD_REF_TO_DOCUMENT_KEY, document);
     }
 }
