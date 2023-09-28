@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.browser;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.collections.CompactArrayList;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +15,7 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.dispose.Checks.isTrue;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DatabaseBrowserUtils {
@@ -69,5 +72,17 @@ public class DatabaseBrowserUtils {
             }
         }
         return new CompactArrayList<>(treeNodeList);
+    }
+
+    public static void markSkipBrowserAutoscroll(VirtualFile file) {
+        file.putUserData(UserDataKeys.SKIP_BROWSER_AUTOSCROLL, true);
+    }
+
+    public static void unmarkSkipBrowserAutoscroll(VirtualFile file) {
+        file.putUserData(UserDataKeys.SKIP_BROWSER_AUTOSCROLL, false);
+    }
+
+    static boolean isSkipBrowserAutoscroll(VirtualFile file) {
+        return isTrue(file.getUserData(UserDataKeys.SKIP_BROWSER_AUTOSCROLL));
     }
 }
