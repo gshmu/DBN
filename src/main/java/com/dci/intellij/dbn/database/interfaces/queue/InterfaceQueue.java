@@ -9,12 +9,15 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaceQueue;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.containers.ContainerUtil;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -33,6 +36,9 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     private final InterfaceCounters counters = new InterfaceCounters();
     private final ConnectionRef connection;
     private volatile Thread monitor;
+
+    @Getter
+    private final Map<Thread, Long> workers = ContainerUtil.createConcurrentWeakMap();
 
 
     public InterfaceQueue(ConnectionHandler connection) {
@@ -133,9 +139,12 @@ public class InterfaceQueue extends StatefulDisposableBase implements DatabaseIn
     }
 
     void executeTask(InterfaceTask<?> task) {
+        Thread thread = Thread.currentThread();
         try {
+            workers.put(thread, System.currentTimeMillis());
             task.execute();
         } finally {
+            workers.remove(thread);
             counters.running().decrement();
             counters.finished().increment();
             InterfaceThreadMonitor.finish(isProgressThread());
