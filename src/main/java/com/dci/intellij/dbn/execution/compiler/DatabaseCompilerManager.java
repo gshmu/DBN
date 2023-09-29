@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.compiler.ui.CompilerTypeSelectionDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -40,6 +39,7 @@ import static com.dci.intellij.dbn.common.Priority.LOW;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.execution.compiler.CompilerActionSource.BULK_COMPILE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 import static com.dci.intellij.dbn.object.common.status.DBObjectStatus.COMPILING;
 
 public class DatabaseCompilerManager extends ProjectComponentBase {
@@ -60,26 +60,26 @@ public class DatabaseCompilerManager extends ProjectComponentBase {
             public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
                 Project project = getProject();
                 DBSchemaObject object = sourceCodeFile.getObject();
+
+                if (!DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) return;
+                if (object.isNot(COMPILABLE)) return;
+
                 DBContentType contentType = sourceCodeFile.getContentType();
+                CompileType compileType = getCompileType(object, contentType);
 
-                if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
-                    boolean isCompilable = object.is(DBObjectProperty.COMPILABLE);
-
-                    if (isCompilable) {
-                        CompileType compileType = getCompileType(object, contentType);
-
-                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
-                        if (compileType == CompileType.DEBUG) {
-                            compileObject(object, compileType, compilerAction);
-                        }
-                        ConnectionHandler connection = object.getConnection();
-                        ProjectEvents.notify(project,
-                                CompileManagerListener.TOPIC,
-                                (listener) -> listener.compileFinished(connection, object));
-
-                        createCompilerResult(object, compilerAction, null);
-                    }
+                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, sourceCodeFile, fileEditor);
+                if (compileType == CompileType.DEBUG) {
+                    compileObject(object, compileType, compilerAction);
+                } else {
+                    CompilerResult compilerResult = createCompilerResult(object, compilerAction, null);
+                    ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                    executionManager.addCompilerResult(compilerResult);
                 }
+                ConnectionHandler connection = object.getConnection();
+                ProjectEvents.notify(project,
+                        CompileManagerListener.TOPIC,
+                        (listener) -> listener.compileFinished(connection, object));
+
             }
         };
     }
