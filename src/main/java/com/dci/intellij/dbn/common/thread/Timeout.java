@@ -12,7 +12,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.common.exception.Exceptions.causeOf;
-import static com.dci.intellij.dbn.common.util.TimeUtil.millisSince;
 import static com.dci.intellij.dbn.common.util.TimeUtil.secondsSince;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
@@ -29,25 +28,29 @@ public final class Timeout {
             seconds = Diagnostics.timeoutAdjustment(seconds);
             ThreadInfo invoker = ThreadInfo.copy();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
+
+            AtomicReference<Future<T>> future = new AtomicReference<>();
             AtomicReference<Throwable> exception = new AtomicReference<>();
-            Future<T> future = executorService.submit(
-                    () -> {
-                        try {
-                            return ThreadMonitor.surround(
-                                    invoker.getProject(),
-                                    invoker,
-                                    ThreadProperty.TIMEOUT,
-                                    defaultValue,
-                                    callable);
-                        } catch (Throwable e) {
-                            conditionallyLog(e);
-                            exception.set(e);
-                            return null;
-                        }
-                    });
+
+            future.set(executorService.submit(() -> {
+                String taskId = PooledThread.enter(future.get());
+                try {
+                    return ThreadMonitor.surround(
+                            invoker.getProject(),
+                            invoker,
+                            ThreadProperty.TIMEOUT,
+                            callable);
+                } catch (Throwable e) {
+                    conditionallyLog(e);
+                    exception.set(e);
+                    return null;
+                } finally {
+                    PooledThread.exit(taskId);
+                }
+            }));
 
 
-            T result = waitFor(future, seconds, TimeUnit.SECONDS);
+            T result = waitFor(future.get(), seconds, TimeUnit.SECONDS);
             if (exception.get() != null) {
                 throw exception.get();
             }
@@ -60,6 +63,9 @@ public final class Timeout {
             conditionallyLog(e);
             log.warn("{} - Operation failed after {}s (timeout = {}s). Defaulting to {}", identifier, secondsSince(start), seconds, defaultValue, causeOf(e));
             throw e.getCause();
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            throw e;
         }
         return defaultValue;
     }
@@ -72,21 +78,25 @@ public final class Timeout {
             seconds = Diagnostics.timeoutAdjustment(seconds);
             ThreadInfo invoker = ThreadInfo.copy();
             ExecutorService executorService = Threads.timeoutExecutor(daemon);
+            AtomicReference<Future<?>> future = new AtomicReference<>();
             AtomicReference<Throwable> exception = new AtomicReference<>();
-            Future<?> future = executorService.submit(
-                    () -> {
-                        try {
-                            ThreadMonitor.surround(
-                                    invoker.getProject(),
-                                    invoker,
-                                    ThreadProperty.TIMEOUT,
-                                    runnable);
-                        } catch (Throwable e) {
-                            conditionallyLog(e);
-                            exception.set(e);
-                        }
-                    });
-            waitFor(future, seconds, TimeUnit.SECONDS);
+
+            future.set(executorService.submit(() -> {
+                String taskId = PooledThread.enter(future.get());
+                try {
+                    ThreadMonitor.surround(
+                            invoker.getProject(),
+                            invoker,
+                            ThreadProperty.TIMEOUT,
+                            runnable);
+                } catch (Throwable e) {
+                    conditionallyLog(e);
+                    exception.set(e);
+                } finally {
+                    PooledThread.exit(taskId);
+                }
+            }));
+            waitFor(future.get(), seconds, TimeUnit.SECONDS);
             if (exception.get() != null) {
                 throw exception.get();
             }
@@ -94,11 +104,14 @@ public final class Timeout {
         } catch (TimeoutException | InterruptedException | RejectedExecutionException e) {
             conditionallyLog(e);
             String message = Commons.nvl(e.getMessage(), e.getClass().getSimpleName());
-            log.warn("Operation timed out after {} millis (timeout = {} seconds). Cause: {}", millisSince(start), seconds, message);
+            log.warn("Operation timed out after {}s (timeout = {}s). Cause: {}", secondsSince(start), seconds, message);
         } catch (ExecutionException e) {
             conditionallyLog(e);
-            log.warn("Operation failed after {} millis (timeout = {} seconds)", millisSince(start), seconds, causeOf(e));
+            log.warn("Operation failed after {}s (timeout = {}s)", secondsSince(start), seconds, causeOf(e));
             throw e.getCause();
+        } catch (Throwable e) {
+            conditionallyLog(e);
+            throw e;
         }
     }
 

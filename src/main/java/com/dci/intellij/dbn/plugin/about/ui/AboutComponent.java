@@ -26,6 +26,7 @@ public class AboutComponent extends DBNFormBase {
     private JLabel requestTrackerPageLinkLabel;
     private JLabel buildLabel;
     private JPanel linksPanel;
+    private JLabel versionLabel;
 
     public AboutComponent(Project project) {
         super(null, project);
@@ -52,6 +53,7 @@ public class AboutComponent extends DBNFormBase {
 
         IdeaPluginDescriptor ideaPluginDescriptor = DatabaseNavigator.getPluginDescriptor();
         String version = ideaPluginDescriptor.getVersion();
+        versionLabel.setText("Version: " + version.substring(0, 3));
         buildLabel.setText("Build: " + version.substring(4, 8));
     }
 

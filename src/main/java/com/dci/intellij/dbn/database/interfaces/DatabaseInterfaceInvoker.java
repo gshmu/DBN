@@ -89,8 +89,8 @@ public final class DatabaseInterfaceInvoker {
         ThreadInfo threadInfo = ThreadInfo.copy();
         return interfaceQueue.scheduleAndReturn(request,
                 () -> ConnectionContext.surround(request,
-                    () -> ThreadMonitor.surround(project, threadInfo, null, null,
-                        () -> PooledConnection.call(request, callable))));
+                    () -> ThreadMonitor.surround(project, threadInfo, null,
+                            () -> PooledConnection.call(request, callable))));
     }
 
     public static <T> T cached(CacheKey<T> key, Callable<T> loader) throws SQLException {

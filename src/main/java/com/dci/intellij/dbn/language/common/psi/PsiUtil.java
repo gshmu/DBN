@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 
 import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public class PsiUtil {
 
@@ -310,7 +311,7 @@ public class PsiUtil {
         if (isNotValid(virtualFile)) return null;
 
         PsiManager psiManager = PsiManager.getInstance(project);
-        return (T) Read.call(() -> psiManager.findFile(virtualFile));
+        return Read.call(() -> cast(psiManager.findFile(virtualFile)));
     }
 
 

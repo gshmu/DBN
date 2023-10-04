@@ -38,13 +38,13 @@ public class DatabaseLoaderManager extends ProjectComponentBase {
             for (VirtualFile openFile : openFiles) {
                 checkDisposed();
                 ConnectionHandler activeConnection = contextManager.getConnection(openFile);
-                if (activeConnection == connection) {
-                    FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
-                    for (FileEditor fileEditor : fileEditors) {
-                        checkDisposed();
-                        Editor editor = Editors.getEditor(fileEditor);
-                        Documents.refreshEditorAnnotations(editor);
-                    }
+                if (activeConnection != connection) continue;
+
+                FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
+                for (FileEditor fileEditor : fileEditors) {
+                    checkDisposed();
+                    Editor editor = Editors.getEditor(fileEditor);
+                    Documents.refreshEditorAnnotations(editor);
                 }
             }
         };

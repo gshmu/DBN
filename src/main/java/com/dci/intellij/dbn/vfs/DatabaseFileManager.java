@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
-import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -48,6 +47,7 @@ import java.util.*;
 
 import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.util.Commons.list;
+import static com.dci.intellij.dbn.common.util.Lists.anyMatch;
 
 @State(
     name = DatabaseFileManager.COMPONENT_NAME,
@@ -155,7 +155,11 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
     }
 
     public boolean isFileOpened(@NotNull DBObject object) {
-        return Lists.anyMatch(openFiles, file -> file.getObjectRef().is(object));
+        return anyMatch(openFiles, file -> file.getObjectRef().is(object));
+    }
+
+    public boolean isFileOpened(@NotNull DBObjectRef object) {
+        return anyMatch(openFiles, file -> Objects.equals(file.getObjectRef(), object));
     }
 
     private void closeFiles(ConnectionId connectionId) {

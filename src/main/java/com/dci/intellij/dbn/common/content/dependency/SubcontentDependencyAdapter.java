@@ -9,10 +9,6 @@ public interface SubcontentDependencyAdapter extends ContentDependencyAdapter{
     @NotNull
     DynamicContent getSourceContent();
 
-    boolean isSourceContentReady();
-
-    boolean canUseAlternativeLoader();
-
     static SubcontentDependencyAdapter create(@NotNull DatabaseEntity sourceContentOwner, @NotNull DynamicContentType sourceContentType) {
         return new SubcontentDependencyAdapterImpl(sourceContentOwner, sourceContentType);
     }

@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
+import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 
 public class CodeCompletionProvider extends CompletionProvider<CompletionParameters> {
     public static final CodeCompletionProvider INSTANCE = new CodeCompletionProvider();
@@ -323,39 +323,39 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         PsiElement sourceElement = context.getElementAtCaret();
         ConnectionHandler connection = context.getConnection();
 
-        if (isValid(connection) && !connection.isVirtual()) {
-            DBObjectBundle objectBundle = connection.getObjectBundle();
-            if (sourceElement.getParent() instanceof QualifiedIdentifierPsiElement && sourceElement.getParent().getFirstChild() != sourceElement) {
-                QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) sourceElement.getOriginalElement().getParent();
-                DBObject parentObject = qualifiedIdentifierPsiElement.lookupParentObjectFor(identifierElementType);
-                if (parentObject != null) {
+        if (isNotValid(connection) || connection.isVirtual()) return;
+
+        DBObjectBundle objectBundle = connection.getObjectBundle();
+        if (sourceElement.getParent() instanceof QualifiedIdentifierPsiElement && sourceElement.getParent().getFirstChild() != sourceElement) {
+            QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) sourceElement.getOriginalElement().getParent();
+            DBObject parentObject = qualifiedIdentifierPsiElement.lookupParentObjectFor(identifierElementType);
+            if (parentObject != null) {
+                DBSchema currentSchema = PsiUtil.getDatabaseSchema(sourceScope);
+                objectBundle.lookupChildObjectsOfType(
+                        consumer,
+                        parentObject,
+                        objectType,
+                        filter,
+                        currentSchema);
+
+            }
+        } else if (!identifierElementType.isLocalReference()){
+            Set<DBObject> parentObjects = LeafPsiElement.identifyPotentialParentObjects(objectType, filter, sourceScope, null);
+            if (parentObjects != null && !parentObjects.isEmpty()) {
+                for (DBObject parentObject : parentObjects) {
                     DBSchema currentSchema = PsiUtil.getDatabaseSchema(sourceScope);
                     objectBundle.lookupChildObjectsOfType(
                             consumer,
-                            parentObject,
+                            parentObject.getUndisposedEntity(),
                             objectType,
                             filter,
                             currentSchema);
-
                 }
-            } else if (!identifierElementType.isLocalReference()){
-                Set<DBObject> parentObjects = LeafPsiElement.identifyPotentialParentObjects(objectType, filter, sourceScope, null);
-                if (parentObjects != null && parentObjects.size() > 0) {
-                    for (DBObject parentObject : parentObjects) {
-                        DBSchema currentSchema = PsiUtil.getDatabaseSchema(sourceScope);
-                        objectBundle.lookupChildObjectsOfType(
-                                consumer,
-                                parentObject.getUndisposedEntity(),
-                                objectType,
-                                filter,
-                                currentSchema);
-                    }
-                } else {
-                    if (filter.acceptsRootObject(objectType)) {
-                        objectBundle.lookupObjectsOfType(
-                                consumer,
-                                objectType);
-                    }
+            } else {
+                if (filter.acceptsRootObject(objectType)) {
+                    objectBundle.lookupObjectsOfType(
+                            consumer,
+                            objectType);
                 }
             }
         }

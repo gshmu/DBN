@@ -75,7 +75,7 @@ public class Editors {
         if (fileEditor != null) {
             if (fileEditor instanceof DDLFileEditor) {
                 DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-                DBSchemaObject editableObject = attachmentManager.getEditableObject(virtualFile);
+                DBSchemaObject editableObject = attachmentManager.getMappedObject(virtualFile);
                 if (editableObject != null) {
                     virtualFile = editableObject.getVirtualFile();
                 }
@@ -100,7 +100,7 @@ public class Editors {
                     fileEditors = fileEditorManager.getEditors(objectFile);
                 }
 
-                if (fileEditors.length > 0) {
+                if (fileEditors != null &&  fileEditors.length > 0) {
                     selectEditor(project, objectFile, editorProviderId);
                     fileEditor = findTextEditor(fileEditors, editorProviderId);
                 }
@@ -161,7 +161,7 @@ public class Editors {
         if (selectedEditor == null) {
             if (virtualFile.isInLocalFileSystem()) {
                 DDLFileAttachmentManager ddlFileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                DBSchemaObject schemaObject = ddlFileAttachmentManager.getEditableObject(virtualFile);
+                DBSchemaObject schemaObject = ddlFileAttachmentManager.getMappedObject(virtualFile);
                 if (schemaObject != null) {
                     DBEditableObjectVirtualFile objectVirtualFile = schemaObject.getEditableVirtualFile();
                     selectedEditor = fileEditorManager.getSelectedEditor(objectVirtualFile);
@@ -371,7 +371,7 @@ public class Editors {
             }
         }
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-        DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(virtualFile);
+        DBSchemaObject schemaObject = fileAttachmentManager.getMappedObject(virtualFile);
         if (schemaObject != null) {
             DBEditableObjectVirtualFile editableObjectFile = schemaObject.getEditableVirtualFile();
             fileEditors = editorManager.getAllEditors(editableObjectFile);

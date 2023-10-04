@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
@@ -106,13 +107,11 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
 
                 @Override
                 protected void statusChanged() {
-                    if (true || getResource().isNot(ConnectionHandlerStatus.LOADING)) {
-                        ConnectionHandler connection = Failsafe.nn(getConnection());
-                        Project project = connection.getProject();
-                        ProjectEvents.notify(project,
-                                ConnectionLoadListener.TOPIC,
-                                (listener) -> listener.contentsLoaded(connection));
-                    }
+                    ConnectionHandler connection = Failsafe.nn(getConnection());
+                    Project project = connection.getProject();
+                    ProjectEvents.notify(project,
+                            ConnectionLoadListener.TOPIC,
+                            (listener) -> Background.run(project, () -> listener.contentsLoaded(connection)));
                 }
             };
 

@@ -31,6 +31,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.Commons.nvl;
+
 public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExecutionResult> {
     private JPanel mainPanel;
     private JPanel actionsPanel;
@@ -93,18 +95,18 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
     private void updateOutputTabs() {
         outputTabs.removeAllTabs();
         MethodExecutionResult executionResult = getExecutionResult();
-        String logOutput = executionResult.getLogOutput();
-        String logConsoleName = "Output";
+        addOutputArgumentTabs(executionResult);
+        addLoggingConsoleTab(executionResult);
+        UserInterface.repaint(outputTabs);
+    }
+
+    private void addLoggingConsoleTab(MethodExecutionResult executionResult) {
         ConnectionHandler connection = executionResult.getConnection();
         DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
-        String databaseLogName = compatibility.getDatabaseLogName();
-        if (databaseLogName != null) {
-            logConsoleName = databaseLogName;
-        }
+        String logConsoleName = nvl(compatibility.getDatabaseLogName(), "Output");
 
         DatabaseLoggingResultConsole console = new DatabaseLoggingResultConsole(connection, logConsoleName, true);
-        JComponent consoleComponent = console.getComponent();
-        consoleComponent.setBorder(Borders.lineBorder(JBColor.border(), 0, 0, 1, 0));
+        console.setBorder(Borders.lineBorder(JBColor.border(), 0, 0, 1, 0));
 
         LogOutputContext context = new LogOutputContext(connection);
         console.writeToConsole(context,
@@ -112,19 +114,21 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
                         executionResult.getExecutionContext().getExecutionTimestamp(),
                         " - Method execution started", true));
 
+        String logOutput = executionResult.getLogOutput();
         if (Strings.isNotEmptyOrSpaces(logOutput)) {
             console.writeToConsole(context, LogOutput.createStdOutput(logOutput));
         }
         console.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution finished\n\n", false));
         Disposer.register(this, console);
 
-        TabInfo outputTabInfo = new TabInfo(consoleComponent);
+        TabInfo outputTabInfo = new TabInfo(console.getComponent());
         outputTabInfo.setText(console.getTitle());
         outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
         outputTabInfo.setObject(console);
         outputTabs.addTab(outputTabInfo);
+    }
 
-        boolean isFirst = true;
+    private void addOutputArgumentTabs(MethodExecutionResult executionResult) {
         List<ArgumentValue> argumentValues = executionResult.getArgumentValues();
         for (ArgumentValue argumentValue : argumentValues) {
             DBArgument argument = argumentValue.getArgument();
@@ -139,8 +143,6 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
                 addOutputTab(argument, argumentForm);
             }
         }
-
-        UserInterface.repaint(outputTabs);
     }
 
     private void addOutputTab(DBArgument argument, DBNForm form) {

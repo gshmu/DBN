@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
@@ -170,7 +171,7 @@ public abstract class MethodExecutionProcessorImpl implements MethodExecutionPro
 
     @NotNull
     private MethodExecutionResult execute(MethodExecutionContext context) throws SQLException {
-        ConnectionHandler connection = context.getTargetConnection();
+        ConnectionHandler connection = nd(context.getTargetConnection());
         DBNConnection conn = context.getConnection();
 
         MethodExecutionResult executionResult = new CancellableDatabaseCall<MethodExecutionResult>(

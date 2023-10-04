@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.exception.ElementSkippedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadInfo;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
+import com.dci.intellij.dbn.common.util.UUIDs;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -32,7 +33,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.INTERNAL;
@@ -100,7 +100,7 @@ public abstract class DynamicContentResultSetLoader<E extends DynamicContentElem
     public abstract E createElement(DynamicContent<E> content, M metadata, LoaderCache cache) throws SQLException;
 
     private static class DebugInfo {
-        private final String id = UUID.randomUUID().toString();
+        private final String id = UUIDs.compact();
         private final long startTimestamp = System.currentTimeMillis();
     }
 

@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
@@ -136,15 +137,15 @@ public class FileConnectionContextRegistry extends StatefulDisposableBase implem
     }
 
     @Nullable
-    private <T> T resolveDdlAttachment(@NotNull VirtualFile file, Function<DBSchemaObject, T> handler) {
+    private <T> T resolveDdlAttachment(@NotNull VirtualFile file, Function<DBObjectRef<DBSchemaObject>, T> handler) {
         if (VirtualFiles.isLocalFileSystem(file)) {
             // if the file is an attached ddl file, then resolve the object which it is
             // linked to, and return its parent schema
             Project project = getProject();
             DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-            DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(file);
-            if (schemaObject != null && DatabaseFileSystem.isFileOpened(schemaObject)) {
-                return handler.apply(schemaObject);
+            DBObjectRef<DBSchemaObject> object = fileAttachmentManager.getMappedObjectRef(file);
+            if (object != null && DatabaseFileSystem.isFileOpened(object)) {
+                return handler.apply(object);
             }
         }
         return null;

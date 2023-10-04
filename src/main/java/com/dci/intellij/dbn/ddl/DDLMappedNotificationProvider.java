@@ -133,7 +133,7 @@ public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProv
             if (!isDbLanguageFile(file)) return null;
 
             DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-            DBSchemaObject object = attachmentManager.getEditableObject(file);
+            DBSchemaObject object = attachmentManager.getMappedObject(file);
             if (isNotValid(object)) return null;
             if (!isFileOpened(object)) return null;
 

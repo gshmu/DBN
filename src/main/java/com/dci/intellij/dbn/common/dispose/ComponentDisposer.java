@@ -53,21 +53,19 @@ public final class ComponentDisposer {
     }
 
     public static void dispose(@Nullable Component component) {
-        if (component != null) {
-            Dispatch.run(true, () -> {
-                UIUtil.dispose(component);
-                removeListeners(component);
-                if (component instanceof Container) {
-                    Container container = (Container) component;
-                    Component[] components = container.getComponents();
-                    if (components.length > 0) {
-                        for (Component child : components) {
-                            dispose(child);
-                            //Unsafe.silent(() -> container.remove(child));
-                        }
-                    }
+        if (component == null) return;
+
+        Dispatch.run(true, () -> {
+            UIUtil.dispose(component);
+            removeListeners(component);
+            if (component instanceof Container) {
+                Container container = (Container) component;
+                Component[] components = container.getComponents();
+                for (Component child : components) {
+                    dispose(child);
+                    //Unsafe.silent(() -> container.remove(child));
                 }
-            });
-        }
+            }
+        });
     }
 }

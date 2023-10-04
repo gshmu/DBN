@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.script;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.component.PersistentState;
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
@@ -57,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.Settings.*;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
@@ -146,7 +146,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
     private void doExecuteScript(ScriptExecutionInput input) throws Exception {
         ScriptExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
-        ConnectionHandler connection = Failsafe.nn(input.getConnection());
+        ConnectionHandler connection = nd(input.getConnection());
         VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.remove(sourceFile, null);
 
