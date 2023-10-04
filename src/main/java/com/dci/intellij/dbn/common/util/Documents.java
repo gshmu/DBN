@@ -35,7 +35,7 @@ import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.createGuardedBlock;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.removeGuardedBlocks;
 import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
-import static com.intellij.openapi.fileEditor.impl.FileDocumentManagerBase.HARD_REF_TO_DOCUMENT_KEY;
+import static com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @UtilityClass
