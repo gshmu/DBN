@@ -4,19 +4,12 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
-
-import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
-import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
 @UtilityClass
 public final class Threads {
-    private static final Map<String, AtomicInteger> THREAD_COUNTERS = new ConcurrentHashMap<>();
-
     private static final ExecutorService DATABASE_INTERFACE_EXECUTOR = newThreadPool("DBN - Database Interface Thread", true,  5, 100);
     private static final ExecutorService CANCELLABLE_EXECUTOR        = newThreadPool("DBN - Cancellable Calls Thread",  true,  5, 100);
     private static final ExecutorService BACKGROUND_EXECUTOR         = newThreadPool("DBN - Background Thread",         true,  5, 200);
@@ -25,21 +18,13 @@ public final class Threads {
     private static final ExecutorService TIMEOUT_DAEMON_EXECUTOR     = newThreadPool("DBN - Timeout Execution Daemon",  true,  5, 200);
     private static final ExecutorService CODE_COMPLETION_EXECUTOR    = newThreadPool("DBN - Code Completion Thread",    true,  5, 100);
     private static final ExecutorService OBJECT_LOOKUP_EXECUTOR      = newThreadPool("DBN - Object Lookup Thread",      true,  5, 100);
+    public static final long DELAY = TimeUnit.MILLISECONDS.toNanos(1);
 
     @NotNull
     public static ThreadFactory createThreadFactory(String name, boolean daemon) {
         return runnable -> {
-            AtomicInteger index = THREAD_COUNTERS.computeIfAbsent(name, n -> new AtomicInteger(0));
-            String indexedName = name + " (" + index.incrementAndGet() + ")";
-            log.info("Creating thread \"" + indexedName + "\"");
-            Thread thread = new Thread(() -> {
-                    try {
-                        guarded(runnable, r -> r.run());
-                    } catch (Throwable t) {
-                        conditionallyLog(t);
-                        log.error(name + " - Execution failed: " + t.getMessage(), t);
-                    }
-                }, name);
+            PooledThread thread = new PooledThread(name, runnable);
+            log.info("Created thread \"" + thread.getName() + "\"");
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.setDaemon(daemon);
             return thread;
@@ -88,6 +73,6 @@ public final class Threads {
     }
 
     static void delay(Object sync) {
-        LockSupport.parkNanos(sync, 1_000_000);
+        LockSupport.parkNanos(sync, DELAY);
     }
 }

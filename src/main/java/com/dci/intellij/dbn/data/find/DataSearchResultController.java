@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.PooledThread;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
@@ -25,7 +26,7 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class DataSearchResultController {
     private final WeakRef<SearchableDataComponent> searchableComponent;
-    private final AtomicReference<Thread> searchHandle = new AtomicReference<>();
+    private final AtomicReference<PooledThread> searchHandle = new AtomicReference<>();
 
     DataSearchResultController(SearchableDataComponent searchableComponent) {
         this.searchableComponent = WeakRef.of(searchableComponent);

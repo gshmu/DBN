@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.dispose.Checks;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ref.WeakRefCache;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
@@ -95,10 +96,11 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
         if (!super.isValid()) return false;
 
         T object = this.object.value();
-        if (object != null && object.isDisposed()) return false; // loaded but disposed meanwhile
-        if (ThreadMonitor.isTimeSensitiveThread()) return true; // assume valid without loading
+        if (object != null && ThreadMonitor.isTimeSensitiveThread()) return true; // assume valid without loading
 
-        boolean valid = this.object.get() != null;
+        object = this.object.get();
+        boolean valid = Checks.isValid(object);
+
         if (!valid) invalidate();
         return valid;
     }

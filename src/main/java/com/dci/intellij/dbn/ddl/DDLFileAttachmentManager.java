@@ -68,6 +68,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.Settings.newElement;
 import static com.dci.intellij.dbn.common.options.setting.Settings.stringAttribute;
+import static com.dci.intellij.dbn.common.util.Lists.anyMatch;
 import static com.dci.intellij.dbn.common.util.Messages.options;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.isFileOpened;
@@ -165,9 +166,13 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     }
 
     @Nullable
-    public DBSchemaObject getEditableObject(@NotNull VirtualFile ddlFile) {
-        DBObjectRef<DBSchemaObject> objectRef = mappings.get(ddlFile.getUrl());
-        return DBObjectRef.get(objectRef);
+    public DBSchemaObject getMappedObject(@NotNull VirtualFile ddlFile) {
+        return DBObjectRef.get(getMappedObjectRef(ddlFile));
+    }
+
+    @Nullable
+    public DBObjectRef<DBSchemaObject> getMappedObjectRef(@NotNull VirtualFile ddlFile) {
+        return mappings.get(ddlFile.getUrl());
     }
 
     public ConnectionHandler getMappedConnection(VirtualFile ddlFile) {
@@ -180,28 +185,26 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
 
     public boolean hasAttachedDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
-        for (val entry : mappings.entrySet()) {
-            if (entry.getValue().equals(objectRef)) return true;
-        }
-        return false;
+        return anyMatch(mappings.values(), o -> Objects.equals(objectRef, o));
     }
 
 
     private void checkInvalidAttachedFiles(List<VirtualFile> virtualFiles, DBObjectRef<DBSchemaObject> objectRef) {
-        if (virtualFiles != null && virtualFiles.size() > 0) {
-            List<VirtualFile> obsolete = null;
-            for (VirtualFile virtualFile : virtualFiles) {
-                if (isNotValid(virtualFile) || !isValidDDLFile(virtualFile, objectRef)) {
-                    if (obsolete == null) obsolete = new ArrayList<>();
-                    obsolete.add(virtualFile);
-                }
+        if (virtualFiles == null || virtualFiles.isEmpty()) return;
+
+        List<VirtualFile> obsolete = null;
+        for (VirtualFile virtualFile : virtualFiles) {
+            if (isNotValid(virtualFile) || !isValidDDLFile(virtualFile, objectRef)) {
+                if (obsolete == null) obsolete = new ArrayList<>();
+                obsolete.add(virtualFile);
             }
-            if (obsolete != null) {
-                virtualFiles.removeAll(obsolete);
-                for (VirtualFile virtualFile : obsolete) {
-                    detachDDLFile(virtualFile);
-                }
-            }
+        }
+
+        if (obsolete == null) return;
+
+        virtualFiles.removeAll(obsolete);
+        for (VirtualFile virtualFile : obsolete) {
+            detachDDLFile(virtualFile);
         }
     }
 

@@ -76,11 +76,11 @@ public class DBNHintForm extends DBNFormBase {
             mainPanel.setPreferredSize(UserInterface.adjust(contentPreferredSize, 0, 10));
             mainPanel.revalidate();
 
-        Dimension contentSize = UserInterface.adjust(preferredSize, 4, 4);
-        if (!preferredSize.equals(contentSize)) {
-            hintTextPane.setPreferredSize(contentSize);
-            hintTextPane.revalidate();
-        }
+            Dimension contentSize = UserInterface.adjust(preferredSize, 4, 4);
+            if (!preferredSize.equals(contentSize)) {
+                hintTextPane.setPreferredSize(contentSize);
+                hintTextPane.revalidate();
+            }
         });
     }
 
@@ -116,7 +116,7 @@ public class DBNHintForm extends DBNFormBase {
             hintTextPane.setText(content.getText());
         }
 
-        Dispatch.run(() -> resizeTextPane());
+        resizeTextPane();
     }
 
     public void setMessageType(MessageType messageType) {

@@ -4,12 +4,9 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.ConnectionCallable;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterface.ConnectionRunnable;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-
-import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public final class PooledConnection {
     private PooledConnection() {}
@@ -27,9 +24,6 @@ public final class PooledConnection {
             connection.checkDisposed();
             conn.set(ResourceStatus.ACTIVE, true);
             runnable.run(conn);
-
-        } catch (ProcessCanceledException e){
-            conditionallyLog(e);
         } finally {
             if (conn != null) {
                 connection.freePoolConnection(conn);
@@ -51,7 +45,6 @@ public final class PooledConnection {
             connection.checkDisposed();
             c.set(ResourceStatus.ACTIVE, true);
             return callable.call(c);
-
         } finally {
             if (c != null) {
                 connection.freePoolConnection(c);

@@ -155,7 +155,7 @@ public final class VirtualFiles {
 
         if (virtualFile.isInLocalFileSystem()) {
             DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-            DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(virtualFile);
+            DBSchemaObject schemaObject = fileAttachmentManager.getMappedObject(virtualFile);
             if (schemaObject == null) return null;
 
             return schemaObject.getEditableVirtualFile();

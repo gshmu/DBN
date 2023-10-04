@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -78,7 +78,7 @@ public class SchemaSelectDropdownAction extends DBNComboBoxAction implements Dum
 
                 if (virtualFile.isInLocalFileSystem()) {
                     DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
+                    DBObjectRef editableObject = fileAttachmentManager.getMappedObjectRef(virtualFile);
                     if (editableObject != null) {
                         boolean isOpened = DatabaseFileSystem.isFileOpened(editableObject);
                         if (isOpened) {

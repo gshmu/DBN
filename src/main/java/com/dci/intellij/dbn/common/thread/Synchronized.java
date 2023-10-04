@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Predicate;
 
 import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
@@ -18,26 +17,16 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 public class Synchronized {
 	static final Map<Object, SyncObject> LOCKS = new ConcurrentHashMap<>(100);
 
-	public static <O, E extends Throwable> void on(O owner, Predicate<O> condition, ParametricRunnable<O, E> runnable) throws E{
-		if (condition.test(owner)) {
-			on(owner, o -> {
-				if (condition.test(o)) {
-					runnable.run(o);
-				}
-				return null;
-			});
-		}
-	}
 	public static <O, E extends Throwable> void on(O owner, ParametricRunnable<O, E> runnable) throws E{
-		on(owner, o -> {
-			runnable.run(o);
-			return null;
-		});
+		SyncObject<O> lock = acquire(owner);
+		try {
+			lock.execute(owner, runnable);
+		} finally {
+			release(owner, lock);
+		}
 	}
 
 	public static <O, R, E extends Throwable> R on(O owner, ParametricCallable<O, R, E> callable) throws E{
-		if (owner == null) return callable.call(null);
-
 		SyncObject<R> lock = acquire(owner);
 		try {
 			return lock.execute(owner, callable);
@@ -63,6 +52,17 @@ public class Synchronized {
 			lock.lock();
 			try {
 				return callable.call(owner);
+			} finally {
+				invokers.decrementAndGet();
+				lock.unlock();
+			}
+		}
+
+		public <O, E extends Throwable> void execute(O owner, ParametricRunnable<O, E> runnable) throws E{
+			invokers.incrementAndGet();
+			lock.lock();
+			try {
+				runnable.run(owner);
 			} finally {
 				invokers.decrementAndGet();
 				lock.unlock();

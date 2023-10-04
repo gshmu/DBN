@@ -47,7 +47,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
 
     private ContentDependencyAdapter dependencyAdapter;
     private DatabaseEntity parent;
-    private byte signature = 0;
+    private volatile byte signature = 0;
 
     protected List<T> elements = cast(EMPTY_UNTOUCHED_CONTENT);
 
@@ -113,6 +113,11 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
     @Override
     public boolean isLoaded() {
         return is(LOADED);
+    }
+
+    @Override
+    public boolean isReady() {
+        return is(LOADED) && isNot(LOADING) && isNot(DIRTY);
     }
 
     @Override
@@ -239,7 +244,11 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
      * Synchronised block making sure the content is loaded before the thread is released
      */
     private void ensureLoaded(boolean force) {
+        if (isReady()) return;
+
         Synchronized.on(this, o -> {
+            if (o.isReady()) return; // content meanwhile loaded by another thread
+
             o.set(LOADING, true);
             try {
                 o.performLoad(force);

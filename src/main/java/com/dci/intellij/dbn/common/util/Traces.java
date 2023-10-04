@@ -4,14 +4,27 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.*;
 import com.dci.intellij.dbn.diagnostics.Diagnostics;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@Slf4j
 @UtilityClass
 public final class Traces {
+
+    public static final Set<String> SKIPPED_CALL_STACK_CLASSES = new HashSet<>(Arrays.asList(
+            Traces.class.getName(),
+            ThreadInfo.class.getName(),
+            ThreadMonitor.class.getName(),
+            Synchronized.class.getName(),
+            Background.class.getName(),
+            Progress.class.getName(),
+            Failsafe.class.getName()));
 
     public static boolean isCalledThrough(Class ... oneOfClasses) {
         StackTraceElement[] callStack = Thread.currentThread().getStackTrace();
@@ -58,15 +71,7 @@ public final class Traces {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         return Arrays
                 .stream(stackTrace)
-                .filter(st -> !Arrays.asList(
-                        Traces.class.getName(),
-                        ThreadInfo.class.getName(),
-                        ThreadMonitor.class.getName(),
-                        Synchronized.class.getName(),
-                        Background.class.getName(),
-                        Progress.class.getName(),
-                        Failsafe.class.getName()
-                ).contains(st.getClassName()))
+                .filter(st -> !SKIPPED_CALL_STACK_CLASSES.contains(st.getClassName()))
                 .toArray(StackTraceElement[]::new);
     }
 }

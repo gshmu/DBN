@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -209,10 +210,10 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         DBSchemaObject object = DBDebugUtil.getObject(sourcePosition);
         if (object != null) {
             String frameName = object.getName();
-            Icon frameIcon = object.getIcon();
+            Icon frameIcon = object.getObjectType().getIcon();
 
             IdentifierPsiElement subject = getSubject();
-            if (subject != null) {
+            if (subject != null && !Strings.equalsIgnoreCase(subject.getChars(), frameName)) {
                 DBObjectType objectType = subject.getObjectType();
                 frameName = frameName + "." + subject.getChars();
                 frameIcon = objectType.getIcon();

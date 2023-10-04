@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.PooledThread;
 import com.dci.intellij.dbn.common.ui.form.DBNForm;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.UserInterface;
@@ -29,7 +30,7 @@ public class ObjectPropertiesForm extends DBNFormBase {
     private JPanel closeActionPanel;
     private DBObjectRef<?> object;
 
-    private final AtomicReference<Thread> refreshHandle = new AtomicReference<>();
+    private final AtomicReference<PooledThread> refreshHandle = new AtomicReference<>();
     private final ObjectPropertiesTable objectPropertiesTable;
 
     public ObjectPropertiesForm(DBNForm parent) {
@@ -80,25 +81,25 @@ public class ObjectPropertiesForm extends DBNFormBase {
 
     public void setObject(@NotNull DBObject object) {
         DBObject localObject = getObject();
-        if (!Objects.equals(object, localObject)) {
-            this.object = DBObjectRef.of(object);
-            Background.run(getProject(), refreshHandle, () -> {
-                ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
-                Disposer.register(ObjectPropertiesForm.this, tableModel);
+        if (Objects.equals(object, localObject)) return;
 
-                Dispatch.run(() -> {
-                    objectLabel.setText(object.getName());
-                    objectLabel.setIcon(object.getIcon());
-                    objectTypeLabel.setText(Naming.capitalize(object.getTypeName()) + ":");
+        this.object = DBObjectRef.of(object);
+        Background.run(getProject(), refreshHandle, () -> {
+            ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
+            Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                    ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
-                    objectPropertiesTable.setModel(tableModel);
-                    objectPropertiesTable.accommodateColumnsSize();
+            Dispatch.run(() -> {
+                objectLabel.setText(object.getName());
+                objectLabel.setIcon(object.getIcon());
+                objectTypeLabel.setText(Naming.capitalize(object.getTypeName()) + ":");
 
-                    UserInterface.repaint(mainPanel);
-                    Disposer.dispose(oldTableModel);
-                });
+                ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
+                objectPropertiesTable.setModel(tableModel);
+                objectPropertiesTable.accommodateColumnsSize();
+
+                UserInterface.repaint(mainPanel);
+                Disposer.dispose(oldTableModel);
             });
-        }
+        });
     }
 }

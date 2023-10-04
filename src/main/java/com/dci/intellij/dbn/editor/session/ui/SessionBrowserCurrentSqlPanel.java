@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.exception.OutdatedContentException;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.PooledThread;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.form.DBNFormBase;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -51,7 +52,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormBase {
     private EditorEx viewer;
     private Object selectedSessionId;
 
-    private final AtomicReference<Thread> refreshHandle = new AtomicReference<>();
+    private final AtomicReference<PooledThread> refreshHandle = new AtomicReference<>();
 
 
     SessionBrowserCurrentSqlPanel(DBNComponent parent, SessionBrowser sessionBrowser) {

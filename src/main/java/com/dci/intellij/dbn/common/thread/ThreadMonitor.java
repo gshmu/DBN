@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
-import com.dci.intellij.dbn.common.util.Traces;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import lombok.experimental.UtilityClass;
@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
 import static com.dci.intellij.dbn.common.thread.ThreadInfo.current;
 import static com.dci.intellij.dbn.common.thread.ThreadProperty.*;
 
@@ -47,12 +46,10 @@ public class ThreadMonitor {
         try {
             if (property != null) threadInfo.set(property, true);
             threadInfo.setProject(project);
-            threadInfo.setCallStack(Traces.diagnosticsCallStack());
-            return guarded(null, callable, c -> c.call());
+            return callable.call();
         } finally {
             if (property != null) threadInfo.set(property, false);
             threadInfo.setProject(originalProject);
-            threadInfo.setCallStack(null);
         }
     }
 
@@ -63,7 +60,7 @@ public class ThreadMonitor {
             @Nullable ThreadProperty property,
             ThrowableRunnable<E> runnable) throws E {
 
-        surround(project, invoker, property, null, () -> {
+        surround(project, invoker, property, () -> {
             runnable.run();
             return null;
         });
@@ -73,7 +70,6 @@ public class ThreadMonitor {
             @Nullable Project project,
             @Nullable ThreadInfo invoker,
             @Nullable ThreadProperty property,
-            T defaultValue,
             ThrowableCallable<T, E> callable) throws E {
 
         ThreadInfo threadInfo = current();
@@ -96,8 +92,7 @@ public class ThreadMonitor {
 
             threadInfo.setProject(project);
             threadInfo.setInvoker(invoker);
-            threadInfo.setCallStack(Traces.diagnosticsCallStack());
-            return guarded(defaultValue, callable, c -> c.call());
+            return callable.call();
 
         } finally {
             if (property != null)  {
@@ -108,7 +103,6 @@ public class ThreadMonitor {
 
             threadInfo.setProject(originalProject);
             threadInfo.setInvoker(null);
-            threadInfo.setCallStack(null);
         }
     }
 
@@ -133,15 +127,18 @@ public class ThreadMonitor {
     }
 
     public static boolean isDispatchThread() {
-        return ApplicationManager.getApplication().isDispatchThread();
+        Application application = ApplicationManager.getApplication();
+        return application != null && application.isDispatchThread();
     }
 
     public static boolean isReadActionThread() {
-        return ApplicationManager.getApplication().isReadAccessAllowed();
+        Application application = ApplicationManager.getApplication();
+        return application != null && application.isReadAccessAllowed();
     }
 
     public static boolean isWriteActionThread() {
-        return ApplicationManager.getApplication().isWriteAccessAllowed();
+        Application application = ApplicationManager.getApplication();
+        return application != null && application.isWriteAccessAllowed();
     }
 
     public static boolean isTimeSensitiveThread() {

@@ -134,10 +134,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             }
 
             DDLFileAttachmentManager instance = DDLFileAttachmentManager.getInstance(getProject());
-            DBSchemaObject editableObject = instance.getEditableObject(virtualFile);
-            if (editableObject != null) {
-                return editableObject;
-            }
+            DBSchemaObject editableObject = instance.getMappedObject(virtualFile);
+            if (editableObject != null) return editableObject;
         }
 
         return DBObjectRef.get(underlyingObject);
@@ -337,12 +335,16 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
 
     @Override
     public PsiDirectory getParent() {
+        VirtualFile file = getVirtualFile();
+        if (file.isInLocalFileSystem()) return Read.call(this, f -> f.getSuperParent());
+
         DBObject underlyingObject = getUnderlyingObject();
-        if (underlyingObject != null) {
-            DBObject parentObject = underlyingObject.getParentObject();
-            return DBObjectPsiCache.asPsiDirectory(parentObject);
-        }
-        return Read.call(this, f -> f.getSuperParent());
+        if (underlyingObject == null) return null;
+
+        DBObject parentObject = underlyingObject.getParentObject();
+        if (parentObject == null) return underlyingObject.getConnection().getPsiDirectory();
+
+        return DBObjectPsiCache.asPsiDirectory(parentObject);
     }
 
     private PsiDirectory getSuperParent() {
