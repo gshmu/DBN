@@ -42,6 +42,8 @@ public interface DynamicContent<T extends DynamicContentElement> extends
      */
     byte getSignature();
 
+    boolean isReady();
+
     /**
      * A load attempt has been made already
      */

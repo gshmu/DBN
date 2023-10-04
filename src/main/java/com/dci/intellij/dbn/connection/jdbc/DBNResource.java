@@ -4,12 +4,12 @@ import com.dci.intellij.dbn.common.ui.util.Listeners;
 import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
+import com.dci.intellij.dbn.common.util.UUIDs;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDebug;
@@ -19,7 +19,7 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseResourceDeb
 public abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     private final long initTimestamp = System.currentTimeMillis();
     private final ResourceType resourceType;
-    private final String resourceId = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+    private final String resourceId = UUIDs.compact();
     protected final T inner;
 
     private ResourceStatusAdapter<CloseableResource> closed;

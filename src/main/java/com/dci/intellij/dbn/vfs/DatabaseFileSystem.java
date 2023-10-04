@@ -247,6 +247,14 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         filesCache.remove(objectRef);
     }
 
+    public static boolean isFileOpened(DBObjectRef object) {
+        Project project = object.getProject();
+        if (project == null) return false;
+
+        DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);
+        return fileManager.isFileOpened(object);
+    }
+
     public static boolean isFileOpened(DBObject object) {
         Project project = object.getProject();
         DatabaseFileManager fileManager = DatabaseFileManager.getInstance(project);

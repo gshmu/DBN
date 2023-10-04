@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderBase;
-import com.dci.intellij.dbn.common.util.Traces;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +14,6 @@ public class ThreadInfo extends PropertyHolderBase.IntStore<ThreadProperty> {
     private static final ThreadLocal<ThreadInfo> THREAD_INFO = new ThreadLocal<>();
     private ProjectRef project;
     private ThreadInfo invoker;
-    private StackTraceElement[] callStack;
 
     public static ThreadInfo copy() {
         ThreadInfo current = current();
@@ -23,7 +21,6 @@ public class ThreadInfo extends PropertyHolderBase.IntStore<ThreadProperty> {
         copy.inherit(current);
         copy.setProject(current.getProject());
         copy.setInvoker(current.getInvoker());
-        copy.setCallStack(Traces.diagnosticsCallStack());
         return copy;
     }
 

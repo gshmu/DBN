@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.jdbc.*;
 import com.dci.intellij.dbn.database.DatabaseActivityTrace;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.interfaces.DatabaseInterfaces;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -27,6 +29,7 @@ import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.isDatabaseAccessDebug;
 
 @Slf4j
+@Getter
 public class StatementExecutionProcessor {
     public static final SQLFeatureNotSupportedException NO_STATEMENT_DEFINITION_EXCEPTION = new SQLFeatureNotSupportedException("No statement definition found");
 
@@ -77,14 +80,6 @@ public class StatementExecutionProcessor {
         }
     }
 
-    public DatabaseInterfaces getInterfaces() {
-        return interfaces;
-    }
-
-    public String getId() {
-        return id;
-    }
-
     public ResultSet executeQuery(DBNConnection connection, boolean forceExecution, Object... arguments) throws SQLException {
         StatementExecutorContext context = createContext(connection);
         if (statementDefinitions.size() == 1) {
@@ -94,6 +89,10 @@ public class StatementExecutionProcessor {
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
                     return executeQuery(statementDefinition, context, forceExecution, arguments);
+                } catch (SQLRecoverableException e){
+                    conditionallyLog(e);
+                    exception = e;
+                    break;
                 } catch (SQLException e){
                     conditionallyLog(e);
                     exception = e;

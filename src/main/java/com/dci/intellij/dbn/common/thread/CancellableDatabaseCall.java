@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionRef;
 import com.dci.intellij.dbn.connection.Savepoints;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -27,7 +28,8 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private final long startTimestamp = System.currentTimeMillis();
     private final ThreadInfo invoker = ThreadInfo.copy();
 
-    private final DBNConnection connection;
+    private final ConnectionRef connection;
+    private final DBNConnection conn;
     private final int timeout;
     private final TimeUnit timeUnit;
     private final boolean createSavepoint;
@@ -37,8 +39,9 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private transient boolean cancelRequested = false;
     private Timer cancelCheckTimer;
 
-    protected CancellableDatabaseCall(@Nullable ConnectionHandler connection, @Nullable DBNConnection conn, int timeout, TimeUnit timeUnit) {
-        this.connection = conn;
+    protected CancellableDatabaseCall(ConnectionHandler connection, @Nullable DBNConnection conn, int timeout, TimeUnit timeUnit) {
+        this.connection = ConnectionRef.of(connection);
+        this.conn = conn;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
         createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connection);
@@ -48,17 +51,20 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         cancelRequested = true;
     }
 
+    public ConnectionHandler getConnection() {
+        return ConnectionRef.ensure(connection);
+    }
+
     @Override
     public T call() throws Exception {
         return ThreadMonitor.surround(
                 invoker.getProject(),
                 invoker,
                 ThreadProperty.CANCELABLE,
-                null,
                 () -> {
                     if (createSavepoint) {
                         AtomicReference<Exception> innerException = new AtomicReference<>();
-                        T result = Savepoints.call(connection, () -> {
+                        T result = Savepoints.call(conn, () -> {
                             try {
                                 return CancellableDatabaseCall.this.execute();
                             } catch (SQLException e) {

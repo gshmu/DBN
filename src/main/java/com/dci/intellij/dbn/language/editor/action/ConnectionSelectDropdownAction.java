@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.ui.misc.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -49,9 +49,9 @@ public class ConnectionSelectDropdownAction extends DBNComboBoxAction implements
 
             if (virtualFile.isInLocalFileSystem()) {
                 DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
-                if (editableObject != null) {
-                    boolean isOpened = DatabaseFileSystem.isFileOpened(editableObject);
+                DBObjectRef mappedObject = fileAttachmentManager.getMappedObjectRef(virtualFile);
+                if (mappedObject != null) {
+                    boolean isOpened = DatabaseFileSystem.isFileOpened(mappedObject);
                     presentation.setEnabled(!isOpened);
                 }
             }

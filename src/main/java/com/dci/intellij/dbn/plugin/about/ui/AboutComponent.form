@@ -16,12 +16,12 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="673fb" class="javax.swing.JLabel">
+          <component id="673fb" class="javax.swing.JLabel" binding="versionLabel">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Version: 3.3"/>
+              <text value="Version: [version]"/>
             </properties>
           </component>
           <component id="981e1" class="javax.swing.JLabel" binding="buildLabel">
