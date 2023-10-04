@@ -1,8 +1,7 @@
 <idea-plugin url="https://plugins.jetbrains.com/plugin/1800-database-navigator">
     <name>Database Navigator</name>
     <id>DBN</id>
-    <!--3050 -->
-    <version>3.4.1220.0</version>
+    <version>3.4.1570.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -30,6 +29,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.4.1570</b>
+            <ul>
+                <li>Addressed IDE freezing issues
+                <li>Bug fixes and performance improvements
+            </ul>
             <li><b>3.4.1220</b>
             <ul>
                 <li>Discontinued support for IntelliJ 17 and earlier versions
