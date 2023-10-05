@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.config;
 
+import com.dci.intellij.dbn.common.options.AbstractConfiguration;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.connection.config.ConnectionDebuggerSettings;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRunConfig {
-    @Delegate
+    @Delegate(excludes = {BasicConfiguration.class, AbstractConfiguration.class})
     private ConnectionDebuggerSettings debuggerConfig = new ConnectionDebuggerSettings();
 
     public DBMethodJdwpRunConfig(Project project, DBMethodJdwpRunConfigFactory factory, String name, DBRunConfigCategory category) {
