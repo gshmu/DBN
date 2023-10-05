@@ -120,7 +120,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                         return null;
                     }
                 }*/
-                return lookupAdapter.matches(this) ? this : null;
+                return identifierLookupAdapter.matches(this) ? this : null;
             }
         }
         return null;
@@ -298,7 +298,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         SequencePsiElement statement = findEnclosingElement(ElementTypeAttribute.STATEMENT);
         BasePsiElement sourceScope = getEnclosingScopeElement();
         DBObjectType objectType = getObjectType();
-        PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
+        PsiLookupAdapter lookupAdapter = LookupAdapters.aliasDefinition(objectType);
         ListCollector<BasePsiElement> consumer = ListCollector.basic();
         lookupAdapter.collectInScope(statement, consumer);
 
@@ -373,7 +373,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 if (parentPsiElement != null) {
                     DBObject object = parentPsiElement.getUnderlyingObject();
                     if (object != null && object != getFile().getUnderlyingObject()) {
-                        DBObject referencedObject = object.getChildObject(refText.toString(), (short) 0, false);
+                        DBObject referencedObject = object.getChildObject(objectType, refText.toString(), (short) 0, false);
                         if (updateReference(null, elementType, referencedObject)) return;
                     }
                 }

@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.UnlistedDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
-import com.dci.intellij.dbn.common.path.Node;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -98,20 +97,11 @@ public interface DBObject extends
     @Nullable
     <T extends DBObject> DBObjectList<T> getChildObjectList(DBObjectType objectType);
 
-    <T extends DBObject> T getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
+    <T extends DBObject> T getChildObject(String name, short overload);
 
-    <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden);
+    <T extends DBObject> T getChildObject(DBObjectType type, String name, boolean lookupHidden);
 
-    @Nullable
-    DBObject getChildObject(String name, boolean lookupHidden);
-
-    @Nullable
-    DBObject getChildObject(String name, short overload, boolean lookupHidden);
-
-    @Nullable
-    default DBObject getChildObject(String name, short overload, boolean lookupHidden, Node<DBObject> lookupPath) {
-        return null;
-    }
+    <T extends DBObject> T getChildObject(DBObjectType type, String name, short overload, boolean lookupHidden);
 
     <T extends DBObject> T getChildObjectNoLoad(String objectName);
 

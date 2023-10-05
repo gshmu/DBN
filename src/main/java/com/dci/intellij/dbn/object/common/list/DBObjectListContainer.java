@@ -163,7 +163,7 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
     }
 
     @Nullable
-    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, short overload) {
+    public <T extends DBObject> T getObjectForParentType(DBObjectType parentObjectType, String name, short overload) {
         if (objects == null) return null;
 
         for (DBObjectList<?> objectList : objects) {
@@ -175,7 +175,7 @@ public final class DBObjectListContainer implements StatefulDisposable, Unlisted
             DBObject object = objectList.getObject(name, overload);
             if (isNotValid(object)) continue;
 
-            return object;
+            return cast(object);
         }
 
         return null;
