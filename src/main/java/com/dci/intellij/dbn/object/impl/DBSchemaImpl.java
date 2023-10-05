@@ -148,14 +148,14 @@ class DBSchemaImpl extends DBRootObjectImpl<DBSchemaMetadata> implements DBSchem
     }
 
     @Override
-    public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
-        if (objectType.isSchemaObject()) {
-            DBObject object = super.getChildObject(objectType, name, overload, lookupHidden);
-            if (object == null && objectType != SYNONYM) {
+    public <T extends DBObject> T  getChildObject(DBObjectType type, String name, short overload, boolean lookupHidden) {
+        if (type.isSchemaObject()) {
+            DBObject object = super.getChildObject(type, name, overload, lookupHidden);
+            if (object == null && type != SYNONYM) {
                 DBSynonym synonym = super.getChildObject(SYNONYM, name, overload, lookupHidden);
                 if (synonym != null) {
                     DBObject underlyingObject = synonym.getUnderlyingObject();
-                    if (underlyingObject != null && underlyingObject.isOfType(objectType)) {
+                    if (underlyingObject != null && underlyingObject.isOfType(type)) {
                         return cast(synonym);
                     }
                 }

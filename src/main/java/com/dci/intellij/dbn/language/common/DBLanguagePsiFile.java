@@ -21,7 +21,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapters;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -405,7 +405,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
             PsiLookupAdapter lookupAdapter = new IdentifierDefinitionLookupAdapter(null, DBObjectType.ARGUMENT, null);
             scope.collectPsiElements(lookupAdapter, 0, consumer);
 
-            lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(DBObjectType.ANY);
+            lookupAdapter = LookupAdapters.variableDefinition(DBObjectType.ANY);
             scope.collectPsiElements(lookupAdapter, 1, consumer);
 
             PsiElement parent = scope.getParent();

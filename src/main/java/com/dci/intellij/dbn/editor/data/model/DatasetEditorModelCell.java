@@ -223,30 +223,40 @@ public class DatasetEditorModelCell
         return getRow().getModel();
     }
 
+    private void checkColumnBounds(int index) {
+        getModel().checkColumnBounds(index);
+    }
+
+    private int getViewColumnIndex() {
+        return getEditorTable().convertColumnIndexToView(getIndex());
+    }
+
     public void edit() {
         Dispatch.run(true, () -> {
-            int index = getEditorTable().convertColumnIndexToView(getIndex());
-            if (index > 0) {
-                DatasetEditorTable table = getEditorTable();
-                table.editCellAt(getRow().getIndex(), index);
-            }
+            int index = getViewColumnIndex();
+            checkColumnBounds(index);
+
+            DatasetEditorTable table = getEditorTable();
+            table.editCellAt(getRow().getIndex(), index);
         });
     }
 
     public void editPrevious() {
         Dispatch.run(true, () -> {
-            int index = getEditorTable().convertColumnIndexToView(getIndex());
-            if (index > 0) {
-                DatasetEditorTable table = getEditorTable();
-                DatasetEditorModelRow row = getRow();
-                table.editCellAt(row.getIndex(), index -1);
-            }
+            int index = getViewColumnIndex();
+            checkColumnBounds(index);
+
+            DatasetEditorTable table = getEditorTable();
+            DatasetEditorModelRow row = getRow();
+            table.editCellAt(row.getIndex(), index -1);
         });
     }
 
     public void editNext(){
         Dispatch.run(true, () -> {
-            int index = getEditorTable().convertColumnIndexToView(getIndex());
+            int index = getViewColumnIndex();
+            checkColumnBounds(index);
+
             DatasetEditorModelRow row = getRow();
             if (index < row.getCells().size()-1) {
                 DatasetEditorTable table = getEditorTable();

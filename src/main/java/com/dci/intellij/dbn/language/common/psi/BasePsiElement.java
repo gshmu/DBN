@@ -553,7 +553,7 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
     }
 
     public boolean isScopeBoundary() {
-        return elementType.isScopeDemarcation() || elementType.isScopeIsolation();
+        return elementType.isScopeDemarcation() || elementType.isScopeIsolation() || getParent() instanceof PsiFile;
     }
 
     @Nullable

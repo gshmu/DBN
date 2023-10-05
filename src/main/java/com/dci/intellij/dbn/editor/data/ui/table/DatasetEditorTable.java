@@ -127,6 +127,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
         TableColumnModel columnModel = getColumnModel();
         int viewColumnIndex = convertColumnIndexToView(columnIndex);
+        checkColumnBounds(viewColumnIndex);
+
         TableColumn column = columnModel.getColumn(viewColumnIndex);
         columnModel.removeColumn(column);
 

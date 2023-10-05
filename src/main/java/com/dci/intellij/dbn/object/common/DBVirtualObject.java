@@ -5,8 +5,7 @@ import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.path.Node;
-import com.dci.intellij.dbn.common.path.NodeBase;
+import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.routine.Consumer;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
@@ -170,17 +169,25 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     }
 
     private String resolveColumnName(BasePsiElement psiElement) {
-        PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(DBObjectType.COLUMN);
-        BasePsiElement relevantPsiElement = lookupAdapter.findInElement(psiElement);
+        PsiLookupAdapter lookupAdapter = LookupAdapters.alias(DBObjectType.COLUMN);
+        BasePsiElement specificPsiElement = lookupAdapter.findInElement(psiElement);
 
-        if (relevantPsiElement == null) {
-            lookupAdapter = new SimpleObjectLookupAdapter(null, DBObjectType.COLUMN);
-            relevantPsiElement = lookupAdapter.findInElement(psiElement);
+        if (specificPsiElement == null) {
+            lookupAdapter = LookupAdapters.object(DBObjectType.COLUMN);
+            specificPsiElement = lookupAdapter.findInElement(psiElement);
         }
 
-        if (relevantPsiElement != null) {
-            this.relevantPsiElement = PsiElementRef.of(relevantPsiElement);
-            return relevantPsiElement.getText();
+        if (specificPsiElement != null) {
+            this.relevantPsiElement = PsiElementRef.of(specificPsiElement);
+            return specificPsiElement.getText();
+        }
+
+        specificPsiElement = WeakRef.get(this.relevantPsiElement);
+        if (specificPsiElement != null) {
+            String text = specificPsiElement.getText();
+            if (!text.contains("\\s*")) {
+                return text.trim();
+            }
         }
         return "";
     }
@@ -219,30 +226,21 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     }
 
     @Override
-    public DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
-        DBObjectList<DBObject> objects = getChildObjectList(objectType);
-        return objects == null ? null : objects.getObject(name, overload);
-    }
-
-    @Nullable
-    @Override
-    public DBObject getChildObject(String name, short overload, boolean lookupHidden) {
-        return getChildObject(name, overload, lookupHidden, new NodeBase<>(this, null));
-    }
-
-    @Nullable
-    public DBObject getChildObject(String name, short overload, boolean lookupHidden, Node<DBObject> lookupPath) {
-        DBObject childObject = super.getChildObject(name, overload, lookupHidden);
-        if (childObject == null) {
-            BasePsiElement relevantPsiElement = getRelevantPsiElement();
-            DBObject underlyingObject = relevantPsiElement.getUnderlyingObject();
-
-            if (underlyingObject != null && !lookupPath.isAncestor(underlyingObject)) {
-                lookupPath = new NodeBase<>(underlyingObject, lookupPath);
-                return underlyingObject.getChildObject(name, overload, lookupHidden, lookupPath);
-            }
+    public DBObject getChildObject(DBObjectType type, String name, short overload, boolean lookupHidden) {
+        DBObjectList<DBObject> childObjectList = getChildObjectList(type);
+        if (childObjectList != null) {
+            DBObject object = childObjectList.getObject(name, overload);
+            if (object != null) return object;
         }
-        return childObject;
+
+        BasePsiElement relevantPsiElement = getRelevantPsiElement();
+        DBObject underlyingObject = relevantPsiElement.getUnderlyingObject();
+        if (underlyingObject != null && underlyingObject != this) {
+            DBObject object = underlyingObject.getChildObject(type, name, overload, lookupHidden);
+            if (object != null) return object;
+        }
+
+        return getChildObject(name, overload);
     }
 
     @Override
@@ -259,19 +257,18 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     @Override
     @Nullable
     public DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
-        if (!loadingChildren) {
-            synchronized (this) {
-                if (!loadingChildren) {
-                    try {
-                        loadingChildren = true;
-                        return loadChildObjectList(objectType);
-                    } finally {
-                        loadingChildren = false;
-                    }
-                }
+        if (loadingChildren) return null;
+
+        synchronized (this) {
+            if (loadingChildren) return null;
+
+            try {
+                loadingChildren = true;
+                return loadChildObjectList(objectType);
+            } finally {
+                loadingChildren = false;
             }
         }
-        return null;
     }
 
     private DBObjectList<DBObject> loadChildObjectList(DBObjectType objectType) {
@@ -299,13 +296,12 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     }
 
     private void loadChildObjects(DBObjectType childObjectType, DBObjectList<DBObject> objectList) {
-        BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
+        BasePsiElement<?> underlyingPsiElement = getUnderlyingPsiElement();
         if (underlyingPsiElement == null) return;
-
 
         DBObjectType objectType = getObjectType();
         List<DBObject> objects = new ArrayList<>();
-        VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(objectType, childObjectType);
+        PsiLookupAdapter lookupAdapter = LookupAdapters.virtualObject(objectType, childObjectType);
         underlyingPsiElement.collectPsiElements(lookupAdapter, 100, element -> {
             BasePsiElement child = (BasePsiElement) element;
             // handle STAR column

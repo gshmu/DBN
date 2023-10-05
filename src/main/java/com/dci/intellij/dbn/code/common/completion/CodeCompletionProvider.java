@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.language.common.element.path.AstNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.*;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapters;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.*;
@@ -236,7 +236,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     private static void collectObjectElements(LeafPsiElement<?> element, CodeCompletionLookupConsumer consumer, IdentifierElementType identifierElementType, DBObjectType objectType) {
         CodeCompletionContext context = consumer.getContext();
         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
-        PsiLookupAdapter lookupAdapter = LookupAdapterCache.OBJECT_DEFINITION.get(objectType);
+        PsiLookupAdapter lookupAdapter = LookupAdapters.objectDefinition(objectType);
         lookupAdapter.collectInParentScopeOf(element, psiElement -> {
             if (psiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
@@ -257,13 +257,13 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private static void collectAliasElements(LeafPsiElement<?> scopeElement, CodeCompletionLookupConsumer consumer, DBObjectType objectType) {
-        PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
-        lookupAdapter.collectInParentScopeOf(scopeElement, psiElement -> consumer.accept(psiElement));
+        PsiLookupAdapter lookupAdapter = LookupAdapters.aliasDefinition(objectType);
+        lookupAdapter.collectInParentScopeOf(scopeElement, consumer);
     }
 
     private static void collectVariableElements(LeafPsiElement<?> scopeElement, CodeCompletionLookupConsumer consumer, DBObjectType objectType) {
-        PsiLookupAdapter lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(objectType);
-        lookupAdapter.collectInParentScopeOf(scopeElement, psiElement -> consumer.accept(psiElement));
+        PsiLookupAdapter lookupAdapter = LookupAdapters.variableDefinition(objectType);
+        lookupAdapter.collectInParentScopeOf(scopeElement, consumer);
     }
 
     @NotNull
