@@ -25,7 +25,7 @@ public interface DBJdwpRunConfig {
      */
     boolean isCompileDependencies();
 
-    void setTcpPortRange(Range<Integer> integerRange);
+    void setTcpPortRange(Range<Integer> portRange);
 
     void setTcpHostAddress(String tcpHost);
 
