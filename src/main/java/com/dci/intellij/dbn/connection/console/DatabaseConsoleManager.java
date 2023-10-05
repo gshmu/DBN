@@ -6,11 +6,13 @@ import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionContextManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
@@ -23,13 +25,20 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.fileChooser.FileSaverDescriptor;
+import com.intellij.openapi.fileChooser.FileSaverDialog;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import org.jdom.CDATA;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,6 +47,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isNotValid;
 import static com.dci.intellij.dbn.common.file.util.VirtualFiles.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.options.setting.Settings.*;
+import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @State(
     name = DatabaseConsoleManager.COMPONENT_NAME,
@@ -133,6 +143,40 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         DBObjectBundle objectBundle = connection.getObjectBundle();
         DBObjectList<?> objectList = objectBundle.getObjectList(DBObjectType.CONSOLE);
         Safe.run(objectList, target -> target.markDirty());
+    }
+
+    public void saveConsoleToFile(DBConsoleVirtualFile consoleFile) {
+        Project project = getProject();
+        FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
+                Titles.signed("Save Console to File"),
+                "Save content of the console \"" + consoleFile.getName() + "\" to file", "sql");
+
+        FileChooserFactory fileChooserFactory = FileChooserFactory.getInstance();
+        FileSaverDialog fileSaverDialog = fileChooserFactory.createSaveFileDialog(fileSaverDescriptor, project);
+        Document document = Documents.getDocument(consoleFile);
+        if (document == null) return;
+
+        VirtualFileWrapper fileWrapper = fileSaverDialog.save((VirtualFile) null, consoleFile.getName());
+        if (fileWrapper == null) return;
+
+        VirtualFile file = fileWrapper.getVirtualFile(true);
+        if (file == null) return;
+
+        byte[] content = document.getCharsSequence().toString().getBytes();
+        Write.run(project, () -> {
+            try {
+                file.setBinaryContent(content);
+            } catch (IOException e) {
+                conditionallyLog(e);
+                Messages.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + fileWrapper.getFile().getName() + "\"", e);
+            }
+        });
+
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        contextManager.setConnection(file, consoleFile.getConnection());
+        contextManager.setDatabaseSchema(file, consoleFile.getSchemaId());
+        contextManager.setDatabaseSession(file, consoleFile.getSession());
+        Editors.openFile(project, file, true);
     }
 
     /***************************************

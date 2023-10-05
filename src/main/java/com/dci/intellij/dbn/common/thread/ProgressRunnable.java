@@ -4,5 +4,5 @@ import com.intellij.openapi.progress.ProgressIndicator;
 
 @FunctionalInterface
 public interface ProgressRunnable {
-    void run(ProgressIndicator t);
+    void run(ProgressIndicator progress);
 }
