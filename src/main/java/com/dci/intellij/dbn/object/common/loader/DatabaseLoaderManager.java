@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.object.common.loader;
 
 import com.dci.intellij.dbn.common.component.ProjectComponentBase;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
+import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.Documents;
 import com.dci.intellij.dbn.common.util.Editors;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,6 +15,9 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 
@@ -31,23 +36,32 @@ public class DatabaseLoaderManager extends ProjectComponentBase {
     @NotNull
     private ConnectionLoadListener connectionLoadListener(Project project) {
         return connection -> {
-            checkDisposed();
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
-            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-            for (VirtualFile openFile : openFiles) {
-                checkDisposed();
-                ConnectionHandler activeConnection = contextManager.getConnection(openFile);
-                if (activeConnection != connection) continue;
-
-                FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
-                for (FileEditor fileEditor : fileEditors) {
-                    checkDisposed();
-                    Editor editor = Editors.getEditor(fileEditor);
-                    Documents.refreshEditorAnnotations(editor);
-                }
-            }
+            List<Editor> editors = Dispatch.call(() -> getLinkedEditors(connection));
+            Background.run(project, () -> Documents.refreshEditorAnnotations(editors));
         };
+    }
+
+    private List<Editor> getLinkedEditors(ConnectionHandler connection) {
+        Project project = connection.getProject();
+        List<Editor> editors = new ArrayList<>();
+
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        FileConnectionContextManager contextManager = FileConnectionContextManager.getInstance(project);
+        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+        for (VirtualFile openFile : openFiles) {
+            checkDisposed();
+            ConnectionHandler activeConnection = contextManager.getConnection(openFile);
+            if (activeConnection != connection) continue;
+
+            FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
+            for (FileEditor fileEditor : fileEditors) {
+                checkDisposed();
+                Editor editor = Editors.getEditor(fileEditor);
+                if (editor != null) editors.add(editor);
+            }
+        }
+
+        return editors;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -57,11 +58,11 @@ public class Lists {
 
     @Nullable
     public static <T> T first(@Nullable Collection<T> list, Predicate<? super T> predicate) {
-        if (list != null && !list.isEmpty()) {
-            for (T element : list) {
-                if (predicate.test(element)) {
-                    return element;
-                }
+        if (list == null || list.isEmpty()) return null;
+
+        for (T element : list) {
+            if (predicate.test(element)) {
+                return element;
             }
         }
         return null;
@@ -76,26 +77,34 @@ public class Lists {
     }
 
     public static <T> boolean allMatch(@Nullable Collection<T> list, Predicate<? super T> predicate) {
-        if (list != null && !list.isEmpty()) {
-            for (T element : list) {
-                if (!predicate.test(element)) {
-                    return false;
-                }
+        if (list == null || list.isEmpty()) return true;
+
+        for (T element : list) {
+            if (!predicate.test(element)) {
+                return false;
             }
         }
         return true;
     }
 
     public static <T> int count(@Nullable Collection<T> list, Predicate<? super T> predicate) {
+        if (list == null || list.isEmpty()) return 0;
+
         int count = 0;
-        if (list != null && !list.isEmpty()) {
-            for (T element : list) {
-                if (!predicate.test(element)) {
-                    count++;
-                }
+        for (T element : list) {
+            if (!predicate.test(element)) {
+                count++;
             }
         }
         return count;
+    }
+
+    public static <T> void forEach(@Nullable Collection<T> list, Consumer<? super T> consumer) {
+        if (list == null || list.isEmpty()) return;
+
+        for (T element : list) {
+            consumer.accept(element);
+        }
     }
 
     public static int indexOf(@NotNull List<String> where, @NotNull String what, boolean ignoreCase) {

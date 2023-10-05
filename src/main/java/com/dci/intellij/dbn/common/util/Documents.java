@@ -34,6 +34,7 @@ import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.createGuardedBlock;
 import static com.dci.intellij.dbn.common.util.GuardedBlocks.removeGuardedBlocks;
+import static com.dci.intellij.dbn.common.util.Lists.forEach;
 import static com.dci.intellij.dbn.common.util.TimeUtil.isOlderThan;
 import static com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -72,9 +73,11 @@ public class Documents {
         refreshEditorAnnotations(file);
     }
 
+    public static void refreshEditorAnnotations(@Nullable List<Editor> editor) {
+        forEach(editor, e -> refreshEditorAnnotations(e));
+    }
     public static void refreshEditorAnnotations(@Nullable Editor editor) {
         if (editor == null) return;
-
         refreshEditorAnnotations(Documents.getFile(editor));
     }
 
@@ -118,8 +121,13 @@ public class Documents {
 
     @Nullable
     public static PsiFile getFile(@Nullable Editor editor) {
-        Project project = editor == null ? null : editor.getProject();
-        return project == null ? null : PsiUtil.getPsiFile(project, editor.getDocument());
+        if (isNotValid(editor)) return null;
+
+        Project project = editor.getProject();
+        if (isNotValid(project)) return null;
+
+        Document document = editor.getDocument();
+        return PsiUtil.getPsiFile(project, document);
     }
 
     @Nullable
