@@ -7224,7 +7224,7 @@
             <element ref-id="subquery_factoring_clause_item" />
         </iteration>
     </element-def>
-    <element-def attributes="FOLDABLE_BLOCK" description="Subquery factoring clause item" id="subquery_factoring_clause_item"> <!-- CUSTOM -->
+    <element-def attributes="FOLDABLE_BLOCK" description="Subquery factoring clause item" id="subquery_factoring_clause_item" virtual-object="DATASET"> <!-- CUSTOM -->
         <alias-def attributes="SUBJECT" id="04054" original-name="query_name" type="DATASET" />
         <wrapper id="04055" optional="true" template="PARENTHESES">
             <iteration id="04056" separator="CHR_COMMA">

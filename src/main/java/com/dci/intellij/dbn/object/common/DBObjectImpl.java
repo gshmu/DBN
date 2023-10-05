@@ -367,8 +367,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     }
 
     @Override
-    public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
-        return cast(getChildObject(objectType, name, (short) 0, lookupHidden));
+    public <T extends DBObject> T  getChildObject(DBObjectType type, String name, boolean lookupHidden) {
+        return cast(getChildObject(type, name, (short) 0, lookupHidden));
     }
 
     @Override
@@ -383,20 +383,14 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends DBObjectT
     }
 
     @Override
-    public <T extends DBObject> T  getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
+    public <T extends DBObject> T  getChildObject(DBObjectType type, String name, short overload, boolean lookupHidden) {
         DBObjectListContainer objects = getChildObjects();
-        return objects == null ? null : objects.getObject(objectType, name, overload);
+        return objects == null ? null : objects.getObject(type, name, overload);
     }
 
     @Override
     @Nullable
-    public DBObject getChildObject(String name, boolean lookupHidden) {
-        return getChildObject(name, (short) 0, lookupHidden);
-    }
-
-    @Override
-    @Nullable
-    public DBObject getChildObject(String name, short overload, boolean lookupHidden) {
+    public <T extends DBObject> T  getChildObject(String name, short overload) {
         DBObjectListContainer objects = getChildObjects();
         return objects == null ? null : objects.getObjectForParentType(getObjectType(), name, overload);
     }
