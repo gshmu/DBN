@@ -162,7 +162,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposableBase im
             String value = forPreview ? previewValueProvider.getValue() : variable.getValue();
 
             if (Strings.isEmpty(value)) {
-                statementText = Strings.replaceIgnoreCase(statementText, name, "NULL /*" + name + "*/");
+                statementText = Strings.replaceIgnoreCase(statementText, name, "NULL /*" + variable.getName() + "*/");
             } else {
 
                 if (!Strings.isEmpty(value)) {

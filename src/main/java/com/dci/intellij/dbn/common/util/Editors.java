@@ -80,7 +80,7 @@ public class Editors {
                     virtualFile = editableObject.getVirtualFile();
                 }
             }
-            openFile(project, virtualFile, instructions.isFocus());
+            openFileEditor(project, virtualFile, instructions.isFocus());
 
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) fileEditor;
@@ -93,11 +93,9 @@ public class Editors {
             if (isValid(objectFile)) {
                 FileEditor[] fileEditors;
                 if (instructions.isOpen()) {
-                    AtomicReference<FileEditor[]> openedEditors = new AtomicReference<>();
-                    openFile(project, objectFile, instructions.isFocus(), editors -> openedEditors.set(editors));
-                    fileEditors = openedEditors.get();
+                    fileEditors = openFileEditor(project, objectFile, instructions.isFocus());
                 } else{
-                    fileEditors = fileEditorManager.getEditors(objectFile);
+                    fileEditors = getFileEditors(project, objectFile);
                 }
 
                 if (fileEditors != null &&  fileEditors.length > 0) {
@@ -107,11 +105,9 @@ public class Editors {
             }
         } else if (virtualFile.isInLocalFileSystem()) {
             if (instructions.isOpen()) {
-                FileEditor[] fileEditors = new FileEditor[1];
-                openFile(project, virtualFile, instructions.isFocus(), editors -> fileEditors[0] = firstOrNull(editors));
-                fileEditor = fileEditors[0];
+                fileEditor = firstOrNull(openFileEditor(project, virtualFile, instructions.isFocus()));
             } else {
-                fileEditor = firstOrNull(fileEditorManager.getEditors(virtualFile));
+                fileEditor = firstOrNull(getFileEditors(project, virtualFile));
             }
         }
 
@@ -120,6 +116,13 @@ public class Editors {
         }
 
         return fileEditor;
+    }
+
+    private static FileEditor[] getFileEditors(Project project, VirtualFile file) {
+        return Dispatch.call(() -> {
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            return fileEditorManager.getEditors(file);
+        });
     }
 
     public static Collection<TabInfo> getEditorTabInfos(Project project, VirtualFile file) {
@@ -498,27 +501,27 @@ public class Editors {
         editorManager.addTopComponent(fileEditor, toolbarComponent);
     }
 
-    public static void openFile(Project project, VirtualFile file, boolean focus) {
-        openFile(project, file, focus, null);
+    public static FileEditor[] openFileEditor(Project project, VirtualFile file, boolean focus) {
+        AtomicReference<FileEditor[]> fileEditors = new AtomicReference<>();
+        openFileEditor(project, file, focus, editors -> fileEditors.set(editors));
+        return fileEditors.get();
     }
 
-    public static void openFile(Project project, VirtualFile file, boolean focus, @Nullable Consumer<FileEditor[]> callback) {
+    public static void openFileEditor(Project project, VirtualFile file, boolean focus, @Nullable Consumer<FileEditor[]> callback) {
         DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
         attachmentManager.warmUpAttachedDDLFiles(file);
 
         ThreadInfo threadInfo = ThreadInfo.copy();
-        Dispatch.run(
-                () -> ThreadMonitor.surround(project, threadInfo, ThreadProperty.EDITOR_LOAD,
-                        () -> {
-                            try {
-                                markSkipBrowserAutoscroll(file);
-                                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                                FileEditor[] fileEditors = fileEditorManager.openFile(file, focus);
-                                if (callback != null) callback.accept(fileEditors);
-                            } finally {
-                                unmarkSkipBrowserAutoscroll(file);
-                            }
-                        }));
+        Dispatch.run(() -> ThreadMonitor.surround(project, threadInfo, ThreadProperty.EDITOR_LOAD, () -> {
+            try {
+                markSkipBrowserAutoscroll(file);
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                FileEditor[] fileEditors = fileEditorManager.openFile(file, focus);
+                if (callback != null) callback.accept(fileEditors);
+            } finally {
+                unmarkSkipBrowserAutoscroll(file);
+            }
+        }));
 
     }
 

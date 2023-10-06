@@ -35,7 +35,7 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
         VirtualFile virtualFile = change.getFile();
         if (virtualFile == null) return;
 
-        Editors.openFile(getProject(), virtualFile, true);
+        Editors.openFileEditor(getProject(), virtualFile, true);
     }
 
     @Override

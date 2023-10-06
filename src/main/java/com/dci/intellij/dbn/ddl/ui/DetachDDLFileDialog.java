@@ -31,8 +31,8 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     protected SelectDDLFileForm createForm() {
         DBSchemaObject object = objectRef.ensure();
         TextContent hintText = plain(
-                "Following DDL files are currently attached the " + object.getQualifiedNameWithType() + ".\n" +
-                "Select the files to detach from this object.");
+                "Following DDL files are currently attached the " + object.getQualifiedNameWithType() + ".\n\n" +
+                "Select the files to detach from this " + object.getTypeName() + ".");
         return new SelectDDLFileForm(this, object, fileInfos, hintText, false);
     }
 

@@ -162,7 +162,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
             if (isFileOpened(object) || promptFileOpen(databaseFile)) {
                 boolean focusEditor = handle.getEditorInstructions().isFocus();
 
-                Editors.openFile(project, databaseFile, focusEditor);
+                Editors.openFileEditor(project, databaseFile, focusEditor);
                 NavigationInstructions instructions = NavigationInstructions.create().
                         with(SCROLL).
                         with(FOCUS, focusEditor);
@@ -188,21 +188,21 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
 
             // open / reopen (select) the file
             boolean focusEditor = handle.getEditorInstructions().isFocus();
-            Editors.openFile(project, databaseFile, focusEditor, fileEditors -> {
-                for (FileEditor fileEditor : fileEditors) {
-                    if (fileEditor instanceof SourceCodeMainEditor) {
-                        SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                        NavigationInstructions instructions = NavigationInstructions.create().
-                                with(SCROLL).
-                                with(FOCUS, focusEditor);
+            FileEditor[] fileEditors = Editors.openFileEditor(project, databaseFile, focusEditor);
 
-                        EditorProviderId editorProviderId = handle.getEditorProviderId();
-                        Editors.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
-                        sourceCodeEditor.navigateTo(object);
-                        break;
-                    }
+            for (FileEditor fileEditor : fileEditors) {
+                if (fileEditor instanceof SourceCodeMainEditor) {
+                    SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
+                    NavigationInstructions instructions = NavigationInstructions.create().
+                            with(SCROLL).
+                            with(FOCUS, focusEditor);
+
+                    EditorProviderId editorProviderId = handle.getEditorProviderId();
+                    Editors.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
+                    sourceCodeEditor.navigateTo(object);
+                    break;
                 }
-            });
+            }
         });
     }
 
@@ -283,7 +283,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
                 withEditorInstructions(editorInstructions).
                 withBrowserInstructions(browserInstructions);
 
-        invokeFileOpen(handle, () -> Editors.openFile(project, console.getVirtualFile(), focusEditor));
+        invokeFileOpen(handle, () -> Editors.openFileEditor(project, console.getVirtualFile(), focusEditor));
     }
 
     public void closeEditor(DBSchemaObject object) {
@@ -301,7 +301,7 @@ public class DatabaseFileEditorManager extends ProjectComponentBase {
         if (!editorManager.isFileOpen(virtualFile)) return;
 
         editorManager.closeFile(virtualFile);
-        Editors.openFile(project, virtualFile, false);
+        Editors.openFileEditor(project, virtualFile, false);
     }
 
     private boolean isEditable(DBObject object) {

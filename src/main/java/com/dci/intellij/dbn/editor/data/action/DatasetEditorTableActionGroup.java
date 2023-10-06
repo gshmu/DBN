@@ -166,6 +166,30 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
     }
 
+    private class HideAuditColumnsAction extends DumbAwareAction {
+        private HideAuditColumnsAction() {
+            super("Hide Audit Columns");
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
+            editorTable.hideAuditColumns();
+        }
+    }
+
+    private class ShowAuditColumnsAction extends DumbAwareAction {
+        private ShowAuditColumnsAction() {
+            super("Show Audit Columns");
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
+            editorTable.showAuditColumns();
+        }
+    }
+
     private class SortAscendingAction extends DumbAwareAction {
         private SortAscendingAction() {
             super("Sort Ascending", null, Icons.ACTION_SORT_ASC);

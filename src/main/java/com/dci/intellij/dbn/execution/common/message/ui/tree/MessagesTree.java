@@ -224,7 +224,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     private void navigateInConsoleEditor(CompilerMessage compilerMessage, DBConsoleVirtualFile virtualFile, NavigationInstructions instructions) {
         if (instructions.isOpen()) {
-            Editors.openFile(getProject(), virtualFile, instructions.isFocus());
+            Editors.openFileEditor(getProject(), virtualFile, instructions.isFocus());
         }
 
         FileEditor consoleFileEditor = compilerMessage.getCompilerResult().getCompilerAction().getFileEditor();

@@ -403,7 +403,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
 
     private void focusEditor() {
-        Editors.openFile(getProject(), getDatabaseFile(), true);
+        Editors.openFileEditor(getProject(), getDatabaseFile(), true);
     }
 
     protected void setLoading(boolean loading) {
