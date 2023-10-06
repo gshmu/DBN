@@ -8,12 +8,17 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.record.ResultSetRecordV
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.event.MouseEvent;
 
+@Getter
 public class ResultSetTable<T extends ResultSetDataModel<?, ?>> extends SortableTable<T> implements Borderless {
     private final RecordViewInfo recordViewInfo;
+
     public ResultSetTable(DBNComponent parent, T dataModel, boolean enableSpeedSearch, RecordViewInfo recordViewInfo) {
         super(parent, dataModel, enableSpeedSearch);
         this.recordViewInfo = recordViewInfo;
@@ -21,10 +26,6 @@ public class ResultSetTable<T extends ResultSetDataModel<?, ?>> extends Sortable
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                 showRecordViewDialog();
             }}));
-    }
-
-    public RecordViewInfo getRecordViewInfo() {
-        return recordViewInfo;
     }
 
     public void showRecordViewDialog() {
@@ -39,5 +40,25 @@ public class ResultSetTable<T extends ResultSetDataModel<?, ?>> extends Sortable
     @Override
     public T getModel() {
         return super.getModel();
+    }
+
+
+    public void hideColumn(int columnIndex) {
+        checkColumnBounds(columnIndex);
+
+        TableColumnModel columnModel = getColumnModel();
+        int viewColumnIndex = convertColumnIndexToView(columnIndex);
+        checkColumnBounds(viewColumnIndex);
+
+        TableColumn column = columnModel.getColumn(viewColumnIndex);
+        columnModel.removeColumn(column);
+    }
+
+    public void hideAuditColumns() {
+        // TODO
+    }
+
+    public void showAuditColumns() {
+        // TODO
     }
 }

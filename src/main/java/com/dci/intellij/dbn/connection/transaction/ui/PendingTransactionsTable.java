@@ -39,7 +39,7 @@ public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableM
             VirtualFile virtualFile = transaction.getFile();
             if (!Checks.isValid(virtualFile)) return;
 
-            Editors.openFile(getProject(), virtualFile, true);
+            Editors.openFileEditor(getProject(), virtualFile, true);
         }
     }
 

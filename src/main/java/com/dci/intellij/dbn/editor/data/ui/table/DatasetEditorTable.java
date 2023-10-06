@@ -56,7 +56,9 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
-import javax.swing.table.*;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -123,14 +125,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void hideColumn(int columnIndex) {
-        checkColumnBounds(columnIndex);
-
-        TableColumnModel columnModel = getColumnModel();
-        int viewColumnIndex = convertColumnIndexToView(columnIndex);
-        checkColumnBounds(viewColumnIndex);
-
-        TableColumn column = columnModel.getColumn(viewColumnIndex);
-        columnModel.removeColumn(column);
+        super.hideColumn(columnIndex);
 
         ColumnInfo columnInfo = getColumnInfo(columnIndex);
         getDatasetEditor().getColumnSetup().getColumnState(columnInfo.getName()).setVisible(false);

@@ -110,7 +110,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                 (action) -> {
                     Project project = getProject();
                     DBSessionBrowserVirtualFile sessionBrowserFile = connection.getSessionBrowserFile();
-                    Editors.openFile(project, sessionBrowserFile, true);
+                    Editors.openFileEditor(project, sessionBrowserFile, true);
                 });
     }
 
