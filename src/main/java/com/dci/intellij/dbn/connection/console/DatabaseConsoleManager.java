@@ -96,7 +96,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
 
             reloadConsoles(connection);
 
-            Dispatch.run(() -> Editors.openFile(project, consoleFile, true));
+            Dispatch.run(() -> Editors.openFileEditor(project, consoleFile, true));
         });
     }
 
@@ -176,7 +176,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         contextManager.setConnection(file, consoleFile.getConnection());
         contextManager.setDatabaseSchema(file, consoleFile.getSchemaId());
         contextManager.setDatabaseSession(file, consoleFile.getSession());
-        Editors.openFile(project, file, true);
+        Editors.openFileEditor(project, file, true);
     }
 
     /***************************************

@@ -129,7 +129,7 @@ public class FileConnectionMappingTable extends DBNTable<FileConnectionMappingTa
             if (file == null) return;
 
             if (selectedColumn == 0 && clickCount == 2) {
-                Editors.openFile(getProject(), file, true);
+                Editors.openFileEditor(getProject(), file, true);
             } else if (selectedColumn == 1) {
                 promptConnectionSelector(mapping);
             } else if (selectedColumn == 3) {

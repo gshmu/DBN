@@ -49,7 +49,7 @@ public class ParserDiagnosticsTable extends DBNTable<ParserDiagnosticsTableModel
 
         VirtualFile virtualFile = entry.getFile();
         if (virtualFile != null) {
-            Editors.openFile(getProject(), virtualFile, true);
+            Editors.openFileEditor(getProject(), virtualFile, true);
         }
     }
 

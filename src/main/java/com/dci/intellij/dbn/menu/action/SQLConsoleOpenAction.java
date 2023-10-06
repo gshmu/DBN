@@ -130,13 +130,13 @@ public class SQLConsoleOpenAction extends ProjectAction {
                 consoleManager.showCreateConsoleDialog(connection, consoleType);
             } else {
                 ConnectionHandler connection = console.ensureConnection();
-                Editors.openFile(connection.getProject(), console.getVirtualFile(), true);
+                Editors.openFileEditor(connection.getProject(), console.getVirtualFile(), true);
             }
         }
     }
 
     private static void openSQLConsole(ConnectionHandler connection) {
         DBConsole defaultConsole = connection.getConsoleBundle().getDefaultConsole();
-        Editors.openFile(connection.getProject(), defaultConsole.getVirtualFile(), true);
+        Editors.openFileEditor(connection.getProject(), defaultConsole.getVirtualFile(), true);
     }
 }
