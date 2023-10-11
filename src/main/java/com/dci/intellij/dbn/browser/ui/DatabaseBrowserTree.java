@@ -375,10 +375,12 @@ public final class DatabaseBrowserTree extends DBNTree implements Borderless {
 
     private void showPopupMenu(MouseEvent e, ActionGroup actionGroup) {
         if (actionGroup == null) return;
-        ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
+        ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(this, "", actionGroup);
         JPopupMenu popupMenu = actionPopupMenu.getComponent();
-
-        Dispatch.run(() -> popupMenu.show(DatabaseBrowserTree.this, e.getX(), e.getY()));
+        Dispatch.run(() -> {
+            if (!isShowing()) return;
+            popupMenu.show(this, e.getX(), e.getY());
+        });
     }
 
     /********************************************************
