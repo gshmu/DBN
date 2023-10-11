@@ -112,20 +112,20 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
             @Override
             public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
                 DBEditableObjectVirtualFile databaseFile = schemaObject.getCachedVirtualFile();
-                if (databaseFile != null) {
-                    if (databaseFile.isModified()) {
-                        showQuestionDialog(
-                                getProject(), "Unsaved changes",
-                                "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
-                                        "Do you want to discard the changes and reload the updated database version?",
-                                new String[]{"Reload", "Keep changes"}, 0,
-                                option -> when(option == 0, () ->
-                                        reloadAndUpdateEditors(databaseFile, false)));
-                    } else {
-                        reloadAndUpdateEditors(databaseFile, true);
-                    }
+                if (databaseFile == null) return;
 
+                if (databaseFile.isModified()) {
+                    showQuestionDialog(
+                            getProject(), "Unsaved changes",
+                            "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
+                                    "Do you want to discard the changes and reload the updated database version?",
+                            new String[]{"Reload", "Keep changes"}, 0,
+                            option -> when(option == 0, () ->
+                                    reloadAndUpdateEditors(databaseFile, false)));
+                } else {
+                    reloadAndUpdateEditors(databaseFile, true);
                 }
+
             }
         };
     }
@@ -607,36 +607,36 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
         for (VirtualFile openFile : openFiles) {
             if (openFile instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
-                if (databaseFile.isModified()) {
-                    canClose = false;
-                    if (!databaseFile.isSaving()) {
-                        DBSchemaObject object = databaseFile.getObject();
-                        String objectDescription = object.getQualifiedNameWithType();
-                        Project objectProject = object.getProject();
+                if (!databaseFile.isModified()) continue;
 
-                        CodeEditorSettings codeEditorSettings = CodeEditorSettings.getInstance(objectProject);
-                        CodeEditorConfirmationSettings confirmationSettings = codeEditorSettings.getConfirmationSettings();
-                        confirmationSettings.getExitOnChanges().resolve(
-                                list(objectDescription),
-                                option -> {
-                                    switch (option) {
-                                        case SAVE: saveSourceCodeChanges(databaseFile, () -> closeProject(exitApp)); break;
-                                        case DISCARD: revertSourceCodeChanges(databaseFile, () -> closeProject(exitApp)); break;
-                                        case SHOW: {
-                                            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                                            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                                if (sourceCodeFile.isModified()) {
-                                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(objectProject);
-                                                    diffManager.opedDatabaseDiffWindow(sourceCodeFile);
-                                                }
-                                            }
+                canClose = false;
+                if (databaseFile.isSaving()) continue;
 
-                                        } break;
-                                        case CANCEL: break;
+                DBSchemaObject object = databaseFile.getObject();
+                String objectDescription = object.getQualifiedNameWithType();
+                Project objectProject = object.getProject();
+
+                CodeEditorSettings codeEditorSettings = CodeEditorSettings.getInstance(objectProject);
+                CodeEditorConfirmationSettings confirmationSettings = codeEditorSettings.getConfirmationSettings();
+                confirmationSettings.getExitOnChanges().resolve(
+                        list(objectDescription),
+                        option -> {
+                            switch (option) {
+                                case SAVE: saveSourceCodeChanges(databaseFile, () -> closeProject(exitApp)); break;
+                                case DISCARD: revertSourceCodeChanges(databaseFile, () -> closeProject(exitApp)); break;
+                                case SHOW: {
+                                    List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                                    for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                                        if (sourceCodeFile.isModified()) {
+                                            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(objectProject);
+                                            diffManager.opedDatabaseDiffWindow(sourceCodeFile);
+                                        }
                                     }
-                                });
-                    }
-                }
+
+                                } break;
+                                case CANCEL: break;
+                            }
+                        });
             }
         }
         return canClose;

@@ -174,7 +174,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class AcceptAction extends DumbAwareAction {
         private AcceptAction() {
-            super("Accept changes", null, Icons.TEXT_CELL_EDIT_ACCEPT);
+            super("Accept Changes", null, Icons.TEXT_CELL_EDIT_ACCEPT);
             setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK));
             registerAction(this);
         }
@@ -202,7 +202,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class RevertAction extends DumbAwareAction{
         private RevertAction() {
-            super("Revert changes", null, Icons.TEXT_CELL_EDIT_REVERT);
+            super("Revert Changes", null, Icons.TEXT_CELL_EDIT_REVERT);
             setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_ESCAPE, 0));
             //registerAction(this);
         }

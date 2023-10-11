@@ -96,7 +96,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
         if (!super.isValid()) return false;
 
         T object = this.object.value();
-        if (object != null && ThreadMonitor.isTimeSensitiveThread()) return true; // assume valid without loading
+        if (object == null && ThreadMonitor.isTimeSensitiveThread()) return true; // assume valid without loading
 
         object = this.object.get();
         boolean valid = Checks.isValid(object);
