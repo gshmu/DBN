@@ -561,12 +561,12 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     JPopupMenu popupMenu = actionPopupMenu.getComponent();
                     Dispatch.run(() -> {
                         Component component = (Component) e.getSource();
-                        if (component.isShowing()) {
-                            int x = e.getX();
-                            int y = e.getY();
-                            if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
-                                popupMenu.show(component, x, y);
-                            }
+                        if (!component.isShowing()) return;
+
+                        int x = e.getX();
+                        int y = e.getY();
+                        if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
+                            popupMenu.show(component, x, y);
                         }
                     });
                 });

@@ -71,7 +71,6 @@ import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 public class Editors {
 
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstructions instructions) {
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         if (fileEditor != null) {
             if (fileEditor instanceof DDLFileEditor) {
                 DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);

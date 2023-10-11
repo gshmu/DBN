@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.application.Application;
@@ -110,16 +111,16 @@ public class ThreadMonitor {
         return current().is(TIMEOUT);
     }
 
-    public static boolean isProgressProcess() {
-        return current().is(PROGRESS);
-    }
-
     public static boolean isBackgroundProcess() {
         return current().is(BACKGROUND);
     }
 
+    public static boolean isProgressProcess() {
+        return current().is(PROGRESS) || ProgressMonitor.isProgress();
+    }
+
     public static boolean isModalProcess() {
-        return current().is(MODAL);
+        return current().is(MODAL) || ProgressMonitor.isModal();
     }
 
     public static boolean isDisposerProcess() {
