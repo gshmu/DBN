@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.component.Components.projectService;
@@ -35,7 +36,7 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetFilterManager";
 
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();
-    private final Map<ConnectionId, Map<String, DatasetFilterGroup>> filters = new HashMap<>();
+    private final Map<ConnectionId, Map<String, DatasetFilterGroup>> filters = new ConcurrentHashMap<>();
 
     private DatasetFilterManager(Project project) {
         super(project, COMPONENT_NAME);
