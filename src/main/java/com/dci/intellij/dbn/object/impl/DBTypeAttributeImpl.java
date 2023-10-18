@@ -32,7 +32,7 @@ class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> implemen
     protected String initObject(ConnectionHandler connection, DBObject parentObject, DBTypeAttributeMetadata metadata) throws SQLException {
         String name = metadata.getAttributeName();
         position = metadata.getPosition();
-        dataType = DBDataType.get(this.getConnection(), metadata.getDataType());
+        dataType = DBDataType.get(connection, metadata.getDataType());
         return name;
     }
 
