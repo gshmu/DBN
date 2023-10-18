@@ -11,6 +11,7 @@ public enum GenericDataType implements Presentable, Constant<GenericDataType> {
     CLOB("Character Large Object"),
     BLOB("Byte Large Object"),
     ROWID("Row ID"),
+    REF("Ref"),
     FILE("File"),
     BOOLEAN("Boolean"),
     OBJECT("Object"),
