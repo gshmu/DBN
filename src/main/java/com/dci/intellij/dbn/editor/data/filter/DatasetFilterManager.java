@@ -157,7 +157,7 @@ public class DatasetFilterManager extends ProjectComponentBase implements Persis
 
     @NotNull
     public DatasetFilterGroup getFilterGroup(ConnectionId connectionId, String datasetName) {
-        Map<String, DatasetFilterGroup> filterGroups = filters.computeIfAbsent(connectionId, id -> new HashMap<>());
+        Map<String, DatasetFilterGroup> filterGroups = filters.computeIfAbsent(connectionId, id -> new ConcurrentHashMap<>());
         return filterGroups.computeIfAbsent(datasetName, n -> new DatasetFilterGroup(getProject(), connectionId, n));
     }
 

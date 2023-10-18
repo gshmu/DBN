@@ -72,6 +72,7 @@ public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
         createBasicDefinition("BFILE", Object.class, OracleTypes.BFILE, GenericDataType.FILE);
         createBasicDefinition("ROWID", Object.class, OracleTypes.ROWID, GenericDataType.ROWID);
         createBasicDefinition("UROWID", Object.class, OracleTypes.ROWID, GenericDataType.ROWID);
+        createBasicDefinition("REF", Object.class, OracleTypes.REF, GenericDataType.REF);
         createBasicDefinition("REF CURSOR", Object.class, OracleTypes.CURSOR, GenericDataType.CURSOR, true, "CURSOR");
 
         createBasicDefinition("ANYDATA", Object.class, OracleTypes.OTHER, GenericDataType.OBJECT);
