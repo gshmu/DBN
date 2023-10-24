@@ -285,6 +285,7 @@
     </project-components>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.dci.intellij.dbn.plugin.PluginStatusManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.plugin.PluginConflictManager"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.common.file.FileTypeService"/>
         <applicationService serviceImplementation="com.dci.intellij.dbn.driver.DatabaseDriverManager"/>
