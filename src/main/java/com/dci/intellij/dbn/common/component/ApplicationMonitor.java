@@ -29,7 +29,7 @@ public final class ApplicationMonitor {
         return INSTANCE.exiting.get();
     }
 
-    public static boolean isAppExitRequested() {
+    public static boolean checkAppExitRequested() {
         return INSTANCE.exitRequested.getAndSet(false);
     }
 }
