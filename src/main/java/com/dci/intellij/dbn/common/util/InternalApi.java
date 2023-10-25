@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.compatibility.Workaround;
-import com.intellij.diagnostic.LoadingState;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.impl.ApplicationImpl;
 import com.intellij.openapi.util.objectTree.ThrowableInterner;
@@ -18,10 +17,6 @@ public class InternalApi {
         return Traces.isCalledThrough(ApplicationImpl.class, "exit");
         //return ApplicationManagerEx.getApplicationEx().isDisposeInProgress();
         //return ApplicationManagerEx.getApplicationEx().isExitInProgress();
-    }
-
-    public static boolean isComponentsLoadedOccurred() {
-        return LoadingState.COMPONENTS_LOADED.isOccurred();
     }
 
     @NotNull
