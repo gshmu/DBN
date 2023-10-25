@@ -47,9 +47,9 @@ public class BrowserToolWindowForm extends DBNFormBase {
 
         ActionToolbar actionToolbar = Actions.createActionToolbar(
                 actionsPanel,
-                "",
-                true,
-                "DBNavigator.ActionGroup.Browser.Controls");
+                "DBNavigator.ActionGroup.Browser.Controls", "",
+                true
+        );
         actionsPanel.add(actionToolbar.getComponent());
 
         /*ActionToolbar objectPropertiesActionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.Browser.ObjectProperties");
