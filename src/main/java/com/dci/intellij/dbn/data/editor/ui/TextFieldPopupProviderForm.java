@@ -37,7 +37,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormBase implements 
     private JBPopup popup;
     private final Set<AnAction> actions = new HashSet<>();
 
-    TextFieldPopupProviderForm(TextFieldWithPopup<?> editorComponent, boolean autoPopup, boolean buttonVisible) {
+    protected TextFieldPopupProviderForm(TextFieldWithPopup<?> editorComponent, boolean autoPopup, boolean buttonVisible) {
         super(editorComponent, editorComponent.getProject());
         this.editorComponent = WeakRef.of(editorComponent);
         this.autoPopup = autoPopup;
@@ -83,7 +83,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormBase implements 
 
     protected abstract String getKeyShortcutName();
 
-    void registerAction(AnAction action) {
+    protected void registerAction(AnAction action) {
         actions.add(action);
     }
 
