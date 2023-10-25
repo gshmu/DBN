@@ -14,7 +14,10 @@ import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.*;
+import com.dci.intellij.dbn.common.util.ChangeTimestamp;
+import com.dci.intellij.dbn.common.util.Documents;
+import com.dci.intellij.dbn.common.util.Editors;
+import com.dci.intellij.dbn.common.util.Strings;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.Resources;
@@ -66,6 +69,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
+import static com.dci.intellij.dbn.common.component.ApplicationMonitor.isAppExitRequested;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
@@ -598,7 +602,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
     @Override
     public boolean canCloseProject() {
-        boolean exitApp = InternalApi.isAppExitInProgress();
+        boolean exitApp = isAppExitRequested();
         boolean canClose = true;
         Project project = getProject();
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

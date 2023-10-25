@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.dci.intellij.dbn.common.component.ApplicationMonitor.isAppExitRequested;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.dispose.Checks.isValid;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.guarded;
@@ -335,7 +336,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         if (!connectionManager.hasUncommittedChanges()) return true;
 
-        boolean exitApp = InternalApi.isAppExitInProgress();
+        boolean exitApp = isAppExitRequested();
 
         TransactionManagerSettings transactionManagerSettings = getSettings();
         InteractiveOptionBroker<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProject();
