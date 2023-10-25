@@ -69,7 +69,7 @@ import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.Priority.HIGH;
 import static com.dci.intellij.dbn.common.Priority.HIGHEST;
-import static com.dci.intellij.dbn.common.component.ApplicationMonitor.isAppExitRequested;
+import static com.dci.intellij.dbn.common.component.ApplicationMonitor.checkAppExitRequested;
 import static com.dci.intellij.dbn.common.component.Components.projectService;
 import static com.dci.intellij.dbn.common.message.MessageCallback.when;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
@@ -602,8 +602,6 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
     @Override
     public boolean canCloseProject() {
-        boolean exitApp = isAppExitRequested();
-        boolean canClose = true;
         Project project = getProject();
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
@@ -613,7 +611,6 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
                 if (!databaseFile.isModified()) continue;
 
-                canClose = false;
                 if (databaseFile.isSaving()) continue;
 
                 DBSchemaObject object = databaseFile.getObject();
@@ -622,6 +619,8 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
                 CodeEditorSettings codeEditorSettings = CodeEditorSettings.getInstance(objectProject);
                 CodeEditorConfirmationSettings confirmationSettings = codeEditorSettings.getConfirmationSettings();
+
+                boolean exitApp = checkAppExitRequested();
                 confirmationSettings.getExitOnChanges().resolve(
                         list(objectDescription),
                         option -> {
@@ -641,9 +640,10 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                                 case CANCEL: break;
                             }
                         });
+                return false;
             }
         }
-        return canClose;
+        return true;
     }
 
     public void loadSourceCode(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force) {
