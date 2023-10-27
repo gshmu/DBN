@@ -514,6 +514,7 @@ public class DatasetEditorModel
         for (DatasetEditorModelRow row : getRows()) {
             row.revertChanges();
         }
+        set(MODIFIED, false);
     }
 
     public boolean isResultSetUpdatable() {
@@ -531,61 +532,38 @@ public class DatasetEditorModel
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         DatasetEditorModelCell cell = getCellAt(rowIndex, columnIndex);
-        if (cell != null) {
-            cell.updateUserValue(value, false);
-        }
+        if (cell == null) return;
+
+        cell.updateUserValue(value, false);
     }
 
     public void setValueAt(Object value, String errorMessage,  int rowIndex, int columnIndex) {
         DatasetEditorModelCell cell = getCellAt(rowIndex, columnIndex);
-        if (cell != null) {
-            cell.updateUserValue(value, errorMessage);
-        }
+        if (cell == null) return;
+
+        cell.updateUserValue(value, errorMessage);
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorState editorState = getState();
-        if (isReadonly() || isEnvironmentReadonly() || isDirty()) {
-            return false;
-
-        } else if (editorState.isReadonly()) {
-            return false;
-
-        } else if (editorTable.isLoading()) {
-            return false;
-
-        } else if (!editorTable.isEditingEnabled()) {
-            return false;
-
-        } else if (editorTable.getSelectedColumnCount() > 1 || editorTable.getSelectedRowCount() > 1) {
-            return false;
-
-        } else if (!getConnection().isConnected(SessionId.MAIN)) {
-            return false;
-        }
+        if (isReadonly() || isEnvironmentReadonly() || isDirty()) return false;
+        if (editorState.isReadonly()) return false;
+        if (editorTable.isLoading()) return false;
+        if (!editorTable.isEditingEnabled()) return false;
+        if (editorTable.getSelectedColumnCount() > 1 || editorTable.getSelectedRowCount() > 1) return false;
+        if (!getConnection().isConnected(SessionId.MAIN)) return false;
 
         DatasetEditorModelRow row = getRowAtIndex(rowIndex);
-        if (row == null) {
-            return false;
-
-        } else if (row.is(DELETED)) {
-            return false;
-
-        } else if (row.is(UPDATING)) {
-            return false;
-
-        } else if (is(INSERTING)) {
-            return row.is(INSERTING);
-        }
+        if (row == null) return false;
+        if (row.is(DELETED)) return false;
+        if (row.is(UPDATING)) return false;
+        if (is(INSERTING)) return row.is(INSERTING);
 
         DatasetEditorModelCell cell = row.getCellAtIndex(columnIndex);
-        if (cell == null) {
-            return false;
-        } else if (cell.is(UPDATING)) {
-            return false;
-        }
+        if (cell == null) return false;
+        if (cell.is(UPDATING)) return false;
 
         return true;
     }
@@ -595,18 +573,19 @@ public class DatasetEditorModel
      *********************************************************/
     @Override
     public void valueChanged(ListSelectionEvent event) {
-        if (is(INSERTING) && !event.getValueIsAdjusting()) {
-            DatasetEditorModelRow insertRow = getInsertRow();
-            if (insertRow != null) {
-                int index = insertRow.getIndex();
+        if (!is(INSERTING)) return;
+        if (event.getValueIsAdjusting()) return;
 
-                ListSelectionModel listSelectionModel = (ListSelectionModel) event.getSource();
-                int selectionIndex = listSelectionModel.getLeadSelectionIndex();
+        DatasetEditorModelRow insertRow = getInsertRow();
+        if (insertRow == null) return;
 
-                if (index != selectionIndex) {
-                    //postInsertRecord();
-                }
-            }
+        int index = insertRow.getIndex();
+
+        ListSelectionModel listSelectionModel = (ListSelectionModel) event.getSource();
+        int selectionIndex = listSelectionModel.getLeadSelectionIndex();
+
+        if (index != selectionIndex) {
+            //postInsertRecord();
         }
     }
 }
