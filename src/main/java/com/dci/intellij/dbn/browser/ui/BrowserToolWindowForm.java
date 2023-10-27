@@ -148,7 +148,7 @@ public class BrowserToolWindowForm extends DBNFormBase {
     }
 
     @Override
-    protected void disposeInner() {
+    public void disposeInner() {
         browserForm = Disposer.replace(browserForm, null);
         super.disposeInner();
     }

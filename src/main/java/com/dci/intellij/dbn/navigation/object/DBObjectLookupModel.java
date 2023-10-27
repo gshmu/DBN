@@ -196,7 +196,7 @@ public class DBObjectLookupModel extends StatefulDisposableBase implements Choos
     }
 
     @Override
-    protected void disposeInner() {
+    public void disposeInner() {
         nullify();
     }
 
