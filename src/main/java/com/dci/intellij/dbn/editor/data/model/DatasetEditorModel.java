@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -29,6 +30,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +67,7 @@ public class DatasetEditorModel
     private ResultSetAdapter resultSetAdapter;
 
     private final List<DatasetEditorModelRow> changedRows = new ArrayList<>();
+    private final Latent<List<DBColumn>> uniqueKeyColumns = Latent.basic(() -> loadUniqueKeyColumns());
 
     public DatasetEditorModel(DatasetEditor datasetEditor) throws SQLException {
         super(datasetEditor.getConnection());
@@ -566,6 +569,21 @@ public class DatasetEditorModel
         if (cell.is(UPDATING)) return false;
 
         return true;
+    }
+
+    public List<DBColumn> getUniqueKeyColumns() {
+        return uniqueKeyColumns.get();
+    }
+
+    private List<DBColumn> loadUniqueKeyColumns() {
+        DBTable table = (DBTable) getDataset();
+        List<DBColumn> uniqueColumns = new ArrayList<>(table.getPrimaryKeyColumns());
+        uniqueColumns.removeIf(c -> c.isIdentity());
+        if (uniqueColumns.isEmpty()) {
+            uniqueColumns = table.getUniqueKeyColumns();
+        }
+
+        return uniqueColumns;
     }
 
     /*********************************************************

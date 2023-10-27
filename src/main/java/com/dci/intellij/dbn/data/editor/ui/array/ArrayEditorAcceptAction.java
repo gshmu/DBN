@@ -35,6 +35,6 @@ class ArrayEditorAcceptAction extends ArrayEditorAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         ArrayEditorPopupProviderForm form = getArrayEditorForm(e);
-        e.getPresentation().setEnabled(form.isChanged());
+        e.getPresentation().setEnabled(form != null && form.isChanged());
     }
 }
