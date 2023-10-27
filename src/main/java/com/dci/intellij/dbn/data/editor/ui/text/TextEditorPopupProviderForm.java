@@ -1,6 +1,7 @@
-package com.dci.intellij.dbn.data.editor.ui;
+package com.dci.intellij.dbn.data.editor.ui.text;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.ui.misc.DBNScrollPane;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -10,28 +11,32 @@ import com.dci.intellij.dbn.common.util.Actions;
 import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Messages;
 import com.dci.intellij.dbn.common.util.TextAttributes;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupProviderForm;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.JBUI;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import static com.dci.intellij.dbn.common.ui.util.TextFields.onTextChange;
+import static com.dci.intellij.dbn.common.util.Actions.createActionToolbar;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
@@ -41,9 +46,9 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JTextArea editorTextArea;
     private DBNScrollPane textEditorScrollPane;
 
-    private boolean changed;
+    private @Getter @Setter boolean changed;
 
-    TextEditorPopupProviderForm(TextFieldWithPopup<?> textField, boolean autoPopup) {
+    public TextEditorPopupProviderForm(TextFieldWithPopup<?> textField, boolean autoPopup) {
         super(textField, autoPopup, true);
         editorTextArea.setBorder(JBUI.Borders.empty(4));
         editorTextArea.addKeyListener(this);
@@ -57,13 +62,10 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true);
         leftActionPanel.add(leftActionToolbar.getComponent(), BorderLayout.WEST);
 
-        ActionToolbar rightActionToolbar = Actions.createActionToolbar(
-                rightActionPanel,
-                "DBNavigator.Place.DataEditor.TextAreaPopup", true,
-                new DeleteAction(),
-                new RevertAction(),
-                new AcceptAction());
+        ActionToolbar rightActionToolbar = createActionToolbar(leftActionPanel, "DBNavigator.ActionGroup.TextEditor.Controls", "",true);
         rightActionPanel.add(rightActionToolbar.getComponent(), BorderLayout.EAST);
+
+        Arrays.asList(leftActionToolbar, rightActionToolbar).forEach(tb -> tb.getActions().forEach(a -> registerAction(a)));
 
         updateComponentColors();
         Colors.subscribe(this, () -> updateComponentColors());
@@ -93,6 +95,15 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     @Override
     public JComponent getPreferredFocusedComponent() {
         return editorTextArea;
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DataKeys.TEXT_EDITOR_POPUP_PROVIDER_FORM.is(dataId)) {
+            return this;
+        }
+        return super.getData(dataId);
     }
 
     @Override
@@ -166,67 +177,8 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         }
     }
 
-    private class AcceptAction extends DumbAwareAction {
-        private AcceptAction() {
-            super("Accept Changes", null, Icons.TEXT_CELL_EDIT_ACCEPT);
-            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK));
-            registerAction(this);
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            String text = editorTextArea.getText().trim();
-            UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
-            userValueHolder.updateUserValue(text, false);
-
-            if (userValueHolder.getUserValue() instanceof String) {
-                JTextField textField = getTextField();
-                getEditorComponent().setEditable(text.indexOf('\n') == -1);
-
-                textField.setText(text);
-            }
-            hidePopup();
-        }
-
-        @Override
-        public void update(@NotNull AnActionEvent e) {
-            e.getPresentation().setEnabled(changed);
-        }
+    String getText() {
+        return editorTextArea.getText();
     }
 
-    private class RevertAction extends DumbAwareAction{
-        private RevertAction() {
-            super("Revert Changes", null, Icons.TEXT_CELL_EDIT_REVERT);
-            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_ESCAPE, 0));
-            //registerAction(this);
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            hidePopup();
-        }
-
-        @Override
-        public void update(@NotNull AnActionEvent e) {
-            e.getPresentation().setEnabled(changed);
-        }
-    }
-
-    private class DeleteAction extends AnAction {
-        private DeleteAction() {
-            super("Delete Content", null, Icons.TEXT_CELL_EDIT_DELETE);
-            setShortcutSet(Keyboard.createShortcutSet(KeyEvent.VK_DELETE, UserInterface.ctrlDownMask()));
-            //registerAction(this);
-        }
-
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            JTextField textField = getTextField();
-            TextFieldWithPopup editorComponent = getEditorComponent();
-            editorComponent.getUserValueHolder().updateUserValue(null, false);
-            editorComponent.setEditable(true);
-            textField.setText("");
-            hidePopup();
-        }
-    }
 }

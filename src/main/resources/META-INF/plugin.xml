@@ -617,8 +617,18 @@
                 <action id="DBNavigator.Actions.Arrays.Accept" class="com.dci.intellij.dbn.data.editor.ui.array.ArrayEditorAcceptAction" text="Array Editor - Accept">
                     <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
                 </action>
-
             </group>
+        </group>
+        <group id="DBNavigator.ActionGroup.TextEditor.Controls" text="Text Editor Controls">
+            <action id="DBNavigator.Actions.TextEditor.Delete" class="com.dci.intellij.dbn.data.editor.ui.text.TextEditorDeleteAction" text="Text Editor - Delete">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl DELETE"/>
+            </action>
+            <action id="DBNavigator.Actions.TextEditor.Revert" class="com.dci.intellij.dbn.data.editor.ui.text.TextEditorRevertAction" text="Text Editor - Revert">
+                <keyboard-shortcut keymap="$default" first-keystroke="ESCAPE"/>
+            </action>
+            <action id="DBNavigator.Actions.TextEditor.Accept" class="com.dci.intellij.dbn.data.editor.ui.text.TextEditorAcceptAction" text="Text Editor - Accept">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
+            </action>
         </group>
     </actions>
     <projectListeners>
