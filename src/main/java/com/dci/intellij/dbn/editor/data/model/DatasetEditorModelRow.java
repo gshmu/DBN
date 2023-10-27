@@ -95,14 +95,9 @@ public class DatasetEditorModelRow
         // try fast match by primary key
         DatasetEditorModel model = getModel();
         if (model.getDataset() instanceof DBTable) {
-            DBTable table = (DBTable) model.getDataset();
-            List<DBColumn> uniqueColumns = table.getPrimaryKeyColumns();
-            uniqueColumns.removeIf(c -> c.isIdentity());
-            if (uniqueColumns.size() == 0) {
-                uniqueColumns = table.getUniqueKeyColumns();
-            }
-            if (uniqueColumns.size() > 0) {
-                for (DBColumn uniqueColumn : uniqueColumns) {
+            List<DBColumn> uniqueKeyColumns = model.getUniqueKeyColumns();
+            if (!uniqueKeyColumns.isEmpty()) {
+                for (DBColumn uniqueColumn : uniqueKeyColumns) {
                     int index = model.getHeader().indexOfColumn(uniqueColumn);
                     DatasetEditorModelCell localCell = getCellAtIndex(index);
                     DatasetEditorModelCell remoteCell = (DatasetEditorModelCell) row.getCellAtIndex(index);

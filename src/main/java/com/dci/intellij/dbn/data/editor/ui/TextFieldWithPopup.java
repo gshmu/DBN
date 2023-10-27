@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.misc.DBNButton;
 import com.dci.intellij.dbn.common.ui.util.Mouse;
 import com.dci.intellij.dbn.data.editor.ui.array.ArrayEditorPopupProviderForm;
 import com.dci.intellij.dbn.data.editor.ui.calendar.CalendarPopupProviderForm;
+import com.dci.intellij.dbn.data.editor.ui.text.TextEditorPopupProviderForm;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
