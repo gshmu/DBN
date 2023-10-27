@@ -199,7 +199,7 @@ public class SessionBrowserForm extends DBNFormBase implements SearchableDataCom
     }
 
     @Override
-    protected void disposeInner() {
+    public void disposeInner() {
         DataManager.removeDataProvider(actionsPanel);
         super.disposeInner();
         browserTable = null;
