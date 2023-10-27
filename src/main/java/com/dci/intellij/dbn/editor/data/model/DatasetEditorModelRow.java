@@ -171,6 +171,7 @@ public class DatasetEditorModelRow
             for (DatasetEditorModelCell cell : getCells()) {
                 cell.revertChanges();
             }
+            set(RecordStatus.MODIFIED, false);
         }
     }
 

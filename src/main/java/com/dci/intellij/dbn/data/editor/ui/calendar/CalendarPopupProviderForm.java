@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.editor.ui.calendar;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.action.DataProviders;
 import com.dci.intellij.dbn.common.color.Colors;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.util.Borders;
@@ -27,7 +26,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
@@ -107,11 +105,6 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         actionsLeftPanel.add(actionToolbarLeft.getComponent(), BorderLayout.WEST);
         actionsRightPanel.add(actionToolbarRight.getComponent(), BorderLayout.EAST);
         actionsPanelBottom.add(actionToolbarBottom.getComponent(), BorderLayout.EAST);
-
-        DataProviders.register(actionsLeftPanel, this);
-        DataProviders.register(actionsRightPanel, this);
-        DataProviders.register(actionsPanelBottom, this);
-
         updateComponentColors();
         Colors.subscribe(this, () -> updateComponentColors());
     }
@@ -158,6 +151,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     @Override
     public JBPopup createPopup() {
+
         Date date = getDateForPopup();
         CalendarTableModel tableModel = new CalendarTableModel(date);
         tableModel.addTableModelListener(this);
@@ -170,7 +164,8 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         daysTable.setRowSelectionInterval(rowIndex, rowIndex);
         daysTable.setColumnSelectionInterval(columnIndex, columnIndex);
 
-        ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, daysTable);
+        JComponent component = getComponent();
+        ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(component, daysTable);
         popupBuilder.setRequestFocus(true);
 
         monthYearLabel.setText(tableModel.getCurrentMonthName() + " " + tableModel.getCurrentYear());
@@ -180,16 +175,6 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
         return popupBuilder.createPopup();
     }
-
-    @Override
-    public void handleKeyPressedEvent(KeyEvent e) {}
-
-    @Override
-    public void handleKeyReleasedEvent(KeyEvent e) {}
-
-    @Override
-    public void handleFocusLostEvent(FocusEvent e) {}
-
 
     @Override
     public String getKeyShortcutName() {
