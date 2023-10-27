@@ -61,7 +61,7 @@ public class DBNConnection extends DBNConnectionBase {
                     (status, value) -> DBNConnection.super.set(status, value));
 
     private final ResourceStatusAdapter<DBNConnection> valid =
-            new ResourceStatusAdapterImpl<DBNConnection>(this,
+            new ResourceStatusAdapterImpl<>(this,
                     ResourceStatus.VALID,
                     ResourceStatus.CHANGING_VALID,
                     ResourceStatus.EVALUATING_VALID,
@@ -79,7 +79,7 @@ public class DBNConnection extends DBNConnectionBase {
             };
 
     private final ResourceStatusAdapter<DBNConnection> autoCommit =
-            new ResourceStatusAdapterImpl<DBNConnection>(this,
+            new ResourceStatusAdapterImpl<>(this,
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.CHANGING_AUTO_COMMIT,
                     ResourceStatus.EVALUATING_AUTO_COMMIT,
@@ -94,7 +94,7 @@ public class DBNConnection extends DBNConnectionBase {
                         } catch (SQLException e) {
                             inner.setAutoCommit(value);
                         }
-                    } catch (Throwable e){
+                    } catch (Throwable e) {
                         conditionallyLog(e);
                         log.warn("Unable to set auto-commit to " + value + ". Maybe your database does not support transactions...", e);
                     }
@@ -107,7 +107,7 @@ public class DBNConnection extends DBNConnectionBase {
             };
 
     private final ResourceStatusAdapter<DBNConnection> readOnly =
-            new ResourceStatusAdapterImpl<DBNConnection>(this,
+            new ResourceStatusAdapterImpl<>(this,
                     ResourceStatus.READ_ONLY,
                     ResourceStatus.CHANGING_READ_ONLY,
                     ResourceStatus.EVALUATING_READ_ONLY,
@@ -122,7 +122,7 @@ public class DBNConnection extends DBNConnectionBase {
                         } catch (SQLException e) {
                             inner.setReadOnly(value);
                         }
-                    } catch (Throwable e){
+                    } catch (Throwable e) {
                         conditionallyLog(e);
                         log.warn("Unable to set read-only status to " + value + ". Maybe your database does not support transactions...", e);
                     }

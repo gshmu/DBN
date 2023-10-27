@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
@@ -125,21 +124,16 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         editorTextArea.setSelectionStart(textField.getSelectionStart());
         editorTextArea.setSelectionEnd(textField.getSelectionEnd());
         onTextChange(editorTextArea, e -> changed = true);
-        mainPanel.setPreferredSize(new Dimension(Math.max(200, textField.getWidth() + 32), 160));
 
-        ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, editorTextArea);
+        JComponent component = getComponent();
+        component.setPreferredSize(new Dimension(Math.max(200, textField.getWidth() + 32), 160));
+
+        ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(component, editorTextArea);
         popupBuilder.setRequestFocus(true);
         popupBuilder.setResizable(true);
         popupBuilder.setDimensionServiceKey(getProject(), "TextEditor." + userValueHolder.getName(), false);
         return popupBuilder.createPopup();
     }
-
-    @Override
-    public void handleKeyPressedEvent(KeyEvent e) {}
-    @Override
-    public void handleKeyReleasedEvent(KeyEvent e) {}
-    @Override
-    public void handleFocusLostEvent(FocusEvent e) {}
 
     @Override
     public String getKeyShortcutName() {
