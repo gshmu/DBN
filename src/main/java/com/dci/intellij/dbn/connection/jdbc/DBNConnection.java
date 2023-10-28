@@ -61,7 +61,7 @@ public class DBNConnection extends DBNConnectionBase {
                     (status, value) -> DBNConnection.super.set(status, value));
 
     private final ResourceStatusAdapter<DBNConnection> valid =
-            new ResourceStatusAdapterImpl<>(this,
+            new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.VALID,
                     ResourceStatus.CHANGING_VALID,
                     ResourceStatus.EVALUATING_VALID,
@@ -79,7 +79,7 @@ public class DBNConnection extends DBNConnectionBase {
             };
 
     private final ResourceStatusAdapter<DBNConnection> autoCommit =
-            new ResourceStatusAdapterImpl<>(this,
+            new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.CHANGING_AUTO_COMMIT,
                     ResourceStatus.EVALUATING_AUTO_COMMIT,
@@ -107,7 +107,7 @@ public class DBNConnection extends DBNConnectionBase {
             };
 
     private final ResourceStatusAdapter<DBNConnection> readOnly =
-            new ResourceStatusAdapterImpl<>(this,
+            new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.READ_ONLY,
                     ResourceStatus.CHANGING_READ_ONLY,
                     ResourceStatus.EVALUATING_READ_ONLY,
