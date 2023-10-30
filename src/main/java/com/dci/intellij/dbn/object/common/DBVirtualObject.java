@@ -3,12 +3,12 @@ package com.dci.intellij.dbn.object.common;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ref.WeakRef;
 import com.dci.intellij.dbn.common.routine.Consumer;
+import com.dci.intellij.dbn.common.util.Commons;
 import com.dci.intellij.dbn.common.util.Lists;
 import com.dci.intellij.dbn.common.util.Strings;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -49,15 +49,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentProperty.*;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 import static com.dci.intellij.dbn.common.util.Documents.getDocument;
 import static com.dci.intellij.dbn.common.util.Documents.getEditors;
+import static com.dci.intellij.dbn.common.util.Lists.convert;
+import static com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapters.*;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareName;
 import static com.dci.intellij.dbn.object.common.sorting.DBObjectComparator.compareType;
+import static com.dci.intellij.dbn.object.type.DBObjectType.COLUMN;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     private static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new TokenTypeLookupAdapter(element -> element.getLanguage().getSharedTokenTypes().getChrStar());
@@ -169,13 +172,10 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     }
 
     private String resolveColumnName(BasePsiElement psiElement) {
-        PsiLookupAdapter lookupAdapter = LookupAdapters.alias(DBObjectType.COLUMN);
-        BasePsiElement specificPsiElement = lookupAdapter.findInElement(psiElement);
-
-        if (specificPsiElement == null) {
-            lookupAdapter = LookupAdapters.object(DBObjectType.COLUMN);
-            specificPsiElement = lookupAdapter.findInElement(psiElement);
-        }
+        BasePsiElement specificPsiElement = Commons.coalesce(psiElement,
+                e -> aliasDefinition(COLUMN).findInElement(e),
+                e -> aliasReference(COLUMN).findInElement(e),
+                e -> identifierReference(COLUMN).findInElement(e));
 
         if (specificPsiElement != null) {
             this.relevantPsiElement = PsiElementRef.of(specificPsiElement);
@@ -305,7 +305,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
         underlyingPsiElement.collectPsiElements(lookupAdapter, 100, element -> {
             BasePsiElement child = (BasePsiElement) element;
             // handle STAR column
-            if (childObjectType == DBObjectType.COLUMN) {
+            if (childObjectType == COLUMN) {
                 LeafPsiElement starPsiElement = (LeafPsiElement) CHR_STAR_LOOKUP_ADAPTER.findInElement(child);
                 if (starPsiElement != null) loadAllColumns(starPsiElement, objects);
 
@@ -337,22 +337,22 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
             IdentifierPsiElement parentPsiElement = qualifiedIdentifierPsiElement.getLeafAtIndex(index - 1);
             DBObject object = parentPsiElement.getUnderlyingObject();
             if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
-                List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
-                objects.addAll(columns);
+                List<DBObject> columns = object.collectChildObjects(COLUMN);
+                for (DBObject column : columns) objects.add(delegate(column));
             }
         } else {
             BasePsiElement underlyingPsiElement = nn(getUnderlyingPsiElement());
             DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, basePsiElement -> {
                 DBObject object = basePsiElement.getUnderlyingObject();
                 if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
-                    List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
-                    objects.addAll(columns);
+                    List<DBObject> columns = object.collectChildObjects(COLUMN);
+                    for (DBObject column : columns) objects.add(delegate(column));
                 }
             });
         }
     }
     private void loadColumns(LeafPsiElement indexPsiElement, List<DBObject> objects) {
-        BasePsiElement<?> columnPsiElement = indexPsiElement.findEnclosingVirtualObjectElement(DBObjectType.COLUMN);
+        BasePsiElement<?> columnPsiElement = indexPsiElement.findEnclosingVirtualObjectElement(COLUMN);
         if (columnPsiElement == null) return;
 
         String text = columnPsiElement.getText();
@@ -371,7 +371,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
             if (object == null || object == this) return;
             if (!object.getObjectType().matches(DBObjectType.DATASET)) return;
 
-            List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
+            List<DBObject> columns = object.collectChildObjects(COLUMN);
             if (columns.size() > columnIndex) objects.add(columns.get(columnIndex));
         } else {
             BasePsiElement underlyingPsiElement = nn(getUnderlyingPsiElement());
@@ -380,7 +380,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
                 if (object == null || object == this) return;
                 if (!object.getObjectType().matches(DBObjectType.DATASET)) return;
 
-                List<DBObject> columns = object.collectChildObjects(DBObjectType.COLUMN);
+                List<DBObject> columns = object.collectChildObjects(COLUMN);
                 if (columns.size() > columnIndex) objects.add(columns.get(columnIndex));
             });
         }
