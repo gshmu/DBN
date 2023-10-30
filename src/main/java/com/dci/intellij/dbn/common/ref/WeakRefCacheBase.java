@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -43,5 +44,15 @@ abstract class WeakRefCacheBase<K, V> implements WeakRefCache<K, V> {
     @Override
     public V remove(K key) {
         return cache.remove(key);
+    }
+
+    @Override
+    public Set<K> keys() {
+        return cache.keySet();
+    }
+
+    @Override
+    public void clear() {
+        cache.clear();
     }
 }
