@@ -71,35 +71,8 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     private PsiElementRef<BasePsiElement> relevantPsiElement;
     private final DBObjectPsiCache psiCache;
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
-
-    private final Latent<Boolean> valid = Latent.timed(10, TimeUnit.SECONDS, () -> {
-        boolean valid = Failsafe.guarded(true, this, o -> o.checkValid());
-        if (!valid) Disposer.dispose(this);
-        return valid;
-    });
-
-    private boolean checkValid() {
-        if (isDisposed()) return false;
-
-        BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
-        if (underlyingPsiElement == null) return false;
-
-        boolean psiElementValid = underlyingPsiElement.isValid();
-        if (!psiElementValid) return false;
-
-        DBObjectType objectType = getObjectType();
-        if (objectType.matches(DBObjectType.DATASET) || objectType.matches(DBObjectType.TYPE)) return true; // no special checks
-
-        BasePsiElement relevantPsiElement = getRelevantPsiElement();
-        if (!Strings.equalsIgnoreCase(getName(), relevantPsiElement.getText())) return false;
-
-        if (relevantPsiElement instanceof IdentifierPsiElement) {
-            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
-            return identifierPsiElement.getObjectType() == objectType;
-        }
-        return true;
-
-    }
+    private boolean valid = true;
+    private long validCheckTimestamap = 0;
 
     public DBVirtualObject(@NotNull BasePsiElement psiElement) {
         super(
@@ -211,7 +184,37 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     @Override
     public boolean isValid() {
         if (isDisposed()) return false;
-        return valid.get();
+        if (!valid) return false;
+
+        if (TimeUtil.isOlderThan(validCheckTimestamap, 10, SECONDS)) {
+            valid = checkValid();
+            if (!valid) Disposer.dispose(this);
+        }
+
+        return valid;
+    }
+
+    private boolean checkValid() {
+        validCheckTimestamap = System.currentTimeMillis();
+        if (isDisposed()) return false;
+
+        BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
+        if (underlyingPsiElement == null) return false;
+
+        boolean psiElementValid = underlyingPsiElement.isValid();
+        if (!psiElementValid) return false;
+
+        DBObjectType objectType = getObjectType();
+        if (objectType.matches(DBObjectType.DATASET) || objectType.matches(DBObjectType.TYPE)) return true; // no special checks
+
+        BasePsiElement relevantPsiElement = getRelevantPsiElement();
+        if (!Strings.equalsIgnoreCase(getName(), relevantPsiElement.getText())) return false;
+
+        if (relevantPsiElement instanceof IdentifierPsiElement) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
+            return identifierPsiElement.getObjectType() == objectType;
+        }
+        return true;
     }
 
     @Override
@@ -278,7 +281,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
         if (objectList == null) {
             if (!objectType.isChildOf(getObjectType())) return null;
 
-            objectList = childObjects.createObjectList(objectType, this, MUTABLE, VIRTUAL);
+            objectList = childObjects.createObjectList(objectType, this, MUTABLE, VIRTUAL, MASTER);
             if (objectList == null) return null; // not supported (?)
 
             loadChildObjects(objectType, objectList);
@@ -324,7 +327,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
 
         });
 
-        objectList.setElements(objects);
+        objectList.setElements(convert(objects, o -> delegate(o)));
         objectList.set(MASTER, false);
     }
 
@@ -351,6 +354,12 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
             });
         }
     }
+
+    private static DBObject delegate(DBObject object) {
+        return object instanceof DBVirtualObject || object instanceof DBObjectDelegate ? object : new DBObjectDelegate(object);
+    }
+
+
     private void loadColumns(LeafPsiElement indexPsiElement, List<DBObject> objects) {
         BasePsiElement<?> columnPsiElement = indexPsiElement.findEnclosingVirtualObjectElement(COLUMN);
         if (columnPsiElement == null) return;
