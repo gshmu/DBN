@@ -16,6 +16,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
+import static com.dci.intellij.dbn.common.dispose.ComponentDisposer.removeListeners;
+
 public class DBNTree extends Tree implements DBNComponent {
     public static final DefaultTreeCellRenderer DEFAULT_CELL_RENDERER = new DefaultTreeCellRenderer();
 
@@ -91,5 +93,6 @@ public class DBNTree extends Tree implements DBNComponent {
 
     public void disposeInner(){
         clearToggledPaths();
-    };
+        removeListeners(this);
+    }
 }
