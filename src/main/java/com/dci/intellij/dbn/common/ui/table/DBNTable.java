@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.dci.intellij.dbn.common.dispose.ComponentDisposer.removeListeners;
 import static com.dci.intellij.dbn.common.dispose.Disposer.replace;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
 import static com.dci.intellij.dbn.diagnostics.Diagnostics.conditionallyLog;
@@ -335,7 +336,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     protected DBNTableGutter<?> createTableGutter() {
-        return null; // do not instructions gutter by default
+        return null; // do not create gutter by default
     }
 
     public final DBNTableGutter<?> getTableGutter() {
@@ -460,6 +461,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         listenerList = new EventListenerList();
         columnModel = new DefaultTableColumnModel();
         selectionModel = new DefaultListSelectionModel();
+        removeListeners(this);
         nullify();
     }
 }
