@@ -17,6 +17,8 @@ public interface WeakRefCache<K, V> {
 
     V remove(K key);
 
+    boolean contains(K key);
+
     Set<K> keys();
 
     void clear();
