@@ -69,7 +69,6 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
 
     private volatile boolean loadingChildren;
     private PsiElementRef<BasePsiElement> relevantPsiElement;
-    private final DBObjectPsiCache psiCache;
     private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
     private boolean valid = true;
     private long validCheckTimestamap = 0;
@@ -80,7 +79,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
             psiElement.getElementType().getVirtualObjectType(),
             psiElement.getText());
 
-        psiCache = new DBObjectPsiCache(psiElement);
+        DBObjectPsiCache.map(this, psiElement);
         relevantPsiElement = PsiElementRef.of(psiElement);
         String name = resolveName();
         ref = new DBObjectRef<>(this, name);
@@ -168,12 +167,6 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
     @Override
     protected String initObject(ConnectionHandler connection, DBObject parentObject, DBObjectMetadata metadata) throws SQLException {
         throw new UnsupportedOperationException();
-    }
-
-    @NotNull
-    @Override
-    public DBObjectPsiCache getPsiCache() {
-        return psiCache;
     }
 
     @NotNull
@@ -480,7 +473,7 @@ public class DBVirtualObject extends DBRootObjectImpl implements PsiReference {
 
     @Nullable
     public BasePsiElement getUnderlyingPsiElement() {
-        return (BasePsiElement) getPsiCache().getPsiElement();
+        return DBObjectPsiCache.asPsiElement(this);
     }
 
     @NotNull

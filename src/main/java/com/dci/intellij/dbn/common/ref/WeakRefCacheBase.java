@@ -47,6 +47,11 @@ abstract class WeakRefCacheBase<K, V> implements WeakRefCache<K, V> {
     }
 
     @Override
+    public boolean contains(K key) {
+        return cache.containsKey(key);
+    }
+
+    @Override
     public Set<K> keys() {
         return cache.keySet();
     }
