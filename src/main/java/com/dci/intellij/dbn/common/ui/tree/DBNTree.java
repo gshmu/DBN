@@ -8,6 +8,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.treeStructure.Tree;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,21 +79,15 @@ public class DBNTree extends Tree implements DBNComponent {
      *                    Disposable                        *
      ********************************************************/
     @Getter
+    @Setter
     private boolean disposed;
 
     @Override
-    public final void dispose() {
-        if (disposed) return;
-        disposed = true;
-
+    public void disposeInner() {
         getUI().uninstallUI(this);
         setSelectionModel(null);
-        disposeInner();
-        nullify();
-    }
-
-    public void disposeInner(){
         clearToggledPaths();
         removeListeners(this);
+        nullify();
     }
 }
