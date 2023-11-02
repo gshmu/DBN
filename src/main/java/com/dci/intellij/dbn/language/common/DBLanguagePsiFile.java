@@ -51,6 +51,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -422,13 +423,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements DatabaseC
      *                    Disposable                        *
      ********************************************************/
     @Getter
+    @Setter
     private boolean disposed;
 
     @Override
-    public void dispose() {
-        if (disposed) return;
-        disposed = true;
-
+    public void disposeInner() {
         markInvalidated();
         nullify();
 

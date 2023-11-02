@@ -19,6 +19,7 @@ import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.util.keyFMap.KeyFMap;
 import com.intellij.util.ui.UIUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -451,12 +452,10 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
      *                    Disposable                        *
      ********************************************************/
     @Getter
+    @Setter
     private boolean disposed;
 
-    public void dispose(){
-        if (disposed) return;
-        disposed = true;
-
+    public void disposeInner(){
         Disposer.dispose(super.getModel());
         listenerList = new EventListenerList();
         columnModel = new DefaultTableColumnModel();
