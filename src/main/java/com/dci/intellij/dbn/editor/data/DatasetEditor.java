@@ -185,10 +185,6 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         }
     }
 
-    public DatasetEditorState getEditorState() {
-        return editorState;
-    }
-
     @Override
     public boolean isModified() {
         return getTableModel().isModified();

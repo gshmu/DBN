@@ -38,6 +38,7 @@ public class DatasetEditorModelCell
     private static final WeakRefCache<DatasetEditorModelCell, Object> originalUserValues = WeakRefCache.weakKey();
     private static final WeakRefCache<DatasetEditorModelCell, String> temporaryUserValues = WeakRefCache.weakKey();
     private static final WeakRefCache<DatasetEditorModelCell, DatasetEditorError> errors = WeakRefCache.weakKey();
+    private static final Object NULL = new Object();
 
     public DatasetEditorModelCell(DatasetEditorModelRow row, ResultSet resultSet, DatasetEditorColumnInfo columnInfo) throws SQLException {
         super(row, resultSet, columnInfo);
@@ -60,14 +61,13 @@ public class DatasetEditorModelCell
     }
 
     private void updateValue(Object newUserValue, boolean bulk) {
-        initOriginalValue();
-
         ConnectionHandler connection = getConnection();
         connection.updateLastAccess();
 
         boolean valueChanged = userValueChanged(newUserValue);
         if (!valueChanged && !hasError()) return;
 
+        initOriginalValue();
         DatasetEditorColumnInfo columnInfo = getColumnInfo();
         GenericDataType genericDataType = columnInfo.getDataType().getGenericDataType();
         boolean isValueAdapter = ValueAdapter.supports(genericDataType);
@@ -149,7 +149,10 @@ public class DatasetEditorModelCell
     }
 
     private void initOriginalValue() {
-        if (!originalUserValues.contains(this)) originalUserValues.set(this, getUserValue());
+        if (originalUserValues.contains(this)) return;
+
+        Object value = getUserValue();
+        originalUserValues.set(this, value == null ? NULL : value);
     }
 
     protected DBDataset getDataset() {
@@ -282,7 +285,8 @@ public class DatasetEditorModelCell
     }
 
     public Object getOriginalUserValue() {
-        return originalUserValues.get(this);
+        Object value = originalUserValues.get(this);
+        return value == NULL ? null : value;
     }
 
     void setOriginalUserValue(Object value) {
@@ -294,7 +298,7 @@ public class DatasetEditorModelCell
             setModified(!originalUserValue.equals(value));
         }
 
-        originalUserValues.set(this, value);
+        originalUserValues.set(this, value == null ? NULL : value);
     }
 
     public String getTemporaryUserValue() {
