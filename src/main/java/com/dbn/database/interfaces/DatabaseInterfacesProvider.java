@@ -14,6 +14,9 @@ public interface DatabaseInterfacesProvider {
         return getInterfaces().getDebuggerInterface();
     }
 
+    default DatabaseOracleAIInterface getOracleAIInterface() {
+        return getInterfaces().getOracleAIInterface();
+    }
     default DatabaseMessageParserInterface getMessageParserInterface() {
         return getInterfaces().getMessageParserInterface();
     }
