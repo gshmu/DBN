@@ -4,10 +4,7 @@ import com.dbn.common.dispose.Disposed;
 import com.dbn.common.dispose.StatefulDisposableBase;
 import com.dbn.common.index.IdentifiableMap;
 import com.dbn.common.util.CollectionUtil;
-import com.dbn.connection.ConnectionHandler;
-import com.dbn.connection.ConnectionRef;
-import com.dbn.connection.ConnectionType;
-import com.dbn.connection.SessionId;
+import com.dbn.connection.*;
 import com.dbn.database.DatabaseFeature;
 import com.intellij.openapi.Disposable;
 import lombok.Getter;
@@ -29,6 +26,7 @@ public class DatabaseSessionBundle extends StatefulDisposableBase implements Dis
     private final DatabaseSession mainSession;
     private DatabaseSession debugSession;
     private DatabaseSession debuggerSession;
+    private DatabaseSession oracleAISession;
     private DatabaseSession poolSession;
 
     private List<DatabaseSession> sessions = CollectionUtil.createConcurrentList();
@@ -52,6 +50,10 @@ public class DatabaseSessionBundle extends StatefulDisposableBase implements Dis
             poolSession = new DatabaseSession(SessionId.POOL, "Pool", ConnectionType.POOL, connection);
             sessions.add(poolSession);
             rebuildIndex();
+        }
+
+        if (connection.getDatabaseType()== DatabaseType.ORACLE){
+            oracleAISession = new DatabaseSession(SessionId.ORACLE_AI, "OracleAI", ConnectionType.ORACLE_AI, connection);
         }
     }
 
@@ -78,6 +80,9 @@ public class DatabaseSessionBundle extends StatefulDisposableBase implements Dis
     public DatabaseSession getMainSession() {
         return nn(mainSession);
     }
+
+    @NotNull
+    public DatabaseSession getOracleAISession(){ return nn(oracleAISession);};
 
     @Nullable
     public DatabaseSession getSession(String name) {

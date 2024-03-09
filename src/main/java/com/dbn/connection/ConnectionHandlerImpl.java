@@ -462,6 +462,12 @@ public class ConnectionHandlerImpl extends StatefulDisposableBase implements Con
         return getConnectionPool().ensureDebuggerConnection();
     }
 
+    @NotNull
+    public DBNConnection getOracleAIConnection() throws SQLException {
+        assertCanConnect();
+        return getConnectionPool().ensureOracleAIConnection();
+    }
+
     @Override
     @NotNull
     public DBNConnection getPoolConnection(boolean readonly) throws SQLException {
@@ -497,6 +503,7 @@ public class ConnectionHandlerImpl extends StatefulDisposableBase implements Con
     @NotNull
     public DBNConnection getConnection(@NotNull SessionId sessionId) throws SQLException {
         if (sessionId == SessionId.MAIN) return getMainConnection();
+        if (sessionId == SessionId.ORACLE_AI) return getOracleAIConnection();
         if (sessionId == SessionId.POOL) return getPoolConnection(false);
         return getConnectionPool().ensureSessionConnection(sessionId);
     }
