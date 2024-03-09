@@ -1,0 +1,94 @@
+<!DOCTYPE data-dictionary [
+        <!ELEMENT data-dictionary (statement-execution-processor)*>
+        <!ELEMENT statement-execution-processor (statement)*>
+        <!ATTLIST statement-execution-processor
+                id CDATA #REQUIRED
+                timeout CDATA #IMPLIED>
+        <!ELEMENT statement (#PCDATA)>
+        ]>
+<data-dictionary>
+    <statement-execution-processor id="setup-credential" timeout="20">
+        <statement>
+
+            DECLARE
+            v_credential_count NUMBER;
+            BEGIN
+            SELECT COUNT(*)
+            INTO v_credential_count
+            FROM ALL_CREDENTIALS
+            WHERE CREDENTIAL_NAME = '{0}';
+
+            IF v_credential_count = 0 THEN
+            DBMS_CLOUD.CREATE_CREDENTIAL(
+            '{0}',
+            '{1}',
+            '{2}'
+            );
+            END IF;
+            END;
+
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="setup-profile" timeout="20">
+        <statement>
+            BEGIN
+            DBMS_CLOUD_AI.drop_profile(profile_name => '{0}');
+            DBMS_CLOUD_AI.create_profile(
+            profile_name => '{0}',
+            attributes => '{1}',
+            "credential_name": "{2}",
+            "object_list": {3}
+            );
+            END;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="pick-profile" timeout="20">
+        <statement>
+            BEGIN
+            DBMS_CLOUD_AI.SET_PROFILE(
+            profile_name => '{0}'
+            );
+            END;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="list-credentials" timeout="10">
+        <statement>
+            declare
+                credential_names VARCHAR2(4000);
+            BEGIN
+                    SELECT LISTAGG(CREDENTIAL_NAME, ' ') WITHIN GROUP (ORDER BY CREDENTIAL_NAME)
+                    INTO credential_names
+                    FROM ALL_CREDENTIALS;
+                    ? := credential_names;
+            END;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="list-profiles" timeout="10">
+        <statement>
+            declare
+                profile_names VARCHAR2(4000);
+            begin
+                SELECT LISTAGG(PROFILE_NAME, ' ') WITHIN GROUP ( ORDER BY PROFILE_NAME )
+                INTO profile_names
+                FROM DBA_CLOUD_AI_PROFILES;
+                ? := profile_names;
+            end;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="ai-query" timeout="20">
+        <statement>
+            declare
+                query_output VARCHAR2(4000);
+            begin
+                SELECT DBMS_CLOUD_AI.GENERATE(prompt
+                => '{1}', profile_name => 'ayoubon',
+                action
+                => '{0}')
+                INTO query_output
+                FROM dual;
+                ? := query_output;
+            end;
+        </statement>
+    </statement-execution-processor>
+
+</data-dictionary>
