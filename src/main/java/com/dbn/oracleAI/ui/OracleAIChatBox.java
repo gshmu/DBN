@@ -2,6 +2,7 @@ package com.dbn.oracleAI.ui;
 
 import com.dbn.common.ui.listener.KeyAdapter;
 import com.dbn.execution.ExecutionManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.components.JBScrollPane;
@@ -55,8 +56,12 @@ public class OracleAIChatBox extends JPanel {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER && !e.isShiftDown()) {
           e.consume();
-          String output = queryOracleAI(inputTextArea.getText(), Objects.requireNonNull(optionsComboBox.getSelectedItem()).toString());
-          setDisplayTextArea(output);
+          ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            String output = queryOracleAI(inputTextArea.getText(), Objects.requireNonNull(optionsComboBox.getSelectedItem()).toString());
+            ApplicationManager.getApplication().invokeLater(() -> {
+              setDisplayTextArea(output);
+            });
+          });
         }
       }
     });

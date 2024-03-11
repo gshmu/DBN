@@ -10,6 +10,7 @@
   import com.dbn.connection.SessionId;
   import com.dbn.connection.jdbc.DBNConnection;
   import com.dbn.oracleAI.ui.OracleAIChatBox;
+  import com.intellij.openapi.application.ApplicationManager;
   import com.intellij.openapi.components.State;
   import com.intellij.openapi.components.Storage;
   import com.intellij.openapi.project.Project;
@@ -117,7 +118,9 @@
     }
 
     public void connectAI(ConnectionHandler connection){
-      initOracleAIWindow();
+      ApplicationManager.getApplication().invokeLater(() -> {
+        initOracleAIWindow();
+      });
       currConnection = connection;
       try {
         DBNConnection oracleAIConnection = connection.getConnection(SessionId.ORACLE_AI);
@@ -125,25 +128,6 @@
       } catch (SQLException e){
         System.out.println(e.getMessage());
       }
-//      ApplicationManager.getApplication().executeOnPooledThread(() -> {
-//        try {
-//          ContentFactory contentFactory = ContentFactory.getInstance();
-//          // I need to put this the toolwindow factory
-//          Content content = contentFactory.createContent(new OracleAIChatBox(), "", false);
-//          ApplicationManager.getApplication().invokeLater(() -> {
-//            toolWindow.getContentManager().addContent(content);
-//          });
-//
-//        } catch(SQLException e){
-//          System.out.println(e.getMessage());
-//        }
-
-//        ApplicationManager.getApplication().invokeLater(() -> {
-//          if (toolWindow != null) {
-//            toolWindow.hide(null);
-//          }
-//        });
-//      });
     }
 
     //yoooooooooooooooooooooo
