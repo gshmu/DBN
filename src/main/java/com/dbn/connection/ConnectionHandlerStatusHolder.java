@@ -68,7 +68,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
             try {
                 boolean valid = get();
                 ConnectionPool connectionPool = connection.getConnectionPool();
-                ApplicationManager.getApplication().invokeLater(() -> {
+                ApplicationManager.getApplication().executeOnPooledThread(() -> {
                     DatabaseOracleAIManager oracleAIManager = DatabaseOracleAIManager.getInstance(connectionPool.getProject(), null);
                     oracleAIManager.connectAI(connection);
                 });
