@@ -1,5 +1,8 @@
 package com.dbn.oracleAI.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ProviderType {
 
   COHERE("cohere"),
@@ -10,10 +13,6 @@ public enum ProviderType {
 
   ProviderType(String action) {
     this.action = action;
-  }
-
-  public String getAction() {
-    return action;
   }
 
 }

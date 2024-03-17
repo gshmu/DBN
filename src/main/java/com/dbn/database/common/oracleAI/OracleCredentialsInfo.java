@@ -3,6 +3,7 @@ package com.dbn.database.common.oracleAI;
 
 import com.dbn.database.common.statement.CallableStatementOutput;
 import com.dbn.oracleAI.config.CredentialProvider;
+import lombok.Getter;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
@@ -12,13 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@Getter
 public class OracleCredentialsInfo implements CallableStatementOutput {
   private List<CredentialProvider> credentials;
 
-
-  public List<CredentialProvider> getCredentials() {
-    return credentials;
-  }
 
   @Override
   public void registerParameters(CallableStatement statement) throws SQLException {
