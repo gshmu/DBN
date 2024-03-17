@@ -1,119 +1,146 @@
 package com.dbn.oracleAI.ui;
 
-import com.dbn.common.ui.listener.KeyAdapter;
-import com.dbn.execution.ExecutionManager;
+import com.dbn.oracleAI.DatabaseOracleAIManager;
+import com.dbn.oracleAI.enums.ActionAIType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
 import java.util.Objects;
-
-import static com.dbn.oracleAI.DatabaseOracleAIManager.currConnection;
-import static com.dbn.oracleAI.DatabaseOracleAIManager.queryOracleAI;
+import javax.swing.text.DefaultEditorKit;
 
 public class OracleAIChatBox extends JPanel {
+  private static final Dimension SCROLL_PANE_DIMENSION = new Dimension(400, 200);
+  private static final Insets TEXT_AREA_INSETS = JBUI.insets(10);
+  private static final Insets PANEL_INSETS = JBUI.insets(10, 20);
+
   private final JComboBox<String> optionsComboBox;
   private final JTextArea inputTextArea;
   private final JTextArea displayTextArea;
+  private final JLabel titleLabel;
+  public DatabaseOracleAIManager currManager;
 
-  public OracleAIChatBox(Project project) {
-
-//    ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener());
-
+  public OracleAIChatBox() {
     setLayout(new BorderLayout());
-
+    titleLabel = new JLabel();
     optionsComboBox = new ComboBox<>(new String[]{"narrate", "showsql"});
-    JPanel comboBoxPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    comboBoxPanel.add(optionsComboBox);
-    add(comboBoxPanel, BorderLayout.NORTH);
+    inputTextArea = createTextArea(true);
+    displayTextArea = createTextArea(false);
+    initializeUI();
+  }
 
+  private void initializeUI() {
+    add(createComboBoxPanel(), BorderLayout.NORTH);
+    add(createTextFieldsPanel(), BorderLayout.CENTER);
+  }
+
+  private JPanel createComboBoxPanel() {
+    JPanel comboBoxPanel = new JPanel(new BorderLayout());
+    comboBoxPanel.add(titleLabel, BorderLayout.WEST);
+
+    JPanel comboHolderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    comboHolderPanel.add(optionsComboBox);
+    comboBoxPanel.add(comboHolderPanel, BorderLayout.EAST);
+    comboBoxPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+    return comboBoxPanel;
+  }
+
+  private JPanel createTextFieldsPanel() {
     JPanel textFieldsPanel = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
 
     gbc.fill = GridBagConstraints.BOTH;
     gbc.weightx = 1.0;
     gbc.weighty = 0.5;
-    gbc.insets = JBUI.insets(10, 20);
+    gbc.insets = PANEL_INSETS;
 
-    inputTextArea = new JTextArea();
-    inputTextArea.setLineWrap(true);
-    inputTextArea.setWrapStyleWord(true);
-    inputTextArea.setMargin(JBUI.insets(10));
     JScrollPane inputTextScrollPane = new JBScrollPane(inputTextArea);
-    inputTextScrollPane.setPreferredSize(new Dimension(400, 200));
+    inputTextScrollPane.setPreferredSize(SCROLL_PANE_DIMENSION);
     gbc.gridx = 0;
     gbc.gridy = 0;
     textFieldsPanel.add(inputTextScrollPane, gbc);
 
-    inputTextArea.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER && !e.isShiftDown()) {
-          e.consume();
-          ApplicationManager.getApplication().executeOnPooledThread(() -> {
-            String output = queryOracleAI(inputTextArea.getText(), Objects.requireNonNull(optionsComboBox.getSelectedItem()).toString());
-            ApplicationManager.getApplication().invokeLater(() -> {
-              setDisplayTextArea(output);
-            });
-          });
-        }
-      }
-    });
-
-    displayTextArea = new JTextArea();
-    displayTextArea.setLineWrap(true);
-    displayTextArea.setWrapStyleWord(true);
-    displayTextArea.setEditable(false);
-    displayTextArea.setMargin(JBUI.insets(10));
     JScrollPane displayTextScrollPane = new JBScrollPane(displayTextArea);
-    displayTextScrollPane.setPreferredSize(new Dimension(400, 200));
-    gbc.gridx = 0;
+    displayTextScrollPane.setPreferredSize(SCROLL_PANE_DIMENSION);
     gbc.gridy = 1;
     textFieldsPanel.add(displayTextScrollPane, gbc);
 
-    add(textFieldsPanel, BorderLayout.CENTER);
+    setupEnterAction();
+
+    return textFieldsPanel;
   }
+
+  private JTextArea createTextArea(boolean editable) {
+    JTextArea textArea = new JTextArea();
+    textArea.setEditable(editable);
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
+    textArea.setMargin(TEXT_AREA_INSETS);
+    return textArea;
+  }
+
+  private void setupEnterAction() {
+    InputMap inputMap = inputTextArea.getInputMap(JComponent.WHEN_FOCUSED);
+    ActionMap actionMap = inputTextArea.getActionMap();
+
+    inputMap.put(KeyStroke.getKeyStroke("ENTER"), "submit");
+    inputMap.put(KeyStroke.getKeyStroke("shift ENTER"), "insert-break");
+    actionMap.put("submit", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        submitText();
+      }
+    });
+    actionMap.put("insert-break", new DefaultEditorKit.InsertBreakAction());
+  }
+
+  private void submitText() {
+    String selectedAction = (String) optionsComboBox.getSelectedItem();
+    ActionAIType actionType;
+    try {
+      actionType = ActionAIType.getByAction(Objects.requireNonNull(selectedAction));
+    } catch (IllegalArgumentException ex) {
+      JOptionPane.showMessageDialog(this, "Invalid action selected.", "Error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    ApplicationManager.getApplication().executeOnPooledThread(() ->
+        processQuery(actionType));
+  }
+
+  private void processQuery(ActionAIType actionType) {
+    String output = currManager.queryOracleAI(inputTextArea.getText(), actionType);
+    ApplicationManager.getApplication().invokeLater(() -> setDisplayTextArea(output));
+  }
+
 
   public void setDisplayTextArea(String s) {
     displayTextArea.setText(s);
   }
 
-//  @NotNull
-//  private EnvironmentManagerListener environmentManagerListener() {
-//    return new EnvironmentManagerListener() {
-//      @Override
-//      public void configurationChanged(Project project) {
-//        EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
-//        TabbedPane resultTabs = getResultTabs();
-//        for (TabInfo tabInfo : resultTabs.getTabs()) {
-//          updateTab(visibilitySettings, tabInfo);
-//        }
-//      }
-//
-//      private void updateTab(EnvironmentVisibilitySettings visibilitySettings, TabInfo tabInfo) {
-//        ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
-//        if (executionResult != null) {
-//          ConnectionHandler connection = executionResult.getConnection();
-//          EnvironmentType environmentType = connection.getEnvironmentType();
-//          if (visibilitySettings.getExecutionResultTabs().value()) {
-//            tabInfo.setTabColor(environmentType.getColor());
-//          } else {
-//            tabInfo.setTabColor(null);
-//          }
-//        }
-//      }
-//    };
-//  }
+  public void updateForConnection(String connection) {
+    titleLabel.setText(connection);
+    inputTextArea.setText("");
+    displayTextArea.setText("");
 
-  @NotNull
-  public ExecutionManager getExecutionManager() {
-    Project project = currConnection.getProject();
-    return ExecutionManager.getInstance(project);
+  }
+  public OracleAIChatBoxState captureState(String connection) {
+    OracleAIChatBoxState state = new OracleAIChatBoxState(connection);
+    state.setSelectedOption((String) optionsComboBox.getSelectedItem());
+    state.setInputText(inputTextArea.getText());
+    state.setDisplayText(displayTextArea.getText());
+    return state;
+  }
+
+  public void restoreState(OracleAIChatBoxState state) {
+    if (state == null) return;
+    titleLabel.setText(state.getCurrConnection());
+    optionsComboBox.setSelectedItem(state.getSelectedOption());
+    inputTextArea.setText(state.getInputText());
+    displayTextArea.setText(state.getDisplayText());
   }
 }
