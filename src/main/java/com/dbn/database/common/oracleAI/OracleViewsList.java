@@ -1,22 +1,16 @@
 package com.dbn.database.common.oracleAI;
 
-
 import com.dbn.database.common.statement.CallableStatementOutput;
-import com.dbn.oracleAI.config.CredentialProvider;
 import lombok.Getter;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Getter
-public class OracleCredentialsInfo implements CallableStatementOutput {
-  private List<CredentialProvider> credentials;
+public class OracleViewsList implements CallableStatementOutput{
 
+  private String[] views;
 
   @Override
   public void registerParameters(CallableStatement statement) throws SQLException {
@@ -25,6 +19,6 @@ public class OracleCredentialsInfo implements CallableStatementOutput {
 
   @Override
   public void read(CallableStatement statement) throws SQLException {
-    credentials = Arrays.stream(statement.getString(1).split(" ")).map(CredentialProvider::new).collect(Collectors.toList());
+    views = statement.getString(1).split(" ");
   }
 }
