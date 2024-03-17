@@ -1,5 +1,8 @@
 package com.dbn.oracleAI.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ActionAIType {
   SHOWSQL("showsql"),
   NARRATE("narrate"),
@@ -9,10 +12,6 @@ public enum ActionAIType {
 
   ActionAIType(String action) {
     this.action = action;
-  }
-
-  public String getAction() {
-    return action;
   }
 
   public static ActionAIType getByAction(String action) {
