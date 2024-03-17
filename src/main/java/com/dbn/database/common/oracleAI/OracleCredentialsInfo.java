@@ -2,28 +2,31 @@ package com.dbn.database.common.oracleAI;
 
 
 import com.dbn.database.common.statement.CallableStatementOutput;
+import com.dbn.oracleAI.config.CredentialProvider;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class OracleCredentialsInfo implements CallableStatementOutput {
-  private String[] credentials;
+  private List<CredentialProvider> credentials;
 
 
-  public String[] getCredentials() {
+  public List<CredentialProvider> getCredentials() {
     return credentials;
   }
 
   @Override
   public void registerParameters(CallableStatement statement) throws SQLException {
-    System.out.println(statement.getParameterMetaData().getParameterCount());
     statement.registerOutParameter(1, Types.VARCHAR);
   }
 
   @Override
   public void read(CallableStatement statement) throws SQLException {
-    credentials = statement.getString(1).split(" ");
+    credentials = Arrays.stream(statement.getString(1).split(" ")).map(CredentialProvider::new).collect(Collectors.toList());
   }
 }

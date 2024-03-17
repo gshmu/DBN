@@ -2,50 +2,122 @@ package com.dbn.database.oracle;
 
 import com.dbn.connection.jdbc.DBNConnection;
 import com.dbn.database.common.DatabaseInterfaceBase;
-import com.dbn.database.common.oracleAI.OracleCredentialsInfo;
-import com.dbn.database.common.oracleAI.OracleProfilesInfo;
-import com.dbn.database.common.oracleAI.OracleQueryOutput;
+import com.dbn.database.common.oracleAI.*;
 import com.dbn.database.interfaces.DatabaseInterfaces;
 import com.dbn.database.interfaces.DatabaseOracleAIInterface;
+import com.dbn.oracleAI.config.exceptions.CredentialManagementException;
+import com.dbn.oracleAI.config.exceptions.DatabaseOperationException;
+import com.dbn.oracleAI.config.exceptions.ProfileManagementException;
+import com.dbn.oracleAI.config.exceptions.QueryExecutionException;
+import com.dbn.oracleAI.config.CredentialProvider;
+import com.dbn.oracleAI.config.Profile;
+import com.dbn.oracleAI.enums.ActionAIType;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class OracleAIInterface extends DatabaseInterfaceBase implements DatabaseOracleAIInterface {
+
   public OracleAIInterface(DatabaseInterfaces provider) {
     super("oracle_ai_interface.xml", provider);
   }
 
-
   @Override
-  public void setupCredential(DBNConnection connection, String credentialName, String apiName, String apiKey) throws SQLException {
-    executeCall(connection, null, "setup-credential", credentialName, apiName, apiKey);
-
+  public void createCredential(DBNConnection connection, CredentialProvider credentialAttributes) throws CredentialManagementException {
+    try {
+      executeCall(connection, null, "create-credential",credentialAttributes.getCredentialName(), credentialAttributes.format());
+    } catch (SQLException e) {
+      throw new CredentialManagementException("Failed to create credential: " + credentialAttributes.getCredentialName(), e);
+    }
   }
 
   @Override
-  public void setupProfile(DBNConnection connection, String profileName, String provider, String credentialName) throws SQLException {
-    executeCall(connection, null, "setup-profile", profileName, profileName, credentialName);
+  public void dropCredential(DBNConnection connection, String credentialName) throws CredentialManagementException {
+    try {
+      executeCall(connection, null, "drop-credential", credentialName);
+    } catch (SQLException e) {
+      throw new CredentialManagementException("Failed to drop credential: " + credentialName, e);
+    }
   }
 
   @Override
-  public OracleCredentialsInfo listCredentials(DBNConnection connection) throws SQLException {
-    return executeCall(connection, new OracleCredentialsInfo(), "list-credentials");
+  public void setCredentialAttribute(DBNConnection connection, String credentialName, String attributeName, String attributeValue) throws CredentialManagementException {
+    try {
+      executeCall(connection, null, "update-credential", credentialName, attributeName, attributeValue);
+    } catch (SQLException e) {
+      throw new CredentialManagementException("Failed to set credential attribute: " + credentialName, e);
+    }
   }
 
   @Override
-  public OracleProfilesInfo listProfiles(DBNConnection connection) throws SQLException {
-    return executeCall(connection, new OracleProfilesInfo(), "list-profiles");
-  }
-
-
-  @Override
-  public void pickProfile(DBNConnection connection, String profileName) throws SQLException {
-    executeCall(connection, null, "pick-profile", profileName);
+  public void createProfile(DBNConnection connection, Profile profileAttributes) throws ProfileManagementException {
+    try {
+      executeCall(connection, null, "create-profile",profileAttributes.getProfileName(), profileAttributes.format());
+    } catch (SQLException e) {
+      throw new ProfileManagementException("Failed to create profile: " + profileAttributes.getProfileName(), e);
+    }
   }
 
   @Override
-  public OracleQueryOutput queryProfile(DBNConnection connection, String type, String text) throws SQLException {
-    return executeCall(connection, new OracleQueryOutput(), "ai-query", type, text);
+  public void dropProfile(DBNConnection connection, String profileName) throws ProfileManagementException {
+    try {
+      executeCall(connection, null, "drop-profile", profileName);
+    } catch (SQLException e) {
+      throw new ProfileManagementException("Failed to drop profile: " + profileName, e);
+    }
   }
 
+  @Override
+  public void setProfileAttribute(DBNConnection connection, String profileName, String attributeName, String attributeValue) throws ProfileManagementException {
+    try {
+      executeCall(connection, null, "update-profile", profileName, attributeName, attributeValue);
+    } catch (SQLException e) {
+      throw new ProfileManagementException("Failed to set profile attribute: " + profileName, e);
+    }
+  }
+
+  @Override
+  public OracleQueryOutput executeQuery(DBNConnection connection, ActionAIType action, String profile, String text) throws QueryExecutionException {
+    try {
+      return executeCall(connection, new OracleQueryOutput(), "ai-query", profile, action, text);
+    } catch (SQLException e) {
+      throw new QueryExecutionException(e.getMessage(), e.getErrorCode(), e);
+    }
+  }
+
+  @Override
+  public OracleTablesList listTables(DBNConnection connection) throws DatabaseOperationException {
+    try {
+      return executeCall(connection, new OracleTablesList(), "list-tables");
+    } catch (SQLException e) {
+      throw new DatabaseOperationException("Failed to list tables", e.getErrorCode(), e);
+    }
+  }
+
+  @Override
+  public OracleViewsList listViews(DBNConnection connection) throws DatabaseOperationException {
+    try {
+      return executeCall(connection, new OracleViewsList(), "list-views");
+    } catch (SQLException e) {
+      throw new DatabaseOperationException("Failed to list views", e.getErrorCode(), e);
+    }
+  }
+
+  @Override
+  public List<CredentialProvider> listCredentials(DBNConnection connection) throws DatabaseOperationException {
+    try {
+      return executeCall(connection, new OracleCredentialsInfo(), "list-credentials").getCredentials();
+    } catch (SQLException e) {
+      throw new DatabaseOperationException("Failed to list credentials", e.getErrorCode(), e);
+    }
+  }
+
+  @Override
+  public List<Profile> listProfiles(DBNConnection connection) throws DatabaseOperationException {
+    try {
+      return executeCall(connection, new OracleProfilesInfo(), "list-profiles").getProfiles();
+    } catch (SQLException e) {
+      throw new DatabaseOperationException("Failed to list profiles", e.getErrorCode(), e);
+    }
+  }
 }
