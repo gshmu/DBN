@@ -1,6 +1,5 @@
 package com.dbn.oracleAI.config;
 
-import com.dbn.oracleAI.config.exceptions.ProfileManagementException;
 import com.dbn.oracleAI.enums.ProviderType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
 @Getter
