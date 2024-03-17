@@ -9,7 +9,6 @@
 <data-dictionary>
     <statement-execution-processor id="setup-credential" timeout="20">
         <statement>
-
             DECLARE
             v_credential_count NUMBER;
             BEGIN
@@ -20,25 +19,27 @@
 
             IF v_credential_count = 0 THEN
             DBMS_CLOUD.CREATE_CREDENTIAL(
-            '{0}',
-            '{1}',
-            '{2}'
+            '{1}'
             );
             END IF;
             END;
-
         </statement>
     </statement-execution-processor>
-    <statement-execution-processor id="setup-profile" timeout="20">
+    <statement-execution-processor id="create-profile" timeout="20">
         <statement>
+            DECLARE
+            v_profile_count NUMBER;
             BEGIN
-            DBMS_CLOUD_AI.drop_profile(profile_name => '{0}');
-            DBMS_CLOUD_AI.create_profile(
-            profile_name => '{0}',
-            attributes => '{1}',
-            "credential_name": "{2}",
-            "object_list": {3}
+            SELECT COUNT(*)
+            INTO v_profile_count
+            FROM DBA_CLOUD_AI_PROFILES
+            WHERE PROFILE_NAME = '{0}';
+
+            IF v_profile_count = 0 THEN
+            DBMS_CLOUD_AI.CREATE_PROFILE(
+            '{1}'
             );
+            END IF;
             END;
         </statement>
     </statement-execution-processor>
@@ -54,40 +55,100 @@
     <statement-execution-processor id="list-credentials" timeout="10">
         <statement>
             declare
-                credential_names VARCHAR2(4000);
+            credential_names VARCHAR2(4000);
             BEGIN
-                    SELECT LISTAGG(CREDENTIAL_NAME, ' ') WITHIN GROUP (ORDER BY CREDENTIAL_NAME)
-                    INTO credential_names
-                    FROM ALL_CREDENTIALS;
-                    ? := credential_names;
+            SELECT LISTAGG(CREDENTIAL_NAME, ' ') WITHIN GROUP (ORDER BY CREDENTIAL_NAME)
+            INTO credential_names
+            FROM ALL_CREDENTIALS;
+            ? := credential_names;
             END;
         </statement>
     </statement-execution-processor>
     <statement-execution-processor id="list-profiles" timeout="10">
         <statement>
             declare
-                profile_names VARCHAR2(4000);
+            profile_names VARCHAR2(4000);
             begin
-                SELECT LISTAGG(PROFILE_NAME, ' ') WITHIN GROUP ( ORDER BY PROFILE_NAME )
-                INTO profile_names
-                FROM DBA_CLOUD_AI_PROFILES;
-                ? := profile_names;
+            SELECT LISTAGG(PROFILE_NAME, ' ') WITHIN GROUP ( ORDER BY PROFILE_NAME )
+            INTO profile_names
+            FROM DBA_CLOUD_AI_PROFILES;
+            ? := profile_names;
             end;
         </statement>
     </statement-execution-processor>
     <statement-execution-processor id="ai-query" timeout="20">
         <statement>
             declare
-                query_output VARCHAR2(4000);
+            query_output VARCHAR2(4000);
             begin
-                SELECT DBMS_CLOUD_AI.GENERATE(prompt
-                => '{1}', profile_name => 'ayoubon',
-                action
-                => '{0}')
-                INTO query_output
-                FROM dual;
-                ? := query_output;
+            SELECT DBMS_CLOUD_AI.GENERATE(prompt
+            => '{2}', profile_name => '{0}',
+            action
+            => '{1}')
+            INTO query_output
+            FROM dual;
+            ? := query_output;
             end;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="list-tables" timeout="20">
+        <statement>
+            declare
+            tables VARCHAR2(4000);
+            begin
+            SELECT LISTAGG(TABLE_NAME, ' ') WITHIN GROUP ( ORDER BY TABLE_NAME )
+            INTO tables
+            FROM all_tables;
+            ? := tables;
+            end;
+            /
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="list-views" timeout="20">
+        <statement>
+            declare
+            views VARCHAR2(4000);
+            begin
+            SELECT LISTAGG(VIEW_NAME, ' ') WITHIN GROUP ( ORDER BY VIEW_NAME )
+            INTO views
+            FROM all_views;
+            ? := views;
+            end;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="drop-profile" timeout="20">
+        <statement>
+            BEGIN
+            DBMS_CLOUD_AI.DROP_PROFILE(profile_name => '{0}');
+            END;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="drop-credential" timeout="20">
+        <statement>
+            BEGIN
+            DBMS_CLOUD.DROP_CREDENTIAL(credential_name => '{0}');
+            END;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="update-profile" timeout="20">
+        <statement>
+            BEGIN
+            DBMS_CLOUD_AI.SET_ATTRIBUTE(
+            profile_name    => '{0}',
+            attribute_name  => '{1}',
+            attribute_value => '{2}'
+            );
+            END;
+        </statement>
+    </statement-execution-processor>
+    <statement-execution-processor id="update-credential" timeout="20">
+        <statement>
+            BEGIN
+            DBMS_CLOUD.UPDATE_CREDENTIAL(
+            credential_name => '{0}',
+            attribute => '{1}}',
+            value => '{2}}');
+            END;
         </statement>
     </statement-execution-processor>
 
