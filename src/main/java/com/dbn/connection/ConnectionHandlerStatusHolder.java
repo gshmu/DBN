@@ -8,8 +8,6 @@ import com.dbn.common.util.TimeUtil;
 import com.dbn.connection.jdbc.DBNConnection;
 import com.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dbn.connection.jdbc.LatentResourceStatus;
-import com.dbn.oracleAI.DatabaseOracleAIManager;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -68,10 +66,6 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderBase.IntStore<C
             try {
                 boolean valid = get();
                 ConnectionPool connectionPool = connection.getConnectionPool();
-                ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                    DatabaseOracleAIManager oracleAIManager = DatabaseOracleAIManager.getInstance(connectionPool.getProject(), null);
-                    oracleAIManager.connectAI(connection);
-                });
                 if (isConnected() || !valid || connectionPool.wasNeverAccessed()) {
                     poolConnection = connectionPool.allocateConnection(true);
                 }
