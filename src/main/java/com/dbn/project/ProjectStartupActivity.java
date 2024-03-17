@@ -2,6 +2,7 @@ package com.dbn.project;
 
 import com.dbn.connection.config.ConnectionBundleSettings;
 import com.dbn.debugger.ExecutionConfigManager;
+import com.dbn.oracleAI.DatabaseOracleAIManager;
 import com.dbn.plugin.PluginConflictManager;
 import com.dbn.plugin.PluginStatusManager;
 import com.dbn.vfs.DatabaseFileManager;
@@ -14,7 +15,7 @@ public class ProjectStartupActivity implements StartupActivity {
     public void runActivity(@NotNull Project project) {
         // make sure dbn connections are loaded
         ConnectionBundleSettings.getInstance(project);
-
+        project.getService(DatabaseOracleAIManager.class);
         evaluatePluginStatus(project);
         assesPluginConflict(project);
         removeRunConfigurations(project);
