@@ -18,6 +18,7 @@ import com.dbn.connection.ConnectionManager;
 import com.dbn.connection.ConnectivityStatus;
 import com.dbn.connection.DatabaseType;
 import com.dbn.connection.config.*;
+import com.dbn.connection.config.AIProfileSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
@@ -89,11 +90,35 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         filtersTabInfo.setText("Filters");
         tabbedPane.addTab(filtersTabInfo);
 
+        if (databaseSettings.getDatabaseType() == DatabaseType.ORACLE) {
+
+            AICloudSettings aiCloudSettings = connectionSettings.getAiCloudSettings();
+            AIProfileSettings aiProfileSettings = connectionSettings.getOracleAISettings();
+            AICredentialSettings aiCredentialSettings = connectionSettings.getProviderCredentialSettings();
+            TabbedPane AItabbedPane = new TabbedPane(this);
+
+            TabInfo AICloud = new TabInfo(new JBScrollPane(aiCloudSettings.createComponent()));
+            AICloud.setText("Cloud AI");
+            AItabbedPane.addTab(AICloud);
+
+            TabInfo AICredential = new TabInfo(new JBScrollPane(aiCredentialSettings.createComponent()));
+            AICredential.setText("Credentials");
+            AItabbedPane.addTab(AICredential);
+
+            TabInfo AIProfile = new TabInfo(new JBScrollPane(aiProfileSettings.createComponent()));
+            AIProfile.setText("Profiles");
+            AItabbedPane.addTab(AIProfile);
+
+            TabInfo aiTabInfo = new TabInfo(AItabbedPane);
+            aiTabInfo.setText("Oracle Companion");
+            tabbedPane.addTab(aiTabInfo);
+        }
+
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
         Icon icon = connectionSettings.isNew() ? Icons.CONNECTION_NEW :
-                   !connectionSettings.isActive() ? Icons.CONNECTION_DISABLED :
-                   connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_CONNECTED :
-                   connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
+            !connectionSettings.isActive() ? Icons.CONNECTION_DISABLED :
+                connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_CONNECTED :
+                    connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
         String name = connectionSettings.getDatabaseSettings().getName();
         JBColor color = detailSettings.getEnvironmentType().getColor();
@@ -141,6 +166,9 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
             ConnectionFilterSettingsForm filterSettingsForm = configuration.getFilterSettings().getSettingsEditor();
             if (filterSettingsForm != null) filterSettingsForm.applyFormChanges(clone.getFilterSettings());
+
+            AIProfileSettingsForm aiSettingsForm = configuration.getOracleAISettings().getSettingsEditor();
+            if (aiSettingsForm != null) aiSettingsForm.applyFormChanges(clone.getOracleAISettings());
 
             return clone;
         } finally {
@@ -227,12 +255,15 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                 if (isNotValid(ConnectionSettingsForm.this)) return;
 
                 ConnectionSettings configuration = getConfiguration();
-                if (configuration.getConnectionId().equals(connectionId)) {
-                    if (name != null) headerForm.setTitle(name);
-                    if (icon != null) headerForm.setIcon(icon);
-                    if (color != null) headerForm.setBackground(color); else headerForm.setBackground(Colors.getPanelBackground());
-                    //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
-                }
+                if (!configuration.getConnectionId().equals(connectionId)) return;
+
+                DBNHeaderForm header = headerForm;
+                if (header == null) return;
+
+                if (name != null) header.setTitle(name);
+                if (icon != null) header.setIcon(icon);
+                if (color != null) header.setBackground(color); else header.setBackground(Colors.getPanelBackground());
+                //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
             });
         }
     };
@@ -256,8 +287,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged) {
                 ProjectEvents.notify(getProject(),
-                        ConnectionConfigListener.TOPIC,
-                        listener -> listener.connectionChanged(configuration.getConnectionId()));
+                    ConnectionConfigListener.TOPIC,
+                    listener -> listener.connectionChanged(configuration.getConnectionId()));
             }
         });
     }
