@@ -197,15 +197,15 @@ public class OracleAIChatBox extends JPanel {
 
   private void submitText() {
 //    String selectedAction = (String) secondaryOptionsComboBox.getSelectedItem();
-//    ActionAIType actionType;
-//    try {
+    ActionAIType actionType = ActionAIType.NARRATE;
+    try {
 //      actionType = ActionAIType.getByAction(selectedAction);
-//    } catch (IllegalArgumentException ex) {
-//      JOptionPane.showMessageDialog(this, "Invalid action selected.", "Error", JOptionPane.ERROR_MESSAGE);
-//      return;
-//    }
-//    ApplicationManager.getApplication().executeOnPooledThread(() ->
-//        processQuery(actionType));
+    } catch (IllegalArgumentException ex) {
+      JOptionPane.showMessageDialog(this, "Invalid action selected.", "Error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    ApplicationManager.getApplication().executeOnPooledThread(() ->
+        processQuery(actionType));
   }
 
   private void processQuery(ActionAIType actionType) {
