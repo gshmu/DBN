@@ -104,14 +104,12 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
       DBNConnection mainConnection = currConnection.getConnection(SessionId.ORACLE_AI);
       output = currConnection.getOracleAIInterface().executeQuery(mainConnection, action, "ayoubon", text).getQueryOutput();
       return output;
-    } catch (QueryExecutionException e){
-      output = ""+e.getErrorCode();
-      System.out.println(output);
-      return output;
     } catch (SQLException e) {
       output = e.getMessage();
       System.out.println(e);
       return output;
+    } catch (QueryExecutionException e) {
+      throw new RuntimeException(e);
     }
   }
 
