@@ -3,12 +3,13 @@ package com.dbn.connection.config;
 import com.dbn.common.options.BasicProjectConfiguration;
 import com.dbn.connection.ConnectionId;
 import com.dbn.connection.config.ui.AICloudSettingsForm;
-import com.dbn.connection.config.ui.AIProfileSettingsForm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import static com.dbn.common.options.setting.Settings.getString;
 import static com.dbn.common.options.setting.Settings.setString;
@@ -67,6 +68,6 @@ public class AICloudSettings extends BasicProjectConfiguration<ConnectionSetting
   }
 
   public ConnectionId getConnectionId() {
-    return getParent().getConnectionId();
+    return Objects.requireNonNull(getParent()).getConnectionId();
   }
 }

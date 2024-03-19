@@ -57,9 +57,7 @@ public class AIProfileSettingsForm extends ConfigurationEditorForm<com.dbn.conne
 
   @Override
   protected ActionListener createActionListener() {
-    return e -> {
-      System.out.println(apiCredentialNameField.getText());
-    };
+    return e -> System.out.println(apiCredentialNameField.getText());
   }
 
   @Override
