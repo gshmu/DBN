@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 import static com.dbn.common.options.setting.Settings.getString;
 import static com.dbn.common.options.setting.Settings.setString;
 
@@ -60,6 +62,6 @@ public class AICredentialSettings extends BasicProjectConfiguration<ConnectionSe
   }
 
   public ConnectionId getConnectionId() {
-    return getParent().getConnectionId();
+    return Objects.requireNonNull(getParent()).getConnectionId();
   }
 }
