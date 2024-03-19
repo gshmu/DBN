@@ -51,9 +51,7 @@ public class AICredentialSettingsForm extends ConfigurationEditorForm<AICredenti
 
   @Override
   protected ActionListener createActionListener() {
-    return e -> {
-      System.out.println(apiCredentialNameField.getText());
-    };
+    return e -> System.out.println(apiCredentialNameField.getText());
   }
 
   @Override

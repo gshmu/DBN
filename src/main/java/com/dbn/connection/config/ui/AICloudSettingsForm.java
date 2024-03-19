@@ -2,7 +2,6 @@ package com.dbn.connection.config.ui;
 
 import com.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dbn.connection.config.AICloudSettings;
-import com.dbn.connection.config.AIProfileSettings;
 import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
