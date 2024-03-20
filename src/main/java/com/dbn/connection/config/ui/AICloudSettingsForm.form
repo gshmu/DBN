@@ -67,16 +67,20 @@
         <constraints>
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <alignmentX value="0.5"/>
+          <alignmentY value="0.5"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="bf47" class="javax.swing.JTextArea" binding="aclTextArea">
             <constraints>
-              <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="2" hsize-policy="2" anchor="9" fill="0" indent="1" use-parent-layout="false">
+              <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="2" hsize-policy="2" anchor="9" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="50"/>
               </grid>
             </constraints>
             <properties>
+              <alignmentX value="0.5"/>
               <enabled value="false"/>
               <focusable value="true"/>
               <margin top="5" left="5" bottom="5" right="5"/>

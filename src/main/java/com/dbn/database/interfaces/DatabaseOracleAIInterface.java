@@ -10,9 +10,8 @@ import com.dbn.oracleAI.config.exceptions.CredentialManagementException;
 import com.dbn.oracleAI.config.exceptions.DatabaseOperationException;
 import com.dbn.oracleAI.config.exceptions.ProfileManagementException;
 import com.dbn.oracleAI.config.exceptions.QueryExecutionException;
-import com.dbn.oracleAI.enums.ActionAIType;
+import com.dbn.oracleAI.types.ActionAIType;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
