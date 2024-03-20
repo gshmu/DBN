@@ -71,7 +71,7 @@
             begin
             SELECT LISTAGG(PROFILE_NAME, ' ') WITHIN GROUP ( ORDER BY PROFILE_NAME )
             INTO profile_names
-            FROM DBA_CLOUD_AI_PROFILES;
+            FROM USER_CLOUD_AI_PROFILES;
             ? := profile_names;
             end;
         </statement>
