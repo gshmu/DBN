@@ -11,7 +11,7 @@ import com.dbn.oracleAI.config.CredentialProvider;
 import com.dbn.oracleAI.config.Profile;
 import com.dbn.oracleAI.config.exceptions.DatabaseOperationException;
 import com.dbn.oracleAI.config.exceptions.ProfileManagementException;
-import com.dbn.oracleAI.enums.ProviderType;
+import com.dbn.oracleAI.types.ProviderType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
