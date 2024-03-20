@@ -1,8 +1,10 @@
 package com.dbn.oracleAI.ui;
 
 import com.dbn.oracleAI.DatabaseOracleAIManager;
-import com.dbn.oracleAI.enums.ActionAIType;
+import com.dbn.oracleAI.types.ActionAIType;
+import com.github.weisj.jsvg.D;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
@@ -18,17 +20,19 @@ public class OracleAIChatBox extends JPanel {
   private static final Insets TEXT_AREA_INSETS = JBUI.insets(10);
   private static final Insets PANEL_INSETS = JBUI.insets(10, 20);
 
-  private final JComboBox<String> optionsComboBox;
+  private JComboBox<String> optionsComboBox;
   private final JTextArea inputTextArea;
+  private ComboBox comboBox;
   private final JTextPane displayTextPane;
   private JRadioButton showRequestButton, executeRequestButton;
   private JCheckBox explainSQLCheckbox, narrateCheckbox;
   public DatabaseOracleAIManager currManager;
   private JPanel actionPanel, secondaryOptionsPanel;
 
-  public OracleAIChatBox() {
+  public OracleAIChatBox(Project project) {
+    currManager = project.getService(DatabaseOracleAIManager.class);
     setLayout(new BorderLayout());
-    optionsComboBox = new ComboBox<>(new String[]{"profile_1", "profile_2"});
+    optionsComboBox = new ComboBox<>();
     inputTextArea = createTextArea();
     displayTextPane = createTextPane();
     initializeUI();
@@ -54,18 +58,27 @@ public class OracleAIChatBox extends JPanel {
   }
 
   private JPanel createCenterPanel() {
-    JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    centerPanel.add(optionsComboBox);
+    JPanel centerPanel = new JPanel(new BorderLayout());
+    JLabel comboBoxLabel = new JLabel("Profiles:");
+    comboBoxLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+    centerPanel.add(comboBoxLabel, BorderLayout.NORTH);
+    centerPanel.add(optionsComboBox, BorderLayout.CENTER);
     return centerPanel;
   }
 
+
+
   private JPanel createSliderPanel() {
     JSlider temperatureSlider = createTemperatureSlider();
-    JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    sliderPanel.add(new JLabel("Temperature: "));
-    sliderPanel.add(temperatureSlider);
+    JPanel sliderPanel = new JPanel(new BorderLayout());
+    JLabel sliderLabel = new JLabel("Temperature:");
+    sliderLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+    sliderPanel.add(sliderLabel, BorderLayout.NORTH);
+    sliderPanel.add(temperatureSlider, BorderLayout.CENTER);
     return sliderPanel;
   }
+
+
 
   private JSlider createTemperatureSlider() {
     JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
@@ -119,7 +132,6 @@ public class OracleAIChatBox extends JPanel {
     explainSQLCheckbox = new JCheckBox("Explain SQL");
     narrateCheckbox = new JCheckBox("Narrate");
 
-    // Initial states based on the default selected radio button (Show Request)
     explainSQLCheckbox.setEnabled(showRequestButton.isSelected());
     narrateCheckbox.setEnabled(!showRequestButton.isSelected());
 
@@ -134,7 +146,13 @@ public class OracleAIChatBox extends JPanel {
 
   private JPanel createTextFieldsPanel() {
     JPanel textFieldsPanel = new JPanel(new GridBagLayout());
-    textFieldsPanel.add(createScrollPane(inputTextArea, SCROLL_PANE_DIMENSION), createGbc(0, 0.5));
+    comboBox = new ComboBox<>();
+    comboBox.addItem("");
+    comboBox.addItem("lol");
+    comboBox.setPreferredSize(new Dimension(50, 50));
+    comboBox.setEditable(true);
+//    textFieldsPanel.add(createScrollPane(inputTextArea, SCROLL_PANE_DIMENSION), createGbc(0, 0.5));
+    textFieldsPanel.add(comboBox, createGbc2(0, 0.5));
     textFieldsPanel.add(createScrollPane(displayTextPane, SCROLL_PANE_DIMENSION), createGbc(1, 0.5));
     setupEnterAction();
     return textFieldsPanel;
@@ -152,6 +170,17 @@ public class OracleAIChatBox extends JPanel {
     gbc.weightx = 1.0;
     gbc.weighty = weight_y;
     gbc.insets = PANEL_INSETS;
+    gbc.gridx = 0;
+    gbc.gridy = grid_y;
+    return gbc;
+  }
+
+  private GridBagConstraints createGbc2(int grid_y, double weight_y) {
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+//    gbc.weightx = 1.0;
+//    gbc.weighty = weight_y;
+    gbc.insets = JBUI.insets(0, 20);
     gbc.gridx = 0;
     gbc.gridy = grid_y;
     return gbc;
@@ -179,37 +208,57 @@ public class OracleAIChatBox extends JPanel {
     }
   }
   private void setupEnterAction() {
-    InputMap inputMap = inputTextArea.getInputMap(JComponent.WHEN_FOCUSED);
-    ActionMap actionMap = inputTextArea.getActionMap();
+//    InputMap inputMap = inputTextArea.getInputMap(JComponent.WHEN_FOCUSED);
+//    ActionMap actionMap = inputTextArea.getActionMap();
 
-    inputMap.put(KeyStroke.getKeyStroke("ENTER"), "submit");
-    inputMap.put(KeyStroke.getKeyStroke("shift ENTER"), "insert-break");
-    actionMap.put("submit", new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        submitText();
-      }
-    });
-    actionMap.put("insert-break", new DefaultEditorKit.InsertBreakAction());
+    comboBox.setEditable(true);
+
+    Component editorComponent = comboBox.getEditor().getEditorComponent();
+
+    if (editorComponent instanceof JComponent) {
+      JComponent editor = (JComponent) editorComponent;
+
+      InputMap inputMap = editor.getInputMap(JComponent.WHEN_FOCUSED);
+      ActionMap actionMap = editor.getActionMap();
+
+      inputMap.put(KeyStroke.getKeyStroke("ENTER"), "submit");
+      inputMap.put(KeyStroke.getKeyStroke("shift ENTER"), "insert-break");
+
+      actionMap.put("submit", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          submitText();
+        }
+      });
+    }
+
 
   }
 
 
   private void submitText() {
-//    String selectedAction = (String) secondaryOptionsComboBox.getSelectedItem();
-    ActionAIType actionType = ActionAIType.NARRATE;
-    try {
-//      actionType = ActionAIType.getByAction(selectedAction);
-    } catch (IllegalArgumentException ex) {
-      JOptionPane.showMessageDialog(this, "Invalid action selected.", "Error", JOptionPane.ERROR_MESSAGE);
-      return;
-    }
     ApplicationManager.getApplication().executeOnPooledThread(() ->
-        processQuery(actionType));
-  }
+        processQuery(selectedAction()));
+    }
 
+  private ActionAIType selectedAction(){
+    if(showRequestButton.isSelected()){
+      if(explainSQLCheckbox.isSelected()){
+        return ActionAIType.EXPLAINSQL;
+      } else {
+        return ActionAIType.SHOWSQL;
+      }
+    } else{
+      if(narrateCheckbox.isSelected()){
+        return ActionAIType.NARRATE;
+      } else {
+        return ActionAIType.EXECUTESQL;
+      }
+    }
+  }
   private void processQuery(ActionAIType actionType) {
-    String output = currManager.queryOracleAI(inputTextArea.getText(), actionType);
+//    String output = currManager.queryOracleAI(inputTextArea.getText(), actionType);
+    String output = currManager.queryOracleAI(comboBox.getSelectedItem().toString(), actionType);
     ApplicationManager.getApplication().invokeLater(() -> setDisplayTextPane(output));
   }
 
@@ -234,8 +283,9 @@ public class OracleAIChatBox extends JPanel {
     }
   }
 
-  public void updateForConnection(String connection) {
-//    titleLabel.setText(connection);
+  public void updateForConnection() {
+    optionsComboBox.removeAllItems();
+    ApplicationManager.getApplication().executeOnPooledThread(()-> currManager.fetchProfiles().forEach((p)-> ApplicationManager.getApplication().invokeLater(()->optionsComboBox.addItem(p.getProfileName()))));
     inputTextArea.setText("");
     displayTextPane.setText("");
 
