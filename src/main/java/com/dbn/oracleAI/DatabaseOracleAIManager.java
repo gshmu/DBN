@@ -8,7 +8,7 @@ import com.dbn.connection.jdbc.DBNConnection;
 import com.dbn.oracleAI.config.Profile;
 import com.dbn.oracleAI.config.exceptions.DatabaseOperationException;
 import com.dbn.oracleAI.config.exceptions.QueryExecutionException;
-import com.dbn.oracleAI.enums.ActionAIType;
+import com.dbn.oracleAI.types.ActionAIType;
 import com.dbn.oracleAI.ui.OracleAIChatBox;
 import com.dbn.oracleAI.ui.OracleAIChatBoxState;
 import com.intellij.openapi.application.ApplicationManager;
@@ -52,7 +52,7 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
     }
 
     currConnection = ConnectionHandler.get(connectionId);
-    oracleAIChatBox.updateForConnection(currConnection.getConnection().toString());
+    oracleAIChatBox.updateForConnection();
     OracleAIChatBoxState newState = chatBoxStates.get(connectionId);
     if (newState != null) {
       oracleAIChatBox.restoreState(newState);
@@ -83,7 +83,7 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
     ContentManager contentManager = toolWindow.getContentManager();
     if (contentManager.getContents().length == 0) {
       oracleAIChatBox = getOracleAIChatBox();
-      oracleAIChatBox.currManager = this;
+//      oracleAIChatBox.currManager = this;
       ContentFactory contentFactory = contentManager.getFactory();
       Content content = contentFactory.createContent(oracleAIChatBox, null, true);
       contentManager.addContent(content);
@@ -95,7 +95,7 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
 
   @NotNull
   public OracleAIChatBox getOracleAIChatBox() {
-    return new OracleAIChatBox();
+    return new OracleAIChatBox(getProject());
   }
 
   public String queryOracleAI(String text, ActionAIType action){
@@ -117,6 +117,7 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
     try {
       DBNConnection mainConnection = currConnection.getConnection(SessionId.ORACLE_AI);
       List<Profile> profiles = currConnection.getOracleAIInterface().listProfiles(mainConnection);
+
       return profiles;
     } catch (DatabaseOperationException e) {
       throw new RuntimeException(e);
