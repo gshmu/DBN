@@ -1,6 +1,6 @@
 package com.dbn.oracleAI.config;
 
-import com.dbn.oracleAI.enums.ProviderType;
+import com.dbn.oracleAI.types.ProviderType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;

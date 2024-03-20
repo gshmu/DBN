@@ -1,4 +1,4 @@
-package com.dbn.oracleAI.enums;
+package com.dbn.oracleAI.types;
 
 import lombok.Getter;
 
