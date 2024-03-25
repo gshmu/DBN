@@ -142,6 +142,10 @@ public class AIProfileSettingsForm extends ConfigurationEditorForm<com.dbn.conne
   public void loadBoxes() {
     providerBox.addItem("cohere");
     providerBox.addItem("openai");
+    providerBox.setSelectedItem("cohere");
+    modelBox.addItem("3.5");
+    modelBox.addItem("4");
+    modelBox.setSelectedItem("3.5");
     loadCredentials();
   }
   private void addEventListeners() {
