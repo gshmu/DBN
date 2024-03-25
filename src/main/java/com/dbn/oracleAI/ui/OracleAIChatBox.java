@@ -1,125 +1,85 @@
 package com.dbn.oracleAI.ui;
 
 import com.dbn.oracleAI.DatabaseOracleAIManager;
+import com.dbn.oracleAI.config.Profile;
 import com.dbn.oracleAI.types.ActionAIType;
-import com.github.weisj.jsvg.D;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.util.Hashtable;
+import java.util.Objects;
 
 public class OracleAIChatBox extends JPanel {
-  private static final Dimension SCROLL_PANE_DIMENSION = new Dimension(400, 200);
   private static final Insets TEXT_AREA_INSETS = JBUI.insets(10);
-  private static final Insets PANEL_INSETS = JBUI.insets(10, 20);
+  private static final int MIN_TEMPERATURE = 0;
+  private static final int MAX_TEMPERATURE = 10;
+  private static final int DEFAULT_TEMPERATURE = 5;
+// Replace the magic numbers in configureTemperatureSlider with these constants
 
   private JComboBox<String> optionsComboBox;
-  private final JTextArea inputTextArea;
-  private ComboBox comboBox;
-  private final JTextPane displayTextPane;
+  private JPanel panel1;
+  private JSlider temperatureSlider;
+  private JComboBox<String> comboBox;
+  private JTextPane displayTextPane;
   private JRadioButton showRequestButton, executeRequestButton;
   private JCheckBox explainSQLCheckbox, narrateCheckbox;
   public DatabaseOracleAIManager currManager;
-  private JPanel actionPanel, secondaryOptionsPanel;
 
   public OracleAIChatBox(Project project) {
     currManager = project.getService(DatabaseOracleAIManager.class);
-    setLayout(new BorderLayout());
-    optionsComboBox = new ComboBox<>();
-    inputTextArea = createTextArea();
-    displayTextPane = createTextPane();
     initializeUI();
+    this.setLayout(new BorderLayout(0, 0)); // No horizontal or vertical gaps.
+    this.add(panel1);
   }
 
   private void initializeUI() {
     initializeTextStyles();
-    JPanel topControlsPanel = new JPanel(new BorderLayout());
-    topControlsPanel.add(createComboBoxPanel(), BorderLayout.NORTH);
     initializeActionSelectionComponents();
-    topControlsPanel.add(actionPanel, BorderLayout.CENTER);
-    topControlsPanel.add(secondaryOptionsPanel, BorderLayout.SOUTH);
-    add(topControlsPanel, BorderLayout.NORTH);
-    add(createTextFieldsPanel(), BorderLayout.CENTER);
+    configureTemperatureSlider();
+    createTextFieldsPanel();
+    configureTextArea(displayTextPane);
   }
 
-  private JPanel createComboBoxPanel() {
-    JPanel comboBoxPanel = new JPanel(new BorderLayout());
-    comboBoxPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-    comboBoxPanel.add(createCenterPanel(), BorderLayout.WEST);
-    comboBoxPanel.add(createSliderPanel(), BorderLayout.EAST);
-    return comboBoxPanel;
+  private void configureTemperatureSlider() {
+    temperatureSlider.setMinimum(MIN_TEMPERATURE);
+    temperatureSlider.setMaximum(MAX_TEMPERATURE);
+    temperatureSlider.setValue(DEFAULT_TEMPERATURE);
+    temperatureSlider.setMajorTickSpacing(2);
+    temperatureSlider.setMinorTickSpacing(1);
+    temperatureSlider.setPaintTicks(true);
+    temperatureSlider.setPaintLabels(true);
+
+    updateSliderLabels(temperatureSlider, temperatureSlider.getValue());
+
+    temperatureSlider.addChangeListener(e -> {
+      JSlider source = (JSlider)e.getSource();
+      if (!source.getValueIsAdjusting()) {
+        updateSliderLabels(source, source.getValue());
+      }
+    });
+
   }
 
-  private JPanel createCenterPanel() {
-    JPanel centerPanel = new JPanel(new BorderLayout());
-    JLabel comboBoxLabel = new JLabel("Profiles:");
-    comboBoxLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
-    centerPanel.add(comboBoxLabel, BorderLayout.NORTH);
-    centerPanel.add(optionsComboBox, BorderLayout.CENTER);
-    return centerPanel;
-  }
-
-
-
-  private JPanel createSliderPanel() {
-    JSlider temperatureSlider = createTemperatureSlider();
-    JPanel sliderPanel = new JPanel(new BorderLayout());
-    JLabel sliderLabel = new JLabel("Temperature:");
-    sliderLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
-    sliderPanel.add(sliderLabel, BorderLayout.NORTH);
-    sliderPanel.add(temperatureSlider, BorderLayout.CENTER);
-    return sliderPanel;
-  }
-
-
-
-  private JSlider createTemperatureSlider() {
-    JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
-
-    slider.setMajorTickSpacing(2);
-
-    slider.setMinorTickSpacing(1);
-
-    slider.setPaintTicks(true);
-    slider.setPaintLabels(true);
-
+  private void updateSliderLabels(JSlider slider, int currentValue) {
     Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
     labelTable.put(0, new JLabel("0"));
-    labelTable.put(2, new JLabel(""));
-    labelTable.put(4, new JLabel(""));
-    labelTable.put(6, new JLabel(""));
-    labelTable.put(8, new JLabel(""));
+    labelTable.put(currentValue, new JLabel(String.valueOf((float) currentValue/10)));
     labelTable.put(10, new JLabel("1"));
     slider.setLabelTable(labelTable);
-
-    return slider;
   }
 
+
   private void initializeActionSelectionComponents() {
-    createMainActionSelection();
+    attachActionListeners();
     createSecondaryOptions();
   }
 
-  private void createMainActionSelection() {
-    showRequestButton = new JRadioButton("Show Request", true);
-    executeRequestButton = new JRadioButton("Execute Request");
-    ButtonGroup mainActionGroup = new ButtonGroup();
-    mainActionGroup.add(showRequestButton);
-    mainActionGroup.add(executeRequestButton);
-
-    actionPanel = new JPanel(new FlowLayout());
-    actionPanel.add(showRequestButton);
-    actionPanel.add(executeRequestButton);
-
-    attachActionListeners();
-  }
 
   private void attachActionListeners() {
     showRequestButton.addActionListener(e -> updateSecondaryOptionsEnabled());
@@ -127,16 +87,8 @@ public class OracleAIChatBox extends JPanel {
   }
 
   private void createSecondaryOptions() {
-    secondaryOptionsPanel = new JPanel(new FlowLayout());
-
-    explainSQLCheckbox = new JCheckBox("Explain SQL");
-    narrateCheckbox = new JCheckBox("Narrate");
-
     explainSQLCheckbox.setEnabled(showRequestButton.isSelected());
     narrateCheckbox.setEnabled(!showRequestButton.isSelected());
-
-    secondaryOptionsPanel.add(explainSQLCheckbox);
-    secondaryOptionsPanel.add(narrateCheckbox);
   }
 
   private void updateSecondaryOptionsEnabled() {
@@ -144,62 +96,20 @@ public class OracleAIChatBox extends JPanel {
     narrateCheckbox.setEnabled(executeRequestButton.isSelected());
   }
 
-  private JPanel createTextFieldsPanel() {
-    JPanel textFieldsPanel = new JPanel(new GridBagLayout());
-    comboBox = new ComboBox<>();
+  private void createTextFieldsPanel() {
+
     comboBox.addItem("");
-    comboBox.addItem("lol");
+    comboBox.addItem("What are the names of all the customers");
+    comboBox.addItem("Who joined after February 2022");
+    comboBox.addItem("Can you list all customers by their join date in ascending order");
+    comboBox.addItem("I need the email addresses and join dates of customers whose last name is Doe");
     comboBox.setPreferredSize(new Dimension(50, 50));
-    comboBox.setEditable(true);
-//    textFieldsPanel.add(createScrollPane(inputTextArea, SCROLL_PANE_DIMENSION), createGbc(0, 0.5));
-    textFieldsPanel.add(comboBox, createGbc2(0, 0.5));
-    textFieldsPanel.add(createScrollPane(displayTextPane, SCROLL_PANE_DIMENSION), createGbc(1, 0.5));
     setupEnterAction();
-    return textFieldsPanel;
   }
 
-  private JScrollPane createScrollPane(Component view, Dimension dimension) {
-    JScrollPane scrollPane = new JBScrollPane(view);
-    scrollPane.setPreferredSize(dimension);
-    return scrollPane;
-  }
 
-  private GridBagConstraints createGbc(int grid_y, double weight_y) {
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.fill = GridBagConstraints.BOTH;
-    gbc.weightx = 1.0;
-    gbc.weighty = weight_y;
-    gbc.insets = PANEL_INSETS;
-    gbc.gridx = 0;
-    gbc.gridy = grid_y;
-    return gbc;
-  }
-
-  private GridBagConstraints createGbc2(int grid_y, double weight_y) {
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-//    gbc.weightx = 1.0;
-//    gbc.weighty = weight_y;
-    gbc.insets = JBUI.insets(0, 20);
-    gbc.gridx = 0;
-    gbc.gridy = grid_y;
-    return gbc;
-  }
-
-  private JTextArea createTextArea() {
-    JTextArea textArea = new JTextArea();
-    configureTextArea(textArea, true);
-    return textArea;
-  }
-
-  private JTextPane createTextPane() {
-    JTextPane textPane = new JTextPane();
-    configureTextArea(textPane, false);
-    return textPane;
-  }
-
-  private void configureTextArea(JTextComponent textComponent, boolean editable) {
-    textComponent.setEditable(editable);
+  private void configureTextArea(JTextComponent textComponent) {
+    textComponent.setEditable(false);
     textComponent.setMargin(TEXT_AREA_INSETS);
     if (textComponent instanceof JTextArea) {
       JTextArea textArea = (JTextArea) textComponent;
@@ -208,10 +118,6 @@ public class OracleAIChatBox extends JPanel {
     }
   }
   private void setupEnterAction() {
-//    InputMap inputMap = inputTextArea.getInputMap(JComponent.WHEN_FOCUSED);
-//    ActionMap actionMap = inputTextArea.getActionMap();
-
-    comboBox.setEditable(true);
 
     Component editorComponent = comboBox.getEditor().getEditorComponent();
 
@@ -239,7 +145,7 @@ public class OracleAIChatBox extends JPanel {
   private void submitText() {
     ApplicationManager.getApplication().executeOnPooledThread(() ->
         processQuery(selectedAction()));
-    }
+  }
 
   private ActionAIType selectedAction(){
     if(showRequestButton.isSelected()){
@@ -257,8 +163,7 @@ public class OracleAIChatBox extends JPanel {
     }
   }
   private void processQuery(ActionAIType actionType) {
-//    String output = currManager.queryOracleAI(inputTextArea.getText(), actionType);
-    String output = currManager.queryOracleAI(comboBox.getSelectedItem().toString(), actionType);
+    String output = currManager.queryOracleAI(Objects.requireNonNull(comboBox.getSelectedItem()).toString(), actionType, Objects.requireNonNull(optionsComboBox.getSelectedItem()).toString());
     ApplicationManager.getApplication().invokeLater(() -> setDisplayTextPane(output));
   }
 
@@ -283,14 +188,6 @@ public class OracleAIChatBox extends JPanel {
     }
   }
 
-  public void updateForConnection() {
-    optionsComboBox.removeAllItems();
-    ApplicationManager.getApplication().executeOnPooledThread(()-> currManager.fetchProfiles().forEach((p)-> ApplicationManager.getApplication().invokeLater(()->optionsComboBox.addItem(p.getProfileName()))));
-    inputTextArea.setText("");
-    displayTextPane.setText("");
-
-  }
-
   private void initializeTextStyles() {
     StyledDocument doc = displayTextPane.getStyledDocument();
     Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
@@ -302,19 +199,40 @@ public class OracleAIChatBox extends JPanel {
     StyleConstants.setForeground(s, Color.getHSBColor(210, 50, 100));
   }
 
+  public void updateProfiles(String selectdProfile) {
+
+
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      List<Profile> fetchedProfiles = currManager.fetchProfiles();
+      ApplicationManager.getApplication().invokeLater(() -> {
+        optionsComboBox.removeAllItems();
+        populateComboBoxWithProfiles(fetchedProfiles);
+        optionsComboBox.setSelectedItem(selectdProfile);
+      });
+    });
+
+  }
+
+  private void populateComboBoxWithProfiles(List<Profile> profiles) {
+    for (Profile profile : profiles) {
+      optionsComboBox.addItem(profile.getProfileName());
+    }
+  }
   public OracleAIChatBoxState captureState(String connection) {
     OracleAIChatBoxState state = new OracleAIChatBoxState(connection);
     state.setSelectedOption((String) optionsComboBox.getSelectedItem());
-    state.setInputText(inputTextArea.getText());
+    state.setInputText(comboBox.getSelectedItem().toString());
     state.setDisplayText(displayTextPane.getText());
     return state;
   }
 
   public void restoreState(OracleAIChatBoxState state) {
     if (state == null) return;
-//    titleLabel.setText(state.getCurrConnection());
+    optionsComboBox.addItem(state.getSelectedOption());
     optionsComboBox.setSelectedItem(state.getSelectedOption());
-    inputTextArea.setText(state.getInputText());
+    this.updateProfiles(state.getSelectedOption());
+
+    comboBox.setSelectedItem(state.getInputText());
     displayTextPane.setText(state.getDisplayText());
   }
 }
