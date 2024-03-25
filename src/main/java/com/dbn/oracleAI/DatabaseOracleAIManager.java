@@ -48,11 +48,10 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
 
   public void switchToConnection(ConnectionId connectionId) {
     if (currConnection != null && oracleAIChatBox != null) {
-      chatBoxStates.put(currConnection.getConnectionId(), oracleAIChatBox.captureState(ConnectionHandler.get(connectionId).toString()));
+      chatBoxStates.put(currConnection.getConnectionId(), oracleAIChatBox.captureState(currConnection.getConnectionId().toString()));
     }
 
     currConnection = ConnectionHandler.get(connectionId);
-    oracleAIChatBox.updateForConnection();
     OracleAIChatBoxState newState = chatBoxStates.get(connectionId);
     if (newState != null) {
       oracleAIChatBox.restoreState(newState);
@@ -98,11 +97,11 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
     return new OracleAIChatBox(getProject());
   }
 
-  public String queryOracleAI(String text, ActionAIType action){
+  public String queryOracleAI(String text, ActionAIType action, String profile){
     String output;
     try {
       DBNConnection mainConnection = currConnection.getConnection(SessionId.ORACLE_AI);
-      output = currConnection.getOracleAIInterface().executeQuery(mainConnection, action, "ayoubon", text).getQueryOutput();
+      output = currConnection.getOracleAIInterface().executeQuery(mainConnection, action, profile, text).getQueryOutput();
       return output;
     } catch (SQLException e) {
       output = e.getMessage();
@@ -157,7 +156,7 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
 
   @Override
   public void loadComponentState(@NotNull Element element) {
-    List<Element> chatBoxStateElements = element.getChildren("OracleAIChatBoxState");
+    List<Element>   chatBoxStateElements = element.getChildren("OracleAIChatBoxState");
     chatBoxStateElements.forEach(chatBoxStateElement -> {
       ConnectionId connectionId = ConnectionId.get(chatBoxStateElement.getAttributeValue("connectionId"));
       OracleAIChatBoxState chatBoxState = OracleAIChatBoxState.fromElement(chatBoxStateElement);
