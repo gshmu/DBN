@@ -11,6 +11,7 @@ import com.dbn.oracleAI.config.CredentialProvider;
 import com.dbn.oracleAI.config.PasswordCredentialProvider;
 import com.dbn.oracleAI.config.exceptions.CredentialManagementException;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.ui.ComboBox;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -22,13 +23,12 @@ import static com.dbn.common.util.Messages.showInfoDialog;
 public class AICredentialSettingsForm extends ConfigurationEditorForm<AICredentialSettings> {
   private JPanel mainPanel;
   private JPanel sshGroupPanel;
-  private JPanel Credential;
   private JLabel credentialNameLabel;
   private JLabel apiPasswordLabel;
   private JTextField apiUsernameField;
   private JButton saveCredential;
   private JPasswordField passwordField;
-  private JTextField apiCredentialNameField;
+  private ComboBox apiCredentialNameField;
 
   public AICredentialSettingsForm(final AICredentialSettings configuration) {
     super(configuration);
@@ -51,7 +51,7 @@ public class AICredentialSettingsForm extends ConfigurationEditorForm<AICredenti
 
   @Override
   protected ActionListener createActionListener() {
-    return e -> System.out.println(apiCredentialNameField.getText());
+    return e -> System.out.println(apiCredentialNameField.getSelectedItem());
   }
 
   @Override
@@ -91,7 +91,7 @@ public class AICredentialSettingsForm extends ConfigurationEditorForm<AICredenti
 
   @Override
   public void applyFormChanges(AICredentialSettings configuration) throws ConfigurationException {
-    configuration.setCredentialName(apiCredentialNameField.getText());
+    configuration.setCredentialName(apiCredentialNameField.getSelectedItem().toString());
     configuration.setApiUsername(apiUsernameField.getText());
     configuration.setApiPassword(String.valueOf(passwordField.getPassword()));
   }
@@ -100,7 +100,7 @@ public class AICredentialSettingsForm extends ConfigurationEditorForm<AICredenti
   @Override
   public void resetFormChanges() {
     AICredentialSettings configuration = getConfiguration();
-    apiCredentialNameField.setText(configuration.getCredentialName());
+    apiCredentialNameField.setSelectedItem(configuration.getCredentialName());
     apiUsernameField.setText(configuration.getApiUsername());
     passwordField.setText(configuration.getApiPassword());
   }
