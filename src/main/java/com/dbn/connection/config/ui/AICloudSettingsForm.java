@@ -25,8 +25,9 @@ public class AICloudSettingsForm extends ConfigurationEditorForm<AICloudSettings
 
   public AICloudSettingsForm(final AICloudSettings aiCloudSettings) {
     super(aiCloudSettings);
-    this.userName = ConnectionHandler.get(getConfiguration().getConnectionId()).getUserName();
-
+    if(ConnectionHandler.get(getConfiguration().getConnectionId())!=null) {
+      this.userName = ConnectionHandler.get(getConfiguration().getConnectionId()).getUserName();
+    }
     providerComboBox.addItem("OpenAI");
     providerComboBox.addItem("Cohere");
 
