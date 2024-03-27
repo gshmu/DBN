@@ -10,17 +10,15 @@ import com.intellij.util.ui.JBUI;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.util.List;
+import java.util.*;
 import java.awt.event.ActionEvent;
-import java.util.Hashtable;
-import java.util.Objects;
+import java.util.List;
 
 public class OracleAIChatBox extends JPanel {
   private static final Insets TEXT_AREA_INSETS = JBUI.insets(10);
   private static final int MIN_TEMPERATURE = 0;
   private static final int MAX_TEMPERATURE = 10;
   private static final int DEFAULT_TEMPERATURE = 5;
-// Replace the magic numbers in configureTemperatureSlider with these constants
 
   private JComboBox<String> optionsComboBox;
   private JPanel panel1;
@@ -34,7 +32,7 @@ public class OracleAIChatBox extends JPanel {
   public OracleAIChatBox(Project project) {
     currManager = project.getService(DatabaseOracleAIManager.class);
     initializeUI();
-    this.setLayout(new BorderLayout(0, 0)); // No horizontal or vertical gaps.
+    this.setLayout(new BorderLayout(0, 0));
     this.add(panel1);
   }
 
@@ -44,6 +42,14 @@ public class OracleAIChatBox extends JPanel {
     configureTemperatureSlider();
     createTextFieldsPanel();
     configureTextArea(displayTextPane);
+
+    ResourceBundle actions = ResourceBundle.getBundle("Messages", Locale.getDefault());
+
+    showRequestButton.setText(actions.getString("showRequest.action"));
+    executeRequestButton.setText(actions.getString("executeRequest.action"));
+    narrateCheckbox.setText(actions.getString("narrate.action"));
+    explainSQLCheckbox.setText(actions.getString("explainSql.action"));
+
   }
 
   private void configureTemperatureSlider() {

@@ -38,7 +38,8 @@ sourceSets{
               "**/*.svg",
               "**/*.css",
               "**/*.html",
-              "**/*.template")
+              "**/*.template",
+              "**/*.properties")
     }
   }
 }
