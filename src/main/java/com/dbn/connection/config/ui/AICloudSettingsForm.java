@@ -3,9 +3,12 @@ package com.dbn.connection.config.ui;
 import com.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dbn.connection.ConnectionHandler;
 import com.dbn.connection.config.AICloudSettings;
+import com.dbn.oracleAI.types.ProviderType;
 import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -24,16 +27,20 @@ public class AICloudSettingsForm extends ConfigurationEditorForm<AICloudSettings
 
   // Variable to hold the user name, replacing the hard-coded "SCOTT"
   private String userName;
+  private ProviderType hostname = ProviderType.OPENAI;
 
   public AICloudSettingsForm(final AICloudSettings aiCloudSettings) {
     super(aiCloudSettings);
     if(ConnectionHandler.get(getConfiguration().getConnectionId())!=null) {
       this.userName = ConnectionHandler.get(getConfiguration().getConnectionId()).getUserName();
     }
-    providerComboBox.addItem("OpenAI");
-    providerComboBox.addItem("Cohere");
+    providerComboBox.addItem(ProviderType.OPENAI);
+    providerComboBox.addItem(ProviderType.COHERE);
 
     ResourceBundle messages = ResourceBundle.getBundle("Messages", Locale.getDefault());
+
+
+
 
 
     intro.setText(messages.getString("permissions1.message"));
@@ -45,7 +52,13 @@ public class AICloudSettingsForm extends ConfigurationEditorForm<AICloudSettings
 
     networkAllow.setText(messages.getString("permissions5.message"));
 
-    aclTextArea.setText( String.format(messages.getString("permissions6.message"), userName) );
+    aclTextArea.setText( String.format(messages.getString("permissions6.message"), hostname.getAction().toLowerCase(), userName) );
+
+    providerComboBox.addActionListener (e -> {
+      hostname = (ProviderType) providerComboBox.getSelectedItem();
+      aclTextArea.setText( String.format(messages.getString("permissions6.message"), hostname.getAction().toLowerCase(), userName) );
+
+    });
   }
 
   @Override
