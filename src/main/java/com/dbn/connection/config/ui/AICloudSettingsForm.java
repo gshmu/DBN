@@ -6,6 +6,8 @@ import com.dbn.connection.config.AICloudSettings;
 import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class AICloudSettingsForm extends ConfigurationEditorForm<AICloudSettings> {
 
@@ -31,16 +33,19 @@ public class AICloudSettingsForm extends ConfigurationEditorForm<AICloudSettings
     providerComboBox.addItem("OpenAI");
     providerComboBox.addItem("Cohere");
 
-    intro.setText("This section displays some mandatory actions that need to be made on the server side for the use of this connection.");
-    intro2.setText("Please perform the following logged as admin to this remote database.");
+    ResourceBundle messages = ResourceBundle.getBundle("Messages", Locale.getDefault());
 
-    grantTextField.setText("Grant execution to user " + userName + " for the AI Cloud Package.");
 
-    grantTextArea.setText("grant execute on DBMS_CLOUD to " + userName + "; \ngrant execute on DBM$_CLOUD_AI to " + userName + ";");
+    intro.setText(messages.getString("permissions1.message"));
+    intro2.setText(messages.getString("permissions2.message"));
 
-    networkAllow.setText("Allow Network Access to AI Provider");
+    grantTextField.setText( String.format(messages.getString("permissions3.message"), userName) );
 
-    aclTextArea.setText("BEGIN\n    DBMS_NETWORK_ACL_ADMIN.APPEND_HOST_ACE(\n       HOST => 'api.cohere.ai',\n       ACE => XS$ACE_TYPE(PRIVILEGE_LIST => XS$NAME_LIST('http'),\n         PRINCIPAL_NAME =>'" + userName + "',\n\tPRINCIPAL_TYPE => XS_ACL.PTYPE_DB));\nEND;\n/");
+    grantTextArea.setText( String.format(messages.getString("permissions4.message"), userName, userName) );
+
+    networkAllow.setText(messages.getString("permissions5.message"));
+
+    aclTextArea.setText( String.format(messages.getString("permissions6.message"), userName) );
   }
 
   @Override
