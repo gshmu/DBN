@@ -3,14 +3,17 @@ package com.dbn.oracleAI;
 import com.dbn.DatabaseNavigator;
 import com.dbn.common.component.PersistentState;
 import com.dbn.common.component.ProjectComponentBase;
+import com.dbn.common.util.Actions;
 import com.dbn.connection.*;
 import com.dbn.connection.jdbc.DBNConnection;
+import com.dbn.oracleAI.config.OracleAISettingsOpenAction;
 import com.dbn.oracleAI.config.Profile;
 import com.dbn.oracleAI.config.exceptions.DatabaseOperationException;
 import com.dbn.oracleAI.config.exceptions.QueryExecutionException;
 import com.dbn.oracleAI.types.ActionAIType;
 import com.dbn.oracleAI.ui.OracleAIChatBox;
 import com.dbn.oracleAI.ui.OracleAIChatBoxState;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +41,7 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
   public static final String COMPONENT_NAME = "DBNavigator.Project.OracleAIManager";
   public static final String TOOL_WINDOW_ID = "Oracle Companion";
   public ConnectionHandler currConnection;
+  private JPopupMenu popupMenu;
   private static OracleAIChatBox oracleAIChatBox;
   private static volatile DatabaseOracleAIManager manager;
   private final Map<ConnectionId, OracleAIChatBoxState> chatBoxStates = new ConcurrentHashMap<>();
@@ -47,6 +52,10 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
   }
 
   public void switchToConnection(ConnectionId connectionId) {
+    OracleAISettingsOpenAction oracleAISettingsOpenAction = new OracleAISettingsOpenAction(ConnectionHandler.get(connectionId));
+    ActionGroup actionGroup = new DefaultActionGroup(oracleAISettingsOpenAction);
+    ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(oracleAIChatBox, "", actionGroup);
+    popupMenu = actionPopupMenu.getComponent();
     if (currConnection != null && oracleAIChatBox != null) {
       chatBoxStates.put(currConnection.getConnectionId(), oracleAIChatBox.captureState(currConnection.getConnectionId().toString()));
     }
@@ -94,7 +103,7 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
 
   @NotNull
   public OracleAIChatBox getOracleAIChatBox() {
-    return new OracleAIChatBox(getProject());
+    return OracleAIChatBox.getInstance(getProject());
   }
 
   public String queryOracleAI(String text, ActionAIType action, String profile){
@@ -137,6 +146,19 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
     return  manager;
   }
 
+  public void openSettings(){
+      AnAction action = new OracleAISettingsOpenAction(currConnection);
+      AnActionEvent event = AnActionEvent.createFromDataContext(
+          ActionPlaces.UNKNOWN,
+          null,
+          dataId -> {
+            if (PlatformDataKeys.PROJECT.is(dataId)) {
+              return getProject();
+            }
+            return null;
+          });
+      action.actionPerformed(event);
+  }
 
 
   /*********************************************
