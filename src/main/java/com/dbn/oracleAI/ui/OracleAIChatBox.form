@@ -20,13 +20,13 @@
               <component id="9c819" class="javax.swing.JCheckBox" binding="explainSQLCheckbox">
                 <constraints/>
                 <properties>
-                  <text value="explainSQLCheckbox"/>
+                  <text value="Explain SQL"/>
                 </properties>
               </component>
               <component id="12e7c" class="javax.swing.JCheckBox" binding="narrateCheckbox">
                 <constraints/>
                 <properties>
-                  <text value="narrateCheckbox"/>
+                  <text value="Narrate"/>
                 </properties>
               </component>
             </children>
