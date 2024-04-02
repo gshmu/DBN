@@ -2,10 +2,11 @@ package com.dbn.vfs.file;
 
 import com.dbn.browser.model.BrowserTreeNode;
 import com.dbn.common.DevNullStreams;
+import com.dbn.common.compatibility.Compatibility;
+import com.dbn.common.compatibility.Workaround;
 import com.dbn.common.dispose.Failsafe;
 import com.dbn.common.ref.WeakRefCache;
 import com.dbn.common.util.SlowOps;
-import com.dbn.common.util.Traces;
 import com.dbn.connection.ConnectionHandler;
 import com.dbn.connection.ConnectionId;
 import com.dbn.connection.SchemaId;
@@ -15,11 +16,11 @@ import com.dbn.object.common.list.DBObjectList;
 import com.dbn.object.lookup.DBObjectRef;
 import com.dbn.object.type.DBObjectType;
 import com.dbn.vfs.DBVirtualFileBase;
-import com.intellij.ide.navigationToolbar.NavBarPresentation;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,13 +29,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import static com.dbn.common.dispose.Failsafe.guarded;
 import static com.dbn.common.dispose.Failsafe.nd;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
     private static final WeakRefCache<DBObjectRef, DBObjectVirtualFile> virtualFileCache = WeakRefCache.weakKey();
 
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
-    protected DBObjectRef<T> object;
+    protected final DBObjectRef<T> object;
 
     public DBObjectVirtualFile(@NotNull Project project, @NotNull DBObjectRef<T> object) {
         super(project, object.getFileName());
@@ -101,8 +103,8 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
         String connectionName = getConnectionName();
 
         return connectionName + File.separatorChar +
-                getObjectRef().getObjectType().getListName() + File.separatorChar +
-                getObjectRef().getQualifiedName();
+            getObjectRef().getObjectType().getListName() + File.separatorChar +
+            getObjectRef().getQualifiedName();
     }
 
     private String getConnectionName() {
@@ -127,18 +129,34 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileBase {
 
     @Override
     @Nullable
+    @Workaround
+    @Compatibility
     public VirtualFile getParent() {
-        if (Traces.isCalledThrough(NavBarPresentation.class)) {
-            T object = getObject();
-            BrowserTreeNode treeParent = object.getParent();
-            if (treeParent instanceof DBObjectList<?>) {
-                DBObjectList objectList = (DBObjectList) treeParent;
-                return objectList.getPsiDirectory().getVirtualFile();
-            }
+        return guarded(null, this, f -> f.findParent());
+    }
+
+    @Nullable
+    private VirtualFile findParent() {
+        // TODO review / cleanup
+/*
+        if (!Traces.isCalledThrough(
+                "com.intellij.ide.navigationToolbar.NavBarPresentation",
+                "com.intellij.ide.navbar.ide.NavBarServiceKt")) return null;
+*/
+
+        T object = this.object.get();
+        if (object == null) return null;
+
+        BrowserTreeNode treeParent = object.getParent();
+        if (treeParent == null) return null;
+
+        if (treeParent instanceof DBObjectList<?>) {
+            DBObjectList objectList = (DBObjectList) treeParent;
+            PsiDirectory psiDirectory = objectList.getPsiDirectory();
+            return psiDirectory.getVirtualFile();
         }
         return null;
     }
-
 
 
     @Override
