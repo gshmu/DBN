@@ -41,7 +41,6 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
   public static final String COMPONENT_NAME = "DBNavigator.Project.OracleAIManager";
   public static final String TOOL_WINDOW_ID = "Oracle Companion";
   public ConnectionHandler currConnection;
-  private JPopupMenu popupMenu;
   private static OracleAIChatBox oracleAIChatBox;
   private static volatile DatabaseOracleAIManager manager;
   private final Map<ConnectionId, OracleAIChatBoxState> chatBoxStates = new ConcurrentHashMap<>();
@@ -52,10 +51,6 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
   }
 
   public void switchToConnection(ConnectionId connectionId) {
-    OracleAISettingsOpenAction oracleAISettingsOpenAction = new OracleAISettingsOpenAction(ConnectionHandler.get(connectionId));
-    ActionGroup actionGroup = new DefaultActionGroup(oracleAISettingsOpenAction);
-    ActionPopupMenu actionPopupMenu = Actions.createActionPopupMenu(oracleAIChatBox, "", actionGroup);
-    popupMenu = actionPopupMenu.getComponent();
     if (currConnection != null && oracleAIChatBox != null) {
       chatBoxStates.put(currConnection.getConnectionId(), oracleAIChatBox.captureState(currConnection.getConnectionId().toString()));
     }
@@ -69,17 +64,6 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
     }
   }
 
-  private void showOracleAIWindow() {
-    ToolWindow toolWindow = initOracleAIWindow();
-    toolWindow.show(null);
-  }
-
-  public void hideOracleAIWindow() {
-    ToolWindow toolWindow = getOracleAIWindow();
-    toolWindow.getContentManager().removeAllContents(false);
-    toolWindow.setAvailable(false, null);
-  }
-
   public ToolWindow getOracleAIWindow() {
     Project project = getProject();
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
@@ -91,7 +75,6 @@ public class DatabaseOracleAIManager extends ProjectComponentBase implements Per
     ContentManager contentManager = toolWindow.getContentManager();
     if (contentManager.getContents().length == 0) {
       oracleAIChatBox = getOracleAIChatBox();
-//      oracleAIChatBox.currManager = this;
       ContentFactory contentFactory = contentManager.getFactory();
       Content content = contentFactory.createContent(oracleAIChatBox, null, true);
       contentManager.addContent(content);
