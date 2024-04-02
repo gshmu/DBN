@@ -20,6 +20,7 @@ public class OracleAIChatBox extends JPanel {
   private static final int MAX_TEMPERATURE = 10;
   private static final int DEFAULT_TEMPERATURE = 5;
 
+  private static OracleAIChatBox instance;
   private JComboBox<String> optionsComboBox;
   private JPanel panel1;
   private JSlider temperatureSlider;
@@ -29,11 +30,17 @@ public class OracleAIChatBox extends JPanel {
   private JCheckBox explainSQLCheckbox, narrateCheckbox;
   public DatabaseOracleAIManager currManager;
 
-  public OracleAIChatBox(Project project) {
+  private OracleAIChatBox(Project project) {
     currManager = project.getService(DatabaseOracleAIManager.class);
     initializeUI();
     this.setLayout(new BorderLayout(0, 0));
     this.add(panel1);
+  }
+  public static OracleAIChatBox getInstance(Project project) {
+    if (instance == null) {
+      instance = new OracleAIChatBox(project);
+    }
+    return instance;
   }
 
   private void initializeUI() {
@@ -49,6 +56,10 @@ public class OracleAIChatBox extends JPanel {
     executeRequestButton.setText(actions.getString("executeRequest.action"));
     narrateCheckbox.setText(actions.getString("narrate.action"));
     explainSQLCheckbox.setText(actions.getString("explainSql.action"));
+
+    optionsComboBox.addActionListener(e -> {
+      if(optionsComboBox.getSelectedItem()=="New Profile...") currManager.openSettings();
+    });
 
   }
 
@@ -223,6 +234,7 @@ public class OracleAIChatBox extends JPanel {
     for (Profile profile : profiles) {
       optionsComboBox.addItem(profile.getProfileName());
     }
+    optionsComboBox.addItem("New Profile...");
   }
   public OracleAIChatBoxState captureState(String connection) {
     OracleAIChatBoxState state = new OracleAIChatBoxState(connection);

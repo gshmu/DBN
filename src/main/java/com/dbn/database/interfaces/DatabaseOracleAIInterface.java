@@ -126,4 +126,5 @@ public interface DatabaseOracleAIInterface extends DatabaseInterface {
    * @throws DatabaseOperationException If there is an error in retrieving the list of AI profiles.
    */
   List<Profile> listProfiles(DBNConnection connection) throws DatabaseOperationException;
+  List<Profile> listProfilesDetailed(DBNConnection connection) throws DatabaseOperationException;
 }

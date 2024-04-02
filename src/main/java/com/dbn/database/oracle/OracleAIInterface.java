@@ -12,9 +12,8 @@ import com.dbn.oracleAI.config.exceptions.QueryExecutionException;
 import com.dbn.oracleAI.config.CredentialProvider;
 import com.dbn.oracleAI.config.Profile;
 import com.dbn.oracleAI.types.ActionAIType;
-
 import java.sql.SQLException;
-import java.util.List;
+import java.util.*;
 
 public class OracleAIInterface extends DatabaseInterfaceBase implements DatabaseOracleAIInterface {
 
@@ -25,7 +24,7 @@ public class OracleAIInterface extends DatabaseInterfaceBase implements Database
   @Override
   public void createCredential(DBNConnection connection, CredentialProvider credentialAttributes) throws CredentialManagementException {
     try {
-      executeCall(connection, null, "create-credential",credentialAttributes.getCredentialName(), credentialAttributes.format());
+      executeCall(connection, null, "create-credential", credentialAttributes.getCredentialName(), credentialAttributes.format());
     } catch (SQLException e) {
       throw new CredentialManagementException("Failed to create credential: " + credentialAttributes.getCredentialName(), e);
     }
@@ -52,7 +51,7 @@ public class OracleAIInterface extends DatabaseInterfaceBase implements Database
   @Override
   public void createProfile(DBNConnection connection, Profile profileAttributes) throws ProfileManagementException {
     try {
-      executeCall(connection, null, "create-profile",profileAttributes.getProfileName(), profileAttributes.format());
+      executeCall(connection, null, "create-profile", profileAttributes.getProfileName(), profileAttributes.format());
     } catch (SQLException e) {
       throw new ProfileManagementException("Failed to create profile: " + profileAttributes.getProfileName(), e);
     }
@@ -79,7 +78,7 @@ public class OracleAIInterface extends DatabaseInterfaceBase implements Database
   @Override
   public OracleQueryOutput executeQuery(DBNConnection connection, ActionAIType action, String profile, String text) throws QueryExecutionException {
     try {
-      return executeCall(connection, new OracleQueryOutput(), "ai-query", profile, action, text);
+      return executeCall(connection, new OracleQueryOutput(), "ai-query", profile, action, text, "");
     } catch (SQLException e) {
       throw new QueryExecutionException(e.getMessage(), e.getErrorCode(), e);
     }
@@ -120,4 +119,16 @@ public class OracleAIInterface extends DatabaseInterfaceBase implements Database
       throw new DatabaseOperationException("Failed to list profiles", e.getErrorCode(), e);
     }
   }
+
+  @Override
+  public List<Profile> listProfilesDetailed(DBNConnection connection) throws DatabaseOperationException {
+    try {
+      List<Profile> profileList = executeCall(connection, new OracleProfilesDetailedInfo(), "list-profiles-detailed").getProfileList();
+      return profileList;
+    } catch (SQLException e) {
+      throw new DatabaseOperationException(e.getMessage(), e.getErrorCode(), e);
+    }
+  }
+
 }
+
