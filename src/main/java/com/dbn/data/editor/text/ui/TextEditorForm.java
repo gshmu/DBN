@@ -156,7 +156,7 @@ public class TextEditorForm extends DBNFormBase {
             }
         } catch (SQLException e) {
             conditionallyLog(e);
-            Messages.showErrorDialog(getProject(), "Could not load " + dataType + " content from database.", e);
+            Messages.showErrorDialog(getProject(), nls("msg.dataEditor.error.ContentLoadError", dataType), e);
         }
         return null;
     }

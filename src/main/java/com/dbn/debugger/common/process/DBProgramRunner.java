@@ -15,6 +15,7 @@ import com.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
 import com.dbn.editor.DBContentType;
 import com.dbn.execution.ExecutionInput;
 import com.dbn.execution.compiler.*;
+import com.dbn.nls.NlsSupport;
 import com.dbn.object.DBMethod;
 import com.dbn.object.common.DBSchemaObject;
 import com.dbn.object.lookup.DBObjectRef;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dbn.common.notification.NotificationGroup.DEBUGGER;
 import static com.dbn.common.util.Conditional.when;
 import static com.dbn.common.util.Messages.options;
 import static com.dbn.common.util.Messages.showWarningDialog;
@@ -48,7 +50,7 @@ import static com.dbn.common.util.Unsafe.cast;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.intellij.openapi.ui.DialogWrapper.OK_EXIT_CODE;
 
-public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
+public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner implements NlsSupport {
     public static final String INVALID_RUNNER_ID = "DBNInvalidRunner";
 
     public abstract DBDebuggerType getDebuggerType();
@@ -263,10 +265,8 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
         } catch (ExecutionException e) {
             conditionallyLog(e);
-            NotificationSupport.sendErrorNotification(
-                    project,
-                    NotificationGroup.DEBUGGER,
-                    "Error initializing environment: {0}", e);
+            NotificationSupport.sendErrorNotification(project, DEBUGGER,
+                    nls("ntf.debugger.error.ErrorInitializingEnvironment", e));
         }
     }
 /*

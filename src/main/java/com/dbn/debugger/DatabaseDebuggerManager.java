@@ -55,6 +55,8 @@ import java.util.*;
 
 import static com.dbn.common.Priority.HIGHEST;
 import static com.dbn.common.component.Components.projectService;
+import static com.dbn.common.load.ProgressMonitor.setProgressDetail;
+import static com.dbn.common.notification.NotificationGroup.DEBUGGER;
 import static com.dbn.common.util.Commons.list;
 import static com.dbn.common.util.Conditional.when;
 import static com.dbn.database.DatabaseFeature.DEBUGGING;
@@ -225,7 +227,8 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                         DBSchemaObject schemaObject = (DBSchemaObject) object;
                         boolean added = addToCompileList(compileList, schemaObject);
                         if (added) {
-                            ProgressMonitor.setProgressDetail("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
+                            String objectName = schemaObject.getQualifiedNameWithType();
+                            setProgressDetail(nls("prc.debugger.message.LoadingDependencies", objectName));
                             schemaObject.getReferencedObjects();
                         }
                     }
@@ -281,7 +284,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
     }
 
     private String loadDebuggerVersion(@NotNull ConnectionHandler connection) {
-        if (!DEBUGGING.isSupported(connection)) return "Unknown";
+        if (!DEBUGGING.isSupported(connection)) return nls("app.shared.label.Unknown");
 
         try {
             return DatabaseInterfaceInvoker.load(HIGHEST,
@@ -296,11 +299,9 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                     });
         } catch (SQLException e) {
             conditionallyLog(e);
-            sendErrorNotification(
-                    NotificationGroup.DEBUGGER,
-                    "Failed to load debugger version: {0}", e);
+            sendErrorNotification(DEBUGGER, nls("ntf.debugger.error.FailedToLoadVersion", e));
 
-            return "Unknown";
+            return nls("app.shared.label.Unknown");
         }
     }
 

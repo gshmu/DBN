@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dbn.common.Priority.LOW;
+import static com.dbn.common.notification.NotificationGroup.BROWSER;
 import static com.dbn.database.DatabaseFeature.OBJECT_INVALIDATION;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 
@@ -81,9 +82,7 @@ public class ObjectStatusManager extends ProjectComponentBase implements Persist
                         conn -> refreshObjectStatus(conn, schemas));
             } catch (SQLException e) {
                 conditionallyLog(e);
-                sendErrorNotification(
-                        NotificationGroup.BROWSER,
-                        "Error refreshing object status: {0}", e);
+                sendErrorNotification(BROWSER, nls("ntf.browser.error.FailedToRefreshObjectStatus", e));
             }
         });
     }

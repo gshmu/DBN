@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 
 import static com.dbn.common.component.Components.projectService;
+import static com.dbn.common.notification.NotificationGroup.LOGGING;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Slf4j
@@ -43,11 +44,9 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             return true;
         } catch (SQLException e) {
             conditionallyLog(e);
-            log.warn("Error enabling database logging: " + e.getMessage());
+            log.warn("Error enabling database logging: {}", e.getMessage());
             String logName = getLogName(connection);
-            sendWarningNotification(
-                    NotificationGroup.LOGGING,
-                    "Error enabling {0}: {1}", logName, e);
+            sendWarningNotification(LOGGING, nls("ntf.logging.error.FailedToEnableLogging", logName, e));
             return false;
         }
     }
@@ -61,11 +60,9 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             metadata.disableLogger(conn);
         } catch (SQLException e) {
             conditionallyLog(e);
-            log.warn("Error disabling database logging: " + e.getMessage());
+            log.warn("Error disabling database logging: {}", e.getMessage());
             String logName = getLogName(connection);
-            sendWarningNotification(
-                    NotificationGroup.LOGGING,
-                    "Error disabling {0}: {1}", logName, e);
+            sendWarningNotification(LOGGING, nls("ntf.logging.error.FailedToDisableLogging", logName, e));
         }
     }
 
@@ -75,11 +72,9 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             return metadata.readLoggerOutput(conn);
         } catch (SQLException e) {
             conditionallyLog(e);
-            log.warn("Error reading database log output: " + e.getMessage());
+            log.warn("Error reading database log output: {}", e.getMessage());
             String logName = getLogName(connection);
-            sendWarningNotification(
-                    NotificationGroup.LOGGING,
-                    "Error loading {0}: {1}", logName, e);
+            sendWarningNotification(LOGGING, nls("ntf.logging.error.FailedToLoadLogContent", logName, e));
         }
 
         return null;
@@ -90,7 +85,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
         DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
         String logName = compatibility.getDatabaseLogName();
         if (Strings.isEmpty(logName)) {
-            logName = "database logging";
+            logName = nls("app.logging.label.LogName_GENERIC");
         }
         return logName;
     }

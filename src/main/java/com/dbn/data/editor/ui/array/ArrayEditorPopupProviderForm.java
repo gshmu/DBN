@@ -111,7 +111,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             }
         } catch (SQLException e) {
             conditionallyLog(e);
-            Messages.showErrorDialog(project, e.getMessage(), e);
+            Messages.showErrorDialog(project, e.getLocalizedMessage(), e);
             return null;
         }
         list.setStringValues(stringValues);

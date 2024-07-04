@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.dbn.nls.NlsResources.nls;
+
 public interface Presentable extends Named {
 
     @NotNull
@@ -39,7 +41,7 @@ public interface Presentable extends Named {
         @NotNull
         @Override
         public String getName() {
-            return "Unknown";
+            return nls("app.shared.label.Unknown");
         }
     };
 
