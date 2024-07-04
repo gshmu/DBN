@@ -120,7 +120,7 @@ public class ResourceMonitorDetailForm extends DBNFormBase {
                 ConnectionHandler connection = getConnection();
                 Messages.showQuestionDialog(getProject(),
                         nls("msg.sessions.title.DisconnectSession"),
-                        nls("msg.sessions.text.DisconnectSession", session, connection),
+                        nls("msg.sessions.question.DisconnectSession", session, connection),
                         Messages.OPTIONS_YES_NO, 0,
                         option -> when(option == 0, () -> {
                             DBNConnection conn = getSelectedConnection();
@@ -152,7 +152,7 @@ public class ResourceMonitorDetailForm extends DBNFormBase {
             if (session != null) {
                 Messages.showQuestionDialog(getProject(),
                         nls("msg.sessions.title.DeleteSession"),
-                        nls("msg.sessions.text.DeleteSession", session, getConnection()),
+                        nls("msg.sessions.question.DeleteSession", session, getConnection()),
                         Messages.OPTIONS_YES_NO, 0,
                         option -> when(option == 0, () -> {
                             Project project = ensureProject();

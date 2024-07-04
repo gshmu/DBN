@@ -13,9 +13,13 @@ import java.util.function.Predicate;
 
 import static com.dbn.common.dispose.Failsafe.guarded;
 import static com.dbn.common.dispose.Failsafe.nd;
+import static com.dbn.common.util.Messages.options;
+import static com.dbn.nls.NlsResources.nls;
 
 public abstract class ConnectionAction implements DatabaseContextBase {
-    static final String[] OPTIONS_CONNECT_CANCEL = Commons.list("Connect", "Cancel");
+    static final String[] OPTIONS_CONNECT_CANCEL = options(
+            nls("app.shared.button.Connect"),
+            nls("app.shared.button.Cancel"));
 
     private final String description;
     private final boolean interactive;
@@ -55,7 +59,8 @@ public abstract class ConnectionAction implements DatabaseContextBase {
             } else {
                 String connectionName = connection.getName();
                 Throwable connectionException = connection.getConnectionStatus().getConnectionException();
-                ConnectionManager.showErrorConnectionMessage(getProject(), connectionName, connectionException);
+                ConnectionManager connectionManager = getConnectionManager(connection);
+                connectionManager.showErrorConnectionMessage(getProject(), connectionName, connectionException);
             }
         } else {
             if (connection.isDatabaseInitialized()) {
@@ -72,7 +77,8 @@ public abstract class ConnectionAction implements DatabaseContextBase {
 
     private void promptDatabaseInitDialog() {
         ConnectionHandler connection = getConnection();
-        ConnectionManager.promptDatabaseInitDialog(
+        ConnectionManager connectionManager = getConnectionManager(connection);
+        connectionManager.promptDatabaseInitDialog(
                 connection,
                 option -> {
                     if (option == 0) {
@@ -94,7 +100,7 @@ public abstract class ConnectionAction implements DatabaseContextBase {
         ConnectionHandler connection = getConnection();
         AuthenticationInfo temporaryAuthenticationInfo = connection.getAuthenticationInfo().clone();
         temporaryAuthenticationInfo.setTemporary(true);
-        ConnectionManager connectionManager = ConnectionManager.getInstance(connection.getProject());
+        ConnectionManager connectionManager = getConnectionManager(connection);
         connectionManager.promptAuthenticationDialog(
                 connection,
                 temporaryAuthenticationInfo,
@@ -109,7 +115,8 @@ public abstract class ConnectionAction implements DatabaseContextBase {
 
     private void promptConnectDialog() {
         ConnectionHandler connection = getConnection();
-        ConnectionManager.promptConnectDialog(
+        ConnectionManager connectionManager = getConnectionManager(connection);
+        connectionManager.promptConnectDialog(
                 connection,
                 description,
                 option -> {
@@ -125,6 +132,12 @@ public abstract class ConnectionAction implements DatabaseContextBase {
     @NotNull
     public ConnectionHandler getConnection() {
         return nd(this.context).ensureConnection();
+    }
+
+
+
+    static ConnectionManager getConnectionManager(ConnectionHandler connection) {
+        return ConnectionManager.getInstance(connection.getProject());
     }
 
     public static void invoke(

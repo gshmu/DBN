@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.dbn.common.component.Components.projectService;
+import static com.dbn.common.notification.NotificationGroup.DDL;
 
 @State(
     name = DDLFileManager.COMPONENT_NAME,
@@ -136,11 +137,7 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
                 }
 
                 if (restoredAssociations.length() > 0) {
-                    sendInfoNotification(
-                            NotificationGroup.DDL,
-                            "Following file associations have been restored: \"" + restoredAssociations + "\". " +
-                                    "They are registered as DDL file types in project \"" + getProject().getName() + "\".\n" +
-                                    "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).");
+                    sendInfoNotification(DDL, nls("ntf.ddlFiles.info.FileAssociationsRestored",restoredAssociations, getProject().getName()));
                 }
             }
 

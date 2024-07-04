@@ -55,7 +55,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
         DatabaseSession session = connection.getSessionBundle().getSession(conn.getSessionId());
         Messages.showQuestionDialog(getProject(),
                 nls("msg.sessions.title.RollbackSession"),
-                nls("msg.sessions.text.RollbackSession", session, connection) ,
+                nls("msg.sessions.question.RollbackSession", session, connection) ,
                 Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () ->
                         execute(connection,
@@ -69,7 +69,7 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
         DatabaseSession session = connection.getSessionBundle().getSession(conn.getSessionId());
         Messages.showQuestionDialog(ensureProject(),
                 nls("msg.sessions.title.CommitSession"),
-                nls("msg.sessions.text.CommitSession", session, connection),
+                nls("msg.sessions.question.CommitSession", session, connection),
                 Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () ->
                         execute(connection,
@@ -100,8 +100,8 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                 String connectionName = connection.getConnectionName(conn);
                 String actionName = actions.get(0).getName();
 
-                String title = nls("msg.transactions.title.TransactionalActivity");
-                String description = nls("msg.transactions.text.TransactionalActivity", actionName, connectionName);
+                String title = nls("prc.transactions.title.TransactionalActivity");
+                String description = nls("prc.transactions.info.TransactionalActivity", actionName, connectionName);
                 ProgressRunnable executor = progress -> executeActions(connection, conn, actions, callback);
 
                 if (background)
@@ -143,24 +143,21 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                     TransactionListener.TOPIC,
                     (listener) -> listener.beforeAction(connection, conn, action));
 
-            ProgressMonitor.setProgressDetail(nls("msg.transactions.text.TransactionalActivity", action.getName(), connectionName));
+            ProgressMonitor.setProgressDetail(nls("prc.transactions.info.TransactionalActivity", action.getName(), connectionName));
 
             action.execute(connection, conn);
             if (action.getNotificationType() != null) {
                 sendNotification(
                         action.getNotificationType(),
                         action.getGroup(),
-                        action.getSuccessNotificationMessage(),
-                        connectionName);
+                        nls(action.getSuccessNotificationMessage(), connectionName));
             }
         } catch (SQLException e) {
             conditionallyLog(e);
             sendNotification(
                     action.getFailureNotificationType(),
                     action.getGroup(),
-                    action.getFailureNotificationMessage(),
-                    connectionName,
-                    e);
+                    nls(action.getFailureNotificationMessage(), connectionName, e));
             success.set(false);
         } finally {
             if (isValid(project)) {

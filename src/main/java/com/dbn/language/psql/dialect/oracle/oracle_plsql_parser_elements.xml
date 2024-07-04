@@ -4672,7 +4672,7 @@
                     <token id="02365" type-id="FN_LOCALTIMESTAMP" />
                 </one-of>
                 <wrapper id="02366" optional="true" template="PARENTHESES">
-                    <element ref-id="expression" />
+                    <element ref-id="expression" optional="true"/>
                 </wrapper>
             </sequence>
             <sequence id="02367">

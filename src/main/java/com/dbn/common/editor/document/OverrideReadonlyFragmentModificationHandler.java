@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 
 import static com.dbn.common.action.UserDataKeys.GUARDED_BLOCK_REASON;
+import static com.dbn.nls.NlsResources.nls;
 
 public class OverrideReadonlyFragmentModificationHandler implements
         ReadonlyFragmentModificationHandler {
@@ -32,7 +33,7 @@ public class OverrideReadonlyFragmentModificationHandler implements
         Document document = guardedBlock.getDocument();
         String message = document.getUserData(GUARDED_BLOCK_REASON);
         if (message != null) {
-            Messages.showErrorDialog(null, "Action denied", message);
+            Messages.showErrorDialog(null, nls("msg.codeEditor.title.ActionDenied"), message);
         } else {
             VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
             if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {

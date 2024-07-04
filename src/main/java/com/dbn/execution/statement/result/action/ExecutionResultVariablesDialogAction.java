@@ -18,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 
 import static com.dbn.common.dispose.Checks.isValid;
+import static com.dbn.common.notification.NotificationGroup.EXECUTION;
+import static com.dbn.common.notification.NotificationSupport.sendErrorNotification;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 public class ExecutionResultVariablesDialogAction extends AbstractExecutionResultAction {
@@ -38,10 +40,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
                                 executionProcessor.execute();
                             } catch (SQLException ex) {
                                 conditionallyLog(ex);
-                                NotificationSupport.sendErrorNotification(
-                                        project,
-                                        NotificationGroup.EXECUTION,
-                                        "Error executing statement. {0}", ex);
+                                sendErrorNotification(project, EXECUTION, nls("ntf.execution.error.StatementExecutionError", ex));
                             }
                         }));
     }

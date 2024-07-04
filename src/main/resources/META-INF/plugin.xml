@@ -10,6 +10,7 @@
     <depends optional="true" config-file="dbn-copyright-support.xml">com.intellij.copyright</depends>
     <vendor email="dancioca@bluewin.ch">Dan Cioca</vendor>
     <idea-version since-build="201.6668.113" until-build="242.*"/>
+    <resource-bundle>nls.NlsResources</resource-bundle>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
             This software solution enhances the capabilities of the IntelliJ IDEA development environment and its associated products by providing comprehensive features for database development and maintenance.
@@ -342,6 +343,7 @@
     </project-components>
 
     <extensions defaultExtensionNs="com.intellij">
+        <languageBundle locale="de"/>
         <applicationService serviceImplementation="com.dbn.plugin.PluginStatusManager"/>
         <applicationService serviceImplementation="com.dbn.plugin.PluginConflictManager"/>
         <applicationService serviceImplementation="com.dbn.common.file.FileTypeService"/>
@@ -701,7 +703,7 @@
         <listener topic="com.intellij.openapi.actionSystem.ex.AnActionListener" class="com.dbn.execution.statement.action.ExecuteStatementEditorAction$ShortcutInterceptor"/>
     </projectListeners>
     <extensions defaultExtensionNs="com.intellij">
-        <notificationGroup id="DBNavigator.NotificationGroup" displayType="BALLOON" key="DBNavigator"/>
+        <notificationGroup id="DBNavigator.NotificationGroup" displayType="BALLOON" key="ntf.shared.title.DBNavigator"/>
         <postStartupActivity implementation="com.dbn.project.ProjectStartupActivity"/>
         <!--<postStartupActivity implementation="com.dbn.project.ProjectComponentsInitializer" order="last"/>-->
         <!--<applicationInitializedListener implementation="com.dbn.init.DatabaseNavigatorInitializer"/>-->

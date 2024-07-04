@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,11 +57,11 @@ public class CmdLineInterface implements Cloneable<CmdLineInterface>, Persistent
 
     }
 
-    public CmdLineInterface(DatabaseType databaseType, String executablePath, String name, String description) {
+    public CmdLineInterface(DatabaseType databaseType, @NonNls String executablePath, String name, String description) {
         this(UUID.randomUUID().toString(), databaseType, executablePath, name, description);
     }
 
-    public CmdLineInterface(String id, DatabaseType databaseType, String executablePath, String name, String description) {
+    public CmdLineInterface(String id, DatabaseType databaseType, @NonNls String executablePath, String name, String description) {
         this.id = id;
         this.name = name;
         this.databaseType = databaseType;

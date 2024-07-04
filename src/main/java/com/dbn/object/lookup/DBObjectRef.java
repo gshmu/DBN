@@ -13,6 +13,7 @@ import com.dbn.connection.ConnectionId;
 import com.dbn.connection.SchemaId;
 import com.dbn.connection.context.DatabaseContext;
 import com.dbn.connection.context.DatabaseContextBase;
+import com.dbn.nls.NlsResources;
 import com.dbn.object.DBSchema;
 import com.dbn.object.DBSynonym;
 import com.dbn.object.common.DBObject;
@@ -310,7 +311,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     
 
     public String getQualifiedNameWithType() {
-        return objectType.getName() + " \"" + getPath() + "\"";
+        return NlsResources.nls("app.object.label.QualifiedNameWithType", objectType.getName(), getPath());
     }
 
     @Nullable

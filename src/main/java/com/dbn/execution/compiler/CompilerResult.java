@@ -11,6 +11,7 @@ import com.dbn.connection.jdbc.DBNConnection;
 import com.dbn.database.interfaces.DatabaseInterfaceInvoker;
 import com.dbn.database.interfaces.DatabaseMetadataInterface;
 import com.dbn.editor.DBContentType;
+import com.dbn.nls.NlsSupport;
 import com.dbn.object.DBSchema;
 import com.dbn.object.common.DBSchemaObject;
 import com.dbn.object.lookup.DBObjectRef;
@@ -27,10 +28,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dbn.common.Priority.HIGH;
+import static com.dbn.common.notification.NotificationGroup.COMPILER;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 
 @Getter
-public class CompilerResult implements Disposable, NotificationSupport {
+public class CompilerResult implements Disposable, NotificationSupport, NlsSupport {
     private final DBObjectRef<DBSchemaObject> object;
     private final List<CompilerMessage> compilerMessages = new ArrayList<>();
     private CompilerAction compilerAction;
@@ -61,8 +63,8 @@ public class CompilerResult implements Disposable, NotificationSupport {
         try {
             if (conn == null) {
                 DatabaseInterfaceInvoker.execute(HIGH,
-                        "Loading compiler data",
-                        "Loading compile results for " + qualifiedObjectName,
+                        nls("prc.compiler.title.LoadingCompilerData"),
+                        nls("prc.compiler.message.LoadingCompilerData", qualifiedObjectName),
                         connection.getProject(),
                         connection.getConnectionId(),
                         c -> loadCompilerErrors(connection, schema, objectName, contentType, c));
@@ -72,13 +74,12 @@ public class CompilerResult implements Disposable, NotificationSupport {
             }
         } catch (SQLException e) {
             conditionallyLog(e);
-            sendErrorNotification(
-                    NotificationGroup.COMPILER,
-                    "Failed to read compiler result: {0}", e);
+            sendErrorNotification(COMPILER, nls("ntf.compiler.error.FailedToLoadCompilerResult", e));
         }
 
 
         if (compilerMessages.isEmpty()) {
+            // TODO NLS
             String contentDesc =
                     contentType == DBContentType.CODE_SPEC ? "spec of " :
                     contentType == DBContentType.CODE_BODY ? "body of " : "";

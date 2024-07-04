@@ -23,64 +23,64 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
     COMMIT(
             nls("app.transactions.action.Commit"),
             NotificationGroup.TRANSACTION,
-            NotificationType.INFORMATION, "msg.transactions.confirmation.Commit",
-            NotificationType.ERROR, "msg.transactions.error.Commit",
+            NotificationType.INFORMATION, "ntf.transactions.info.Commit",
+            NotificationType.ERROR, "ntf.transactions.error.Commit",
             false,
             (connection, target) -> Resources.commit(target)),
 
     ROLLBACK(
             nls("app.transactions.action.Rollback"),
             NotificationGroup.TRANSACTION,
-            NotificationType.INFORMATION, "msg.transactions.confirmation.Rollback",
-            NotificationType.ERROR, "msg.transactions.error.Rollback",
+            NotificationType.INFORMATION, "ntf.transactions.info.Rollback",
+            NotificationType.ERROR, "ntf.transactions.error.Rollback",
             false,
             (connection, target) -> Resources.rollback(target)),
 
     ROLLBACK_IDLE(
             nls("app.transactions.action.IdleRollback"),
             NotificationGroup.TRANSACTION,
-            NotificationType.INFORMATION, "msg.transactions.confirmation.Rollback",
-            NotificationType.ERROR, "msg.transactions.error.Rollback",
+            NotificationType.INFORMATION, "ntf.transactions.info.Rollback",
+            NotificationType.ERROR, "ntf.transactions.error.Rollback",
             false,
             (connection, target) -> Resources.rollback(target)),
 
     DISCONNECT(
             nls("app.transactions.action.Disconnect"),
             NotificationGroup.SESSION,
-            NotificationType.INFORMATION, "msg.transactions.confirmation.Disconnect",
-            NotificationType.WARNING, "msg.transactions.error.Disconnect",
+            NotificationType.INFORMATION, "ntf.transactions.info.Disconnect",
+            NotificationType.WARNING, "ntf.transactions.warning.Disconnect",
             true,
             (connection, target) -> connection.closeConnection(target)),
 
     DISCONNECT_IDLE(
             nls("app.transactions.action.IdleDisconnect"),
             NotificationGroup.SESSION,
-            NotificationType.INFORMATION, "msg.transactions.confirmation.IdleDisconnect",
-            NotificationType.WARNING, "msg.transactions.error.Disconnect",
+            NotificationType.INFORMATION, "ntf.transactions.info.DisconnectIdle",
+            NotificationType.WARNING, "ntf.transactions.warning.Disconnect",
             true,
             (connection, target) -> connection.closeConnection(target)),
 
     KEEP_ALIVE(
             nls("app.transactions.action.KeepAlive"),
             NotificationGroup.CONNECTION,
-            null, "",
-            NotificationType.ERROR, "msg.transactions.error.KeepAlive",
+            null, null,
+            NotificationType.ERROR, "ntf.transactions.error.KeepAlive",
             false,
             (connection, target) -> target.updateLastAccess()),
 
     TURN_AUTO_COMMIT_ON(
             nls("app.transactions.action.EnableAutoCommit"),
             NotificationGroup.TRANSACTION,
-            NotificationType.WARNING, "msg.transactions.confirmation.EnableAutoCommit",
-            NotificationType.ERROR, "msg.transactions.error.EnableAutoCommit",
+            NotificationType.WARNING, "ntf.transactions.warning.EnableAutoCommit",
+            NotificationType.ERROR, "ntf.transactions.error.EnableAutoCommit",
             true,
             (connection, target) -> target.setAutoCommit(true)),
 
     TURN_AUTO_COMMIT_OFF(
             nls("app.transactions.action.DisableAutoCommit"),
             NotificationGroup.TRANSACTION,
-            NotificationType.INFORMATION, "msg.transactions.confirmation.DisableAutoCommit",
-            NotificationType.ERROR, "msg.transactions.error.DisableAutoCommit",
+            NotificationType.INFORMATION, "ntf.transactions.info.DisableAutoCommit",
+            NotificationType.ERROR, "ntf.transactions.error.DisableAutoCommit",
             true,
             (connection, target) -> target.setAutoCommit(false));
 

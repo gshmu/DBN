@@ -44,6 +44,8 @@ import java.util.*;
 import static com.dbn.common.Priority.HIGH;
 import static com.dbn.common.component.Components.projectService;
 import static com.dbn.common.dispose.Checks.isNotValid;
+import static com.dbn.common.notification.NotificationGroup.SESSION_BROWSER;
+import static com.dbn.common.options.setting.Settings.newElement;
 import static com.dbn.common.util.Commons.list;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 
@@ -164,9 +166,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
             });
         } catch (SQLException e) {
             conditionallyLog(e);
-            sendWarningNotification(
-                    NotificationGroup.SESSION_BROWSER,
-                    "Could not load current session SQL: {0}", e);
+            sendWarningNotification(SESSION_BROWSER, nls("ntf.sessions.error.FailedToLoadCurrentSql", e));
         }
 
         return EMPTY_CONTENT;
@@ -198,7 +198,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
 
     private void doInterruptSessions(SessionBrowser sessionBrowser, List<SessionIdentifier> sessionIds, SessionInterruptionType type, SessionInterruptionOption option) {
         Progress.prompt(getProject(), sessionBrowser, true,
-                "Interrupting sessions",
+                nls("prc.sessions.title.InterruptingSessions"),
                 type.taskAction(sessionIds.size()),
                 progress -> {
                     try {
@@ -212,6 +212,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
                             Object sessionId = entry.getSessionId();
                             Object serialNumber = entry.getSerialNumber();
 
+                            // TODO NLS
                             checkDisposed();
                             progress.checkCanceled();
                             progress.setText(Strings.capitalize(type.disconnectingAction()) + " session id " + sessionId + " (serial " + serialNumber + ")");
@@ -239,6 +240,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
     }
 
     private void promptInterruptionResult(ConnectionHandler connection, List<SessionIdentifier> idenrifiers, Map<SessionIdentifier, SQLException> errors, SessionInterruptionType type) {
+        // TODO NLS
         DatabaseMessageParserInterface messageParserInterface = connection.getMessageParserInterface();
 
         Project project = getProject();
@@ -261,7 +263,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
 
             }
         } else {
-            if (errors.size() == 0) {
+            if (errors.isEmpty()) {
                 Messages.showInfoDialog(project, "Info", sessionCount + " sessions " + disconnectedAction + ".");
             } else {
                 StringBuilder message = new StringBuilder();
@@ -326,7 +328,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
     @Nullable
     @Override
     public Element getComponentState() {
-        return new Element("state");
+        return newElement("state");
     }
 
     @Override

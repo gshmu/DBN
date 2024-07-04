@@ -61,6 +61,7 @@ import static com.dbn.common.component.Components.projectService;
 import static com.dbn.common.dispose.Checks.isNotValid;
 import static com.dbn.common.dispose.Failsafe.guarded;
 import static com.dbn.common.dispose.Failsafe.nd;
+import static com.dbn.common.notification.NotificationGroup.EXECUTION;
 import static com.dbn.connection.ConnectionHandler.isLiveConnection;
 
 @State(
@@ -276,9 +277,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                 conn = connection.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
                 Diagnostics.conditionallyLog(e);
-                sendErrorNotification(
-                        NotificationGroup.EXECUTION,
-                        "Error executing {0}. Failed to ensure connectivity: {1}", statementName, e);
+                sendErrorNotification(EXECUTION,  nls("ntf.execution.error.ExecutionConnectivityError", statementName, e));
 
                 StatementExecutionContext context = executionProcessor.getExecutionContext();
                 context.reset();
@@ -291,9 +290,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
             Diagnostics.conditionallyLog(e);
         } catch (SQLException e) {
             Diagnostics.conditionallyLog(e);
-            sendErrorNotification(
-                    NotificationGroup.EXECUTION,
-                    "Error executing {0}: {1}", statementName, e);
+            sendErrorNotification(EXECUTION, nls("ntf.execution.error.ExecutionError", statementName, e));
         } finally {
             Documents.refreshEditorAnnotations(executionProcessor.getPsiFile());
         }
