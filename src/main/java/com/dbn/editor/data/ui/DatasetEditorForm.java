@@ -32,6 +32,7 @@ import com.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
@@ -98,8 +99,8 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
             conditionallyLog(e);
             Messages.showErrorDialog(
                     getProject(),
-                    "Error",
-                    "Error opening data editor for " + dataset.getQualifiedNameWithType(), e);
+                    nls("msg.dataEditor.title.FailedToOpenEditor"),
+                    nls("msg.dataEditor.error.FailedToOpenEditor", dataset.getQualifiedNameWithType(), e));
         }
 
         if (dataset.isEditable(DBContentType.DATA)) {
@@ -247,10 +248,6 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
     }
 
     private class CancelLoadingAction extends BasicAction {
-        CancelLoadingAction() {
-            super("Cancel", null, Icons.DATA_EDITOR_STOP_LOADING);
-        }
-
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             getEditorTable().getModel().cancelDataLoad();
@@ -258,7 +255,10 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
 
         @Override
         public void update(@NotNull AnActionEvent e) {
-            e.getPresentation().setEnabled(!getEditorTable().getModel().isLoadCancelled());
+            Presentation presentation = e.getPresentation();
+            presentation.setText(nls("app.shared.action.Cancel"));
+            presentation.setIcon(Icons.DATA_EDITOR_STOP_LOADING);
+            presentation.setEnabled(!getEditorTable().getModel().isLoadCancelled());
         }
     }
 

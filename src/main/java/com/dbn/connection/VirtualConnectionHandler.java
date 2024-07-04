@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.dbn.common.exception.Exceptions.unsupported;
+import static com.dbn.nls.NlsResources.nls;
 
 @Getter
 public class VirtualConnectionHandler extends StatefulDisposableBase implements ConnectionHandler {
@@ -424,7 +425,7 @@ public class VirtualConnectionHandler extends StatefulDisposableBase implements 
 
     @Override
     public String getDebuggerVersion() {
-        return "Unknown";
+        return nls("app.shared.label.Unknown");
     }
 
     @Override

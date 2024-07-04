@@ -268,12 +268,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             copyPasteManager.setContents(new StringSelection(xmlString));
             Messages.showInfoDialog(project,
                     nls("msg.connection.title.ConfigExported"),
-                    nls("msg.connection.text.ConfigExported"));
+                    nls("msg.connection.info.ConfigExported"));
         } catch (Exception e) {
             conditionallyLog(e);
             Messages.showErrorDialog(project,
                     nls("msg.connection.title.ExportFailed"),
-                    "msg.connection.text.ExportFailed", e);
+                    "msg.connection.error.ExportFailed", e);
         }
     }
 
@@ -316,14 +316,14 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                     Messages.showWarningDialog(
                             getProject(),
                             nls("msg.connection.title.ImportFailed"),
-                            nls("msg.connection.text.ImportFailedEmpty"));
+                            nls("msg.connection.warning.ImportFailedEmpty"));
                 }
 
             } catch (Exception e) {
                 conditionallyLog(e);
                 Messages.showErrorDialog(getProject(),
                         nls("msg.connection.title.ImportFailed"),
-                        nls("msg.connection.text.ImportFailedUnparseable"), e);
+                        nls("msg.connection.error.ImportFailedUnparseable"), e);
             }
         }
     }

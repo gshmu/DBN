@@ -87,7 +87,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         Project project = connection.getProject();
         Progress.background(project, connection, true,
                 nls("msg.consoles.title.CreatingConsole"),
-                nls("msg.consoles.text.CreatingConsole", type.getName(), name),
+                nls("msg.consoles.info.CreatingConsole", type.getName(), name),
                 indicator -> {
                     DBConsole console = connection.getConsoleBundle().createConsole(name, type);
                     DBConsoleVirtualFile consoleFile = console.getVirtualFile();
@@ -118,7 +118,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         Messages.showQuestionDialog(
                 project,
                 nls("msg.consoles.title.DeleteConsole"),
-                nls("msg.consoles.text.DeleteConsole"),
+                nls("msg.consoles.question.DeleteConsole"),
                 Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () -> {
                     ConnectionHandler connection = console.getConnection();
@@ -148,7 +148,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         String consoleName = consoleFile.getName();
         FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
                 Titles.signed(nls("msg.consoles.title.SaveToFile")),
-                nls("msg.consoles.text.SaveToFile", consoleName), "sql");
+                nls("msg.consoles.info.SaveToFile", consoleName), "sql");
 
         FileChooserFactory fileChooserFactory = FileChooserFactory.getInstance();
         FileSaverDialog fileSaverDialog = fileChooserFactory.createSaveFileDialog(fileSaverDescriptor, project);
@@ -170,7 +170,7 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
                 String fileName = fileWrapper.getFile().getName();
                 Messages.showErrorDialog(project,
                         nls("msg.consoles.title.CouldNotSaveToFile"),
-                        nls("msg.consoles.text.CouldNotSaveToFile", fileName), e);
+                        nls("msg.consoles.error.CouldNotSaveToFile", fileName), e);
             }
         });
 

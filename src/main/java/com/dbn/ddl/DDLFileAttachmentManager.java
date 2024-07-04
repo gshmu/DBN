@@ -65,6 +65,7 @@ import static com.dbn.common.component.Components.projectService;
 import static com.dbn.common.file.FileEventType.*;
 import static com.dbn.common.options.setting.Settings.*;
 import static com.dbn.common.util.Conditional.when;
+import static com.dbn.common.util.Lists.convert;
 import static com.dbn.common.util.Lists.first;
 import static com.dbn.common.util.Messages.options;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
@@ -269,7 +270,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
         if (fileNameProvider != null) {
             FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-            descriptor.setTitle("Select New DDL-File Location");
+            descriptor.setTitle(nls("msg.ddlFiles.title.SelectNewFileLocation"));
 
             VirtualFile[] selectedDirectories = FileChooser.chooseFiles(descriptor, project, null);
             if (selectedDirectories.length > 0) {
@@ -285,7 +286,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
                 } catch (IOException e) {
                     conditionallyLog(e);
-                    Messages.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
+                    Messages.showErrorDialog(project, nls("msg.ddlFiles.error.FileCreationFailed", parentDirectory + File.separator + fileName), e);
                 }
 
                 reopenEditor(object);
@@ -340,8 +341,8 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         Progress.prompt(
                 getProject(),
                 objectRef, true,
-                "Attaching DDL Files",
-                "Attaching DDL files to " + objectRef.getQualifiedNameWithType(), t -> {
+                nls("msg.ddlFiles.title.AttachingDdlFiles"),
+                nls("msg.ddlFiles.info.AttachingDdlFiles", objectRef.getQualifiedNameWithType()), t -> {
                     DDLFileNameProvider ddlFileNameProvider = getDDLFileNameProvider(objectRef);
                     if (ddlFileNameProvider == null) return;
 
@@ -351,23 +352,19 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
                         StringBuilder message = new StringBuilder();
                         message.append(fileUrls.isEmpty() ?
-                                "No DDL Files were found in " :
-                                "No additional DDL Files were found in ");
-                        message.append("project scope.");
+                                nls("msg.ddlFiles.info.NoDdlFilesFound") :
+                                "msg.ddlFiles.info.NoAdditionalDdlFilesFound");
 
                         if (!fileUrls.isEmpty()) {
-                            message.append("\n\nFollowing files are already attached to ");
-                            message.append(objectRef.getQualifiedNameWithType());
-                            message.append(':');
-                            for (String fileUrl : fileUrls) {
-                                message.append('\n');
-                                message.append(VirtualFiles.ensureFilePath(fileUrl));
-                            }
+                            fileUrls = convert(fileUrls, f -> VirtualFiles.ensureFilePath(f));
+                            message.append(nls("msg.ddlFiles.info.AlreadyAttachedFiles",
+                                    objectRef.getQualifiedNameWithType(),
+                                    String.join("\n", fileUrls)));
                         }
 
-                        String[] options = {"Create New...", "Cancel"};
+                        String[] options = {nls("app.shared.button.CreateNew"), nls("app.shared.button.Cancel")};
                         Messages.showInfoDialog(getProject(),
-                                "No DDL files found",
+                                nls("msg.ddlFiles.title.NoDdlFilesFound"),
                                 message.toString(), options, 0,
                                 option -> when(option == 0, () -> createDDLFile(objectRef)));
                     } else {
@@ -385,8 +382,9 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         Progress.prompt(
                 getProject(),
                 objectRef, true,
-                "Detaching DDL Files",
-                "Detaching DDL files from " + objectRef.getQualifiedNameWithType(), t -> {
+                nls("msg.ddlFiles.title.DetachingDdlFiles"),
+                nls("msg.ddlFiles.info.DetachingDdlFiles", objectRef.getQualifiedNameWithType()),
+                t -> {
                     List<VirtualFile> files = getAttachedDDLFiles(objectRef);
                     if (files == null) return;
 
@@ -395,7 +393,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
                     showFileDetachDialog(object, fileInfos, (dialog, exitCode) ->
                             when(exitCode != DialogWrapper.CANCEL_EXIT_CODE,
                                     () -> reopenEditor(object)));
-        });
+                });
     }
 
     private void reopenEditor(DBSchemaObject object) {
@@ -440,7 +438,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
         SelectionListDialog<DDLFileNameProvider> fileTypeDialog = new SelectionListDialog<>(
                 getProject(),
-                "Select DDL File Type",
+                nls("msg.ddlFiles.title.SelectDdlFileType"),
                 providers,
                 preferredProvider,
                 object);
@@ -464,10 +462,9 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     public void showMissingFileAssociations(DBObjectRef<DBSchemaObject> objectRef) {
         Messages.showWarningDialog(
                 getProject(),
-                "No DDL File Type Association",
-                "No DDL file type is configured for database " + objectRef.getObjectType().getListName() +
-                        ".\nPlease check the DDL file association in Project Settings > DB Navigator > DDL File Settings.",
-                options("Open Settings...", "Cancel"), 0,
+                nls("msg.ddlFiles.title.NoDdlFileAssociation"),
+                nls("msg.ddlFiles.question.NoDdlFileAssociation", objectRef.getObjectType().getListName()),
+                options(nls("app.shared.button.OpenSettings"), nls("app.shared.button.Cancel")), 0,
                 option -> when(option == 0, () -> {
                     ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
                     settingsManager.openProjectSettings(ConfigId.DDL_FILES);
@@ -484,7 +481,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     @Nullable
     @Override
     public Element getComponentState() {
-        Element element = new Element("state");
+        Element element = newElement("state");
 
         Element mappingsElement = newElement(element, "mappings");
         for (String fileUrl : mappings.fileUrls()) {

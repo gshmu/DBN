@@ -31,6 +31,7 @@ import com.dbn.debugger.jdbc.frame.DBJdbcDebugSuspendContext;
 import com.dbn.editor.DBContentType;
 import com.dbn.execution.ExecutionContext;
 import com.dbn.execution.ExecutionInput;
+import com.dbn.nls.NlsSupport;
 import com.dbn.object.DBSchema;
 import com.dbn.object.common.DBObjectBundle;
 import com.dbn.object.common.DBSchemaObject;
@@ -58,6 +59,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.dbn.common.notification.NotificationGroup.DEBUGGER;
 import static com.dbn.common.util.Strings.cachedUpperCase;
 import static com.dbn.debugger.common.process.DBDebugProcessStatus.*;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
@@ -65,7 +67,7 @@ import static com.dbn.execution.ExecutionStatus.CANCELLED;
 
 @Getter
 @Setter
-public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess, NotificationSupport {
+public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebugProcess implements DBDebugProcess, NotificationSupport, NlsSupport {
     private DBNConnection targetConnection;
     private DBNConnection debuggerConnection;
     private final DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
@@ -139,27 +141,27 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         ConnectionHandler connection = getConnection();
                         SchemaId schemaId = input.getExecutionContext().getTargetSchema();
 
-                        ProgressMonitor.setProgressDetail("Initializing target connection");
+                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.InitializingTargetConnection"));
                         targetConnection = connection.getDebugConnection(schemaId);
                         targetConnection.setAutoCommit(false);
                         console.system("Target connection initialized");
 
-                        ProgressMonitor.setProgressDetail("Initializing debugger connection");
+                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.InitializingDebuggerConnection"));
                         debuggerConnection = connection.getDebuggerConnection();
                         console.system("Debug connection initialized");
 
                         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
 
-                        ProgressMonitor.setProgressDetail("Initializing target session");
+                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.InitializingTargetSession"));
                         DebuggerSessionInfo sessionInfo = debuggerInterface.initializeSession(targetConnection);
                         console.system("Target session initialized");
 
-                        ProgressMonitor.setProgressDetail("Enabling debugging on target session");
+                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.EnablingDebuggingOnTargetSession"));
                         debuggerInterface.enableDebugging(targetConnection);
                         console.system("Debug on target session enabled");
 
 
-                        ProgressMonitor.setProgressDetail("Attaching debugger session");
+                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.AttachingDebuggerSession"));
                         debuggerInterface.attachSession(debuggerConnection, sessionInfo.getSessionId());
                         console.system("Debug session attached");
 
@@ -437,9 +439,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         if (isTerminated()) {
             int reasonCode = runtimeInfo.getReason();
             String reason = debuggerInterface.getRuntimeEventReason(reasonCode);
-            sendInfoNotification(
-                    NotificationGroup.DEBUGGER,
-                    "Session terminated with code {0} ({1})", reasonCode, reason);
+            sendInfoNotification(DEBUGGER, nls("ntf.debugger.info.SessionTerminated", reasonCode, reason));
 
             set(PROCESS_STOPPED, true);
             session.stop();
@@ -454,9 +454,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     if (runtimeInfo.isTerminated()) {
                         int reasonCode = runtimeInfo.getReason();
                         String reason = debuggerInterface.getRuntimeEventReason(reasonCode);
-                        sendInfoNotification(
-                                NotificationGroup.DEBUGGER,
-                                "Session terminated with code {0} ({1})", reasonCode, reason);
+                        sendInfoNotification(DEBUGGER,nls("ntf.debugger.info.SessionTerminated", reasonCode, reason));
                     }
                     if (!runtimeInfo.isSameLocation(topRuntimeInfo)) {
                         runtimeInfo = topRuntimeInfo;
