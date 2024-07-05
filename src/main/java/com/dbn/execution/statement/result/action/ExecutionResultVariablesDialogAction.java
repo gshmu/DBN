@@ -1,8 +1,6 @@
 package com.dbn.execution.statement.result.action;
 
 import com.dbn.common.icon.Icons;
-import com.dbn.common.notification.NotificationGroup;
-import com.dbn.common.notification.NotificationSupport;
 import com.dbn.common.thread.Progress;
 import com.dbn.debugger.DBDebuggerType;
 import com.dbn.execution.statement.StatementExecutionManager;
@@ -40,7 +38,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
                                 executionProcessor.execute();
                             } catch (SQLException ex) {
                                 conditionallyLog(ex);
-                                sendErrorNotification(project, EXECUTION, nls("ntf.execution.error.StatementExecutionError", ex));
+                                sendErrorNotification(project, EXECUTION, txt("ntf.execution.error.StatementExecutionError", ex));
                             }
                         }));
     }

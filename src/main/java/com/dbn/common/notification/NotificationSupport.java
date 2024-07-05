@@ -9,11 +9,6 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-
-import static com.dbn.nls.NlsResources.nls;
-
 public interface NotificationSupport extends ProjectSupplier, NlsSupport {
 
     default void sendNotification(NotificationType type, NotificationGroup group, String message) {

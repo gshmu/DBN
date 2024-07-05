@@ -39,7 +39,7 @@ public abstract class IssueReportSubmitter extends ErrorReportSubmitter implemen
     @NotNull
     @Override
     public String getReportActionText() {
-        return nls("msg.reporting.title.SubmitIssueReport");
+        return txt("msg.reporting.title.SubmitIssueReport");
     }
 
     public abstract String getTicketUrl(String ticketId);
@@ -64,7 +64,7 @@ public abstract class IssueReportSubmitter extends ErrorReportSubmitter implemen
     private void submitReport(IssueReport report) {
         Project project = report.getProject();
 
-        Progress.prompt(project, null, true, nls("prc.reporting.title.SubmittingIssueReport"), null, progress -> {
+        Progress.prompt(project, null, true, txt("prc.reporting.title.SubmittingIssueReport"), null, progress -> {
             TicketResponse response;
             Consumer<SubmittedReportInfo> consumer = report.getConsumer();
             try {
@@ -73,7 +73,7 @@ public abstract class IssueReportSubmitter extends ErrorReportSubmitter implemen
                 conditionallyLog(e);
 
                 NotificationSupport.sendErrorNotification(project, REPORTING,
-                        nls("ntf.reporting.error.FailedToSendIssueReport", e));
+                        txt("ntf.reporting.error.FailedToSendIssueReport", e));
 
                 consumer.consume(new SubmittedReportInfo(null, null, FAILED));
                 return;
@@ -86,12 +86,12 @@ public abstract class IssueReportSubmitter extends ErrorReportSubmitter implemen
                 String ticketId = response.getTicketId();
                 String ticketUrl = getTicketUrl(ticketId);
                 NotificationSupport.sendInfoNotification(project, REPORTING,
-                        nls("ntf.reporting.info.IssueReportSuccessfullySent", ticketUrl, ticketId));
+                        txt("ntf.reporting.info.IssueReportSuccessfullySent", ticketUrl, ticketId));
 
                 consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
             } else {
                 NotificationSupport.sendErrorNotification(project, REPORTING,
-                        nls("ntf.reporting.error.ErrorSendingIssueReport", errorMessage));
+                        txt("ntf.reporting.error.ErrorSendingIssueReport", errorMessage));
                 consumer.consume(new SubmittedReportInfo(null, null, FAILED));
             }
         });

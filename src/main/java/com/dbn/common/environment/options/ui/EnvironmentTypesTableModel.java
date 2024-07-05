@@ -140,7 +140,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     public void validate() throws ConfigurationException {
         for (EnvironmentType environmentType : environmentTypes) {
             if (Strings.isEmpty(environmentType.getName())) {
-                throw new ConfigurationException(nls("cfg.environment.error.UnnamedEnvironmentTypes"));
+                throw new ConfigurationException(txt("cfg.environment.error.UnnamedEnvironmentTypes"));
             }
         }
     }

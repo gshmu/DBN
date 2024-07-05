@@ -50,41 +50,41 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         contentPanel.add(tabbedPane, BorderLayout.CENTER);
 
         TabInfo connectionTabInfo = new TabInfo(new JBScrollPane(databaseSettings.createComponent()));
-        connectionTabInfo.setText(nls("cfg.connection.title.Database"));
+        connectionTabInfo.setText(txt("cfg.connection.title.Database"));
         tabbedPane.addTab(connectionTabInfo);
 
         if (databaseSettings.getConfigType() == ConnectionConfigType.BASIC) {
             ConnectionSslSettings sslSettings = connectionSettings.getSslSettings();
             TabInfo sslTabInfo = new TabInfo(new JBScrollPane(sslSettings.createComponent()));
-            sslTabInfo.setText(nls("cfg.connection.title.Ssl"));
+            sslTabInfo.setText(txt("cfg.connection.title.Ssl"));
             tabbedPane.addTab(sslTabInfo);
 
             ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
             TabInfo sshTunnelTabInfo = new TabInfo(new JBScrollPane(sshTunnelSettings.createComponent()));
-            sshTunnelTabInfo.setText(nls("cfg.connection.title.SslTunnel"));
+            sshTunnelTabInfo.setText(txt("cfg.connection.title.SslTunnel"));
             tabbedPane.addTab(sshTunnelTabInfo);
         }
 
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
         TabInfo propertiesTabInfo = new TabInfo(new JBScrollPane(propertiesSettings.createComponent()));
-        propertiesTabInfo.setText(nls("cfg.connection.title.Properties"));
+        propertiesTabInfo.setText(txt("cfg.connection.title.Properties"));
         tabbedPane.addTab(propertiesTabInfo);
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         TabInfo detailsTabInfo = new TabInfo(new JBScrollPane(detailSettings.createComponent()));
-        detailsTabInfo.setText(nls("cfg.connection.title.Details"));
+        detailsTabInfo.setText(txt("cfg.connection.title.Details"));
         tabbedPane.addTab(detailsTabInfo);
 
         if (databaseSettings.getDatabaseType() == DatabaseType.ORACLE) {
             ConnectionDebuggerSettings debuggerSettings = connectionSettings.getDebuggerSettings();
             TabInfo debuggerTabInfo = new TabInfo(new JBScrollPane(debuggerSettings.createComponent()));
-            debuggerTabInfo.setText(nls("cfg.connection.title.Debugger"));
+            debuggerTabInfo.setText(txt("cfg.connection.title.Debugger"));
             tabbedPane.addTab(debuggerTabInfo);
         }
 
         ConnectionFilterSettings filterSettings = connectionSettings.getFilterSettings();
         TabInfo filtersTabInfo = new TabInfo(new JBScrollPane(filterSettings.createComponent()));
-        filtersTabInfo.setText(nls("cfg.connection.title.Filters"));
+        filtersTabInfo.setText(txt("cfg.connection.title.Filters"));
         tabbedPane.addTab(filtersTabInfo);
 
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();

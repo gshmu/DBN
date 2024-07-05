@@ -20,7 +20,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.DriverSource"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.DriverSource"/>
         </properties>
       </component>
       <hspacer id="a6cc1">
@@ -35,7 +35,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.DriverLibrary"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.DriverLibrary"/>
         </properties>
       </component>
       <component id="882f4" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="driverLibraryTextField">
@@ -51,7 +51,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.Driver"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.Driver"/>
         </properties>
       </component>
       <component id="d5f74" class="javax.swing.JLabel" binding="driverErrorLabel">
@@ -59,7 +59,7 @@
           <grid row="4" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.placeholder.DriverError"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.placeholder.DriverError"/>
         </properties>
       </component>
       <component id="4df39" class="com.intellij.openapi.ui.ComboBox" binding="driverSourceComboBox">
@@ -94,7 +94,7 @@
           <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.placeholder.Check"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.placeholder.Check"/>
         </properties>
       </component>
     </children>

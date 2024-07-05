@@ -1,7 +1,6 @@
 package com.dbn.execution.logging;
 
 import com.dbn.common.component.ProjectComponentBase;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.util.Strings;
 import com.dbn.connection.ConnectionHandler;
 import com.dbn.connection.jdbc.DBNConnection;
@@ -46,7 +45,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             conditionallyLog(e);
             log.warn("Error enabling database logging: {}", e.getMessage());
             String logName = getLogName(connection);
-            sendWarningNotification(LOGGING, nls("ntf.logging.error.FailedToEnableLogging", logName, e));
+            sendWarningNotification(LOGGING, txt("ntf.logging.error.FailedToEnableLogging", logName, e));
             return false;
         }
     }
@@ -62,7 +61,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             conditionallyLog(e);
             log.warn("Error disabling database logging: {}", e.getMessage());
             String logName = getLogName(connection);
-            sendWarningNotification(LOGGING, nls("ntf.logging.error.FailedToDisableLogging", logName, e));
+            sendWarningNotification(LOGGING, txt("ntf.logging.error.FailedToDisableLogging", logName, e));
         }
     }
 
@@ -74,7 +73,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
             conditionallyLog(e);
             log.warn("Error reading database log output: {}", e.getMessage());
             String logName = getLogName(connection);
-            sendWarningNotification(LOGGING, nls("ntf.logging.error.FailedToLoadLogContent", logName, e));
+            sendWarningNotification(LOGGING, txt("ntf.logging.error.FailedToLoadLogContent", logName, e));
         }
 
         return null;
@@ -85,7 +84,7 @@ public class DatabaseLoggingManager extends ProjectComponentBase {
         DatabaseCompatibilityInterface compatibility = connection.getCompatibilityInterface();
         String logName = compatibility.getDatabaseLogName();
         if (Strings.isEmpty(logName)) {
-            logName = nls("app.logging.label.LogName_GENERIC");
+            logName = txt("app.logging.label.LogName_GENERIC");
         }
         return logName;
     }

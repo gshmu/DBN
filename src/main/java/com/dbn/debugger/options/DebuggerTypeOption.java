@@ -2,16 +2,17 @@ package com.dbn.debugger.options;
 
 import com.dbn.common.option.InteractiveOption;
 import com.dbn.debugger.DBDebuggerType;
+import com.dbn.nls.NlsResources;
 import lombok.Getter;
 
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 public enum DebuggerTypeOption implements InteractiveOption {
-    JDBC(nls("cfg.debugger.const.DebuggerTypeOption_JDBC"), DBDebuggerType.JDBC),
-    JDWP(nls("cfg.debugger.const.DebuggerTypeOption_JDWP"), DBDebuggerType.JDWP),
-    ASK(nls("cfg.debugger.const.DebuggerTypeOption_ASK")),
-    CANCEL(nls("cfg.debugger.const.DebuggerTypeOption_CANCEL"));
+    JDBC(txt("cfg.debugger.const.DebuggerTypeOption_JDBC"), DBDebuggerType.JDBC),
+    JDWP(txt("cfg.debugger.const.DebuggerTypeOption_JDWP"), DBDebuggerType.JDWP),
+    ASK(txt("cfg.debugger.const.DebuggerTypeOption_ASK")),
+    CANCEL(txt("cfg.debugger.const.DebuggerTypeOption_CANCEL"));
 
     private final String name;
     private final DBDebuggerType debuggerType;

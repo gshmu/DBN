@@ -253,11 +253,11 @@ public class DatabaseFileManager extends ProjectComponentBase implements Persist
 
     private void reopenDatabaseEditors(@NotNull List<DBObjectRef<DBSchemaObject>> objects, @NotNull ConnectionHandler connection) {
         Project project = connection.getProject();
-        ConnectionAction.invoke(nls("app.connection.activity.OpeningDatabaseEditors"), false, connection, action ->
+        ConnectionAction.invoke(txt("app.connection.activity.OpeningDatabaseEditors"), false, connection, action ->
                 ThreadMonitor.surround(project, ThreadProperty.WORKSPACE_RESTORE, () ->
                         Progress.background(project, connection, true,
-                                nls("prc.workspace.title.RestoringWorkspace"),
-                                nls("prc.workspace.message.RestoringWorkspace", connection.getName()),
+                                txt("prc.workspace.title.RestoringWorkspace"),
+                                txt("prc.workspace.message.RestoringWorkspace", connection.getName()),
                                 progress -> reopenDatabaseEditors(objects, connection, progress))));
     }
 

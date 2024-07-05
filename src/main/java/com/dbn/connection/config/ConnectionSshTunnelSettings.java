@@ -37,7 +37,7 @@ public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<Conne
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.connection.title.SshTunnelSettings");
+        return txt("cfg.connection.title.SshTunnelSettings");
     }
 
     @Override

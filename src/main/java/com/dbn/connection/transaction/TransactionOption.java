@@ -2,21 +2,22 @@ package com.dbn.connection.transaction;
 
 import com.dbn.common.icon.Icons;
 import com.dbn.common.option.InteractiveOption;
+import com.dbn.nls.NlsResources;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.swing.*;
 
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 @AllArgsConstructor
 public enum TransactionOption implements InteractiveOption{
-    ASK(nls("cfg.connection.const.TransactionOption_ASK"), null),
-    COMMIT(nls("cfg.connection.const.TransactionOption_COMMIT"), Icons.CONNECTION_COMMIT),
-    ROLLBACK(nls("cfg.connection.const.TransactionOption_ROLLBACK"), Icons.CONNECTION_ROLLBACK),
-    REVIEW_CHANGES(nls("cfg.connection.const.TransactionOption_REVIEW_CHANGES"), null),
-    CANCEL(nls("cfg.connection.const.TransactionOption_CANCEL"), null);
+    ASK(txt("cfg.connection.const.TransactionOption_ASK"), null),
+    COMMIT(txt("cfg.connection.const.TransactionOption_COMMIT"), Icons.CONNECTION_COMMIT),
+    ROLLBACK(txt("cfg.connection.const.TransactionOption_ROLLBACK"), Icons.CONNECTION_ROLLBACK),
+    REVIEW_CHANGES(txt("cfg.connection.const.TransactionOption_REVIEW_CHANGES"), null),
+    CANCEL(txt("cfg.connection.const.TransactionOption_CANCEL"), null);
 
     private final String name;
     private final Icon icon;

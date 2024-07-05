@@ -1,7 +1,6 @@
 package com.dbn.execution.compiler;
 
 import com.dbn.common.message.MessageType;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.notification.NotificationSupport;
 import com.dbn.common.util.Naming;
 import com.dbn.connection.ConnectionHandler;
@@ -63,8 +62,8 @@ public class CompilerResult implements Disposable, NotificationSupport, NlsSuppo
         try {
             if (conn == null) {
                 DatabaseInterfaceInvoker.execute(HIGH,
-                        nls("prc.compiler.title.LoadingCompilerData"),
-                        nls("prc.compiler.message.LoadingCompilerData", qualifiedObjectName),
+                        txt("prc.compiler.title.LoadingCompilerData"),
+                        txt("prc.compiler.message.LoadingCompilerData", qualifiedObjectName),
                         connection.getProject(),
                         connection.getConnectionId(),
                         c -> loadCompilerErrors(connection, schema, objectName, contentType, c));
@@ -74,7 +73,7 @@ public class CompilerResult implements Disposable, NotificationSupport, NlsSuppo
             }
         } catch (SQLException e) {
             conditionallyLog(e);
-            sendErrorNotification(COMPILER, nls("ntf.compiler.error.FailedToLoadCompilerResult", e));
+            sendErrorNotification(COMPILER, txt("ntf.compiler.error.FailedToLoadCompilerResult", e));
         }
 
 

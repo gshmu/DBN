@@ -130,7 +130,7 @@ public class ParserDiagnosticsManager extends ProjectComponentBase implements Pe
                 } catch (IOException e) {
                     conditionallyLog(e);
                     NotificationSupport.sendWarningNotification(getProject(), DEVELOPER,
-                            nls("ntf.diagnostics.warning.FailedToWriteFile", scrambledFile.getPath(), e));
+                            txt("ntf.diagnostics.warning.FailedToWriteFile", scrambledFile.getPath(), e));
                 }
             }
         }

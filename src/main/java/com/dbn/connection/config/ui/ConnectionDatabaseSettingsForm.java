@@ -251,7 +251,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ConfigurationEditors.validateStringValue(nameTextField, nls("cfg.connection.field.Name"), true);
+        ConfigurationEditors.validateStringValue(nameTextField, txt("cfg.connection.field.Name"), true);
         ConnectionDatabaseSettings configuration = getConfiguration();
 
         DatabaseType selectedDatabaseType = getSelectedDatabaseType();
@@ -260,7 +260,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             if (selectedDatabaseType == DatabaseType.GENERIC) {
                 // TODO hint there is dedicated support for the database type resolved from driver
             } else {
-                throw new ConfigurationException(nls("cfg.connection.error.InvalidDriverLibraryType", selectedDatabaseType.getName()));
+                throw new ConfigurationException(txt("cfg.connection.error.InvalidDriverLibraryType", selectedDatabaseType.getName()));
             }
         }
 
@@ -319,10 +319,10 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DatabaseType driverDatabaseType = driverSettingsForm.getDriverDatabaseType();
         if (selectedDatabaseType == DatabaseType.GENERIC && driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
             String databaseTypeName = driverDatabaseType.getName();
-            TextContent hintText = TextContent.plain(nls("cfg.connection.hint.KnownDatabaseType", databaseTypeName));
+            TextContent hintText = TextContent.plain(txt("cfg.connection.hint.KnownDatabaseType", databaseTypeName));
             DBNHintForm hintForm = new DBNHintForm(this,
                     hintText, null, true,
-                    nls("cfg.connection.action.ChangeToDatabaseType", databaseTypeName),
+                    txt("cfg.connection.action.ChangeToDatabaseType", databaseTypeName),
                     () -> setSelection(databaseTypeComboBox, driverDatabaseType));
             hintForm.setHighlighted(true);
             databaseTypeHintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);

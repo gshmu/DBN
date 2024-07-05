@@ -66,7 +66,7 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
     @Nls
     @Override
     public String getDisplayName() {
-        return nls("cfg.dataEditor.title.ContentTypes");
+        return txt("cfg.dataEditor.title.ContentTypes");
     }
 
     @Override

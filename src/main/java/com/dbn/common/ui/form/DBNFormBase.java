@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public abstract class DBNFormBase

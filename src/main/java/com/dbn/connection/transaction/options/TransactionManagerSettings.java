@@ -88,7 +88,7 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.transactions.title.TransactionManager");
+        return txt("cfg.transactions.title.TransactionManager");
     }
 
     @Override

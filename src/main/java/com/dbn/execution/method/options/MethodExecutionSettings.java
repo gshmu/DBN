@@ -27,7 +27,7 @@ public class MethodExecutionSettings extends BasicProjectConfiguration<Execution
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.execution.title.MethodExecution");
+        return txt("cfg.execution.title.MethodExecution");
     }
 
     @Override

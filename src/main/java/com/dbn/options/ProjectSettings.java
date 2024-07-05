@@ -94,7 +94,7 @@ public class ProjectSettings
     @Override
     @Nls
     public String getDisplayName() {
-        return nls("cfg.project.title.DatabaseNavigator");
+        return txt("cfg.project.title.DatabaseNavigator");
     }
 
     @Override

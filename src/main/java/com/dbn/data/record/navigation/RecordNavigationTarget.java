@@ -1,20 +1,21 @@
 package com.dbn.data.record.navigation;
 
 import com.dbn.common.ui.Presentable;
+import com.dbn.nls.NlsResources;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.swing.*;
 
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 @AllArgsConstructor
 public enum RecordNavigationTarget implements Presentable{
-    VIEWER(nls("cfg.data.const.RecordNavigationTarget_VIEWER"), null),
-    EDITOR(nls("cfg.data.const.RecordNavigationTarget_EDITOR"), null),
-    ASK(nls("cfg.data.const.RecordNavigationTarget_ASK"), null),
-    PROMPT(nls("cfg.data.const.RecordNavigationTarget_PROMPT"), null);
+    VIEWER(txt("cfg.data.const.RecordNavigationTarget_VIEWER"), null),
+    EDITOR(txt("cfg.data.const.RecordNavigationTarget_EDITOR"), null),
+    ASK(txt("cfg.data.const.RecordNavigationTarget_ASK"), null),
+    PROMPT(txt("cfg.data.const.RecordNavigationTarget_PROMPT"), null);
 
     private final String name;
     private final Icon icon;

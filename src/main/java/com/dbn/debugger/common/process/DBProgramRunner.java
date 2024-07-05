@@ -1,7 +1,6 @@
 package com.dbn.debugger.common.process;
 
 import com.dbn.common.event.ProjectEvents;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.notification.NotificationSupport;
 import com.dbn.common.thread.Dispatch;
 import com.dbn.common.thread.Progress;
@@ -266,7 +265,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
         } catch (ExecutionException e) {
             conditionallyLog(e);
             NotificationSupport.sendErrorNotification(project, DEBUGGER,
-                    nls("ntf.debugger.error.ErrorInitializingEnvironment", e));
+                    txt("ntf.debugger.error.ErrorInitializingEnvironment", e));
         }
     }
 /*

@@ -3,9 +3,9 @@ package com.dbn.connection;
 import com.dbn.common.database.AuthenticationInfo;
 import com.dbn.common.load.ProgressMonitor;
 import com.dbn.common.routine.Consumer;
-import com.dbn.common.util.Commons;
 import com.dbn.connection.context.DatabaseContext;
 import com.dbn.connection.context.DatabaseContextBase;
+import com.dbn.nls.NlsResources;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,12 +14,12 @@ import java.util.function.Predicate;
 import static com.dbn.common.dispose.Failsafe.guarded;
 import static com.dbn.common.dispose.Failsafe.nd;
 import static com.dbn.common.util.Messages.options;
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 public abstract class ConnectionAction implements DatabaseContextBase {
     static final String[] OPTIONS_CONNECT_CANCEL = options(
-            nls("app.shared.button.Connect"),
-            nls("app.shared.button.Cancel"));
+            txt("app.shared.button.Connect"),
+            txt("app.shared.button.Cancel"));
 
     private final String description;
     private final boolean interactive;

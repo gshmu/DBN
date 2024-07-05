@@ -60,14 +60,14 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
 
         // TODO NLS
         driverLibraryTextField.addBrowseFolderListener(
-                nls("cfg.connection.title.SelectDriverLibrary"),
-                nls("cfg.connection.text.LibraryDriverClasses"),
+                txt("cfg.connection.title.SelectDriverLibrary"),
+                txt("cfg.connection.text.LibraryDriverClasses"),
                 null, LIBRARY_FILE_DESCRIPTOR);
 
         reloadDriversCheckLabel.setText("");
         reloadDriversCheckLabel.setIcon(Icons.COMMON_CHECK);
         reloadDriversCheckLabel.setVisible(false);
-        reloadDriversLink.setHyperlinkText(nls("cfg.connection.link.ReloadDrivers"));
+        reloadDriversLink.setHyperlinkText(txt("cfg.connection.link.ReloadDrivers"));
         reloadDriversLink.addHyperlinkListener(e -> {
             reloadDriversLink.setVisible(false);
             DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
@@ -77,10 +77,10 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                 drivers = driverManager.loadDrivers(driverLibrary, true);
                 if (drivers == null || drivers.isEmpty()) {
                     reloadDriversCheckLabel.setIcon(Icons.COMMON_WARNING);
-                    reloadDriversCheckLabel.setText(nls("cfg.connection.text.NoDriversFound"));
+                    reloadDriversCheckLabel.setText(txt("cfg.connection.text.NoDriversFound"));
                 } else {
                     reloadDriversCheckLabel.setIcon(Icons.COMMON_CHECK);
-                    reloadDriversCheckLabel.setText(nls("cfg.connection.text.DriversReloaded"));
+                    reloadDriversCheckLabel.setText(txt("cfg.connection.text.DriversReloaded"));
                 }
             } catch (Exception ex) {
                 conditionallyLog(ex);
@@ -126,7 +126,7 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                 libraryTextField.setForeground(Colors.getTextFieldForeground());
                 DatabaseType libraryDatabaseType = DatabaseType.resolve(driverLibrary);
                 if (isBuiltInLibrarySupported(databaseType) && libraryDatabaseType != getDatabaseType()) {
-                    error = nls("cfg.connection.error.DriverLibraryMismatch");
+                    error = txt("cfg.connection.error.DriverLibraryMismatch");
                     initComboBox(driverComboBox);
                     setSelection(driverComboBox, null);
                 } else {
@@ -157,16 +157,16 @@ public class ConnectionDriverSettingsForm extends DBNFormBase {
                             selectedOption = driverOptions.get(0);
                         }
                     } else {
-                        error = nls("cfg.connection.error.InvalidDriverLibrary");
+                        error = txt("cfg.connection.error.InvalidDriverLibrary");
                     }
                     setSelection(driverComboBox, selectedOption);
                 }
             } else {
                 libraryTextField.setForeground(JBColor.RED);
                 if (Strings.isEmpty(driverLibrary)) {
-                    error = nls("cfg.connection.error.DriverLibraryNotSpecified");
+                    error = txt("cfg.connection.error.DriverLibraryNotSpecified");
                 } else {
-                    error = nls("cfg.connection.error.CannotLocateDriverFile");
+                    error = txt("cfg.connection.error.CannotLocateDriverFile");
                 }
                 initComboBox(driverComboBox);
                 //driverComboBox.addItem("");

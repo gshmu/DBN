@@ -16,6 +16,7 @@ import com.dbn.connection.ssh.SshTunnelManager;
 import com.dbn.connection.ssl.SslConnectionManager;
 import com.dbn.debugger.jdwp.process.tunnel.NSTunnelConnectionProxy;
 import com.dbn.diagnostics.Diagnostics;
+import com.dbn.nls.NlsResources;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jetbrains.annotations.NonNls;
@@ -35,7 +36,7 @@ import static com.dbn.common.notification.NotificationSupport.sendErrorNotificat
 import static com.dbn.common.util.Commons.nvl;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 import static com.dbn.diagnostics.data.Activity.CONNECT;
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 class Connector {
@@ -203,7 +204,7 @@ class Connector {
                         databaseAttachmentHandler.attachDatabase(connection, filePath, databaseFile.getSchema());
                     } catch (Exception e) {
                         conditionallyLog(e);
-                        sendErrorNotification(project, CONNECTION, nls("ntf.connection.error.UnableToAttachFile", filePath, e));
+                        sendErrorNotification(project, CONNECTION, txt("ntf.connection.error.UnableToAttachFile", filePath, e));
                     }
                 }
             }

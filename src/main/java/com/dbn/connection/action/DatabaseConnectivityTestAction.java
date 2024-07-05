@@ -21,14 +21,14 @@ public class DatabaseConnectivityTestAction extends AbstractConnectionAction {
         connection.getInstructions().setAllowAutoConnect(true);
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
 
-        ConnectionAction.invoke(nls("app.connection.activity.TestingConnectivity"), true, connection,
+        ConnectionAction.invoke(txt("app.connection.activity.TestingConnectivity"), true, connection,
                 (action) -> connectionManager.testConnection(connection, null, SessionId.MAIN, true, true));
     }
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler target) {
         presentation.setEnabled(target != null);
-        presentation.setText(nls("app.connection.action.TestConnectivity"));
-        presentation.setDescription(target == null ? null : nls("app.connection.action.TestConnectivityTo", target.getName()));
+        presentation.setText(txt("app.connection.action.TestConnectivity"));
+        presentation.setDescription(target == null ? null : txt("app.connection.action.TestConnectivityTo", target.getName()));
     }
 }

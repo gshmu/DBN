@@ -21,7 +21,7 @@ public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCo
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.codeCompletion.title.Filters");
+        return txt("cfg.codeCompletion.title.Filters");
     }
 
    /*********************************************************

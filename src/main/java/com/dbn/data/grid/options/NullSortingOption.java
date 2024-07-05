@@ -1,16 +1,17 @@
 package com.dbn.data.grid.options;
 
 import com.dbn.common.ui.Presentable;
+import com.dbn.nls.NlsResources;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 @AllArgsConstructor
 public enum NullSortingOption implements Presentable{
-    FIRST(nls("cfg.data.const.NullSortingOption_FIRST")),
-    LAST(nls("cfg.data.const.NullSortingOption_LAST"));
+    FIRST(txt("cfg.data.const.NullSortingOption_FIRST")),
+    LAST(txt("cfg.data.const.NullSortingOption_LAST"));
 
     private final String name;
 }

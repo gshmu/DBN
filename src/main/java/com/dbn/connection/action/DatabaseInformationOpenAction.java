@@ -18,15 +18,15 @@ public class DatabaseInformationOpenAction extends AbstractConnectionAction {
 
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler target) {
-        presentation.setText(nls("app.connection.action.ConnectionInfo"));
+        presentation.setText(txt("app.connection.action.ConnectionInfo"));
     }
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connection) {
-        ConnectionAction.invoke(nls("app.connection.activity.ShowingDatabaseInformation"), true, connection,
+        ConnectionAction.invoke(txt("app.connection.activity.ShowingDatabaseInformation"), true, connection,
                 action -> Progress.prompt(project, connection, false,
-                        nls("prc.workspace.title.LoadingDatabaseInformation"),
-                        nls("prc.workspace.message.LoadingDatabaseInformation", connection.getName()),
+                        txt("prc.workspace.title.LoadingDatabaseInformation"),
+                        txt("prc.workspace.message.LoadingDatabaseInformation", connection.getName()),
                         progress -> ConnectionManager.showConnectionInfoDialog(connection)));
     }
 }

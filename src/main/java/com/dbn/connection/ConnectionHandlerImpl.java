@@ -341,7 +341,7 @@ public class ConnectionHandlerImpl extends StatefulDisposableBase implements Con
             return ConnectionContext.surround(createConnectionContext(), () -> getMetadataInterface().hasPendingTransactions(conn));
         } catch (SQLException e) {
             conditionallyLog(e);
-            sendErrorNotification(TRANSACTION, nls("ntf.transactions.error.FailedToCheckStatus", e));
+            sendErrorNotification(TRANSACTION, txt("ntf.transactions.error.FailedToCheckStatus", e));
             return false;
 
         }

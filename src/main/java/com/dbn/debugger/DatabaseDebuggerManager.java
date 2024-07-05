@@ -6,7 +6,6 @@ import com.dbn.common.component.ProjectComponentBase;
 import com.dbn.common.dispose.Checks;
 import com.dbn.common.event.ProjectEvents;
 import com.dbn.common.load.ProgressMonitor;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.routine.Consumer;
 import com.dbn.common.util.Messages;
 import com.dbn.connection.ConnectionHandler;
@@ -228,7 +227,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                         boolean added = addToCompileList(compileList, schemaObject);
                         if (added) {
                             String objectName = schemaObject.getQualifiedNameWithType();
-                            setProgressDetail(nls("prc.debugger.message.LoadingDependencies", objectName));
+                            setProgressDetail(txt("prc.debugger.message.LoadingDependencies", objectName));
                             schemaObject.getReferencedObjects();
                         }
                     }
@@ -284,7 +283,7 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
     }
 
     private String loadDebuggerVersion(@NotNull ConnectionHandler connection) {
-        if (!DEBUGGING.isSupported(connection)) return nls("app.shared.label.Unknown");
+        if (!DEBUGGING.isSupported(connection)) return txt("app.shared.label.Unknown");
 
         try {
             return DatabaseInterfaceInvoker.load(HIGHEST,
@@ -299,9 +298,9 @@ public class DatabaseDebuggerManager extends ProjectComponentBase implements Per
                     });
         } catch (SQLException e) {
             conditionallyLog(e);
-            sendErrorNotification(DEBUGGER, nls("ntf.debugger.error.FailedToLoadVersion", e));
+            sendErrorNotification(DEBUGGER, txt("ntf.debugger.error.FailedToLoadVersion", e));
 
-            return nls("app.shared.label.Unknown");
+            return txt("app.shared.label.Unknown");
         }
     }
 

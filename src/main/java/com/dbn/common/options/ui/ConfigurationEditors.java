@@ -1,6 +1,7 @@
 package com.dbn.common.options.ui;
 
 import com.dbn.common.util.Strings;
+import com.dbn.nls.NlsResources;
 import com.intellij.openapi.options.ConfigurationException;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 // TODO NLS (usages of this)
 @UtilityClass
@@ -19,8 +20,8 @@ public class ConfigurationEditors {
 
             String value = inputField.getText();
             if (required && Strings.isEmpty(value)) {
-                String message = nls("cfg.shared.error.MissingInputValue", name);
-                throw new ConfigurationException(message, nls("cfg.shared.title.InvalidConfigValue"));
+                String message = txt("cfg.shared.error.MissingInputValue", name);
+                throw new ConfigurationException(message, txt("cfg.shared.title.InvalidConfigValue"));
             }
 
             if (Strings.isNotEmpty(value)) {
@@ -33,19 +34,19 @@ public class ConfigurationEditors {
             conditionallyLog(e);
             inputField.grabFocus();
             inputField.selectAll();
-            String message = nls("cfg.shared.error.InputValueNotInRange", name, min, max);
+            String message = txt("cfg.shared.error.InputValueNotInRange", name, min, max);
             if (hint != null) {
                 message = message + " " + hint;
             }
-            throw new ConfigurationException(message, nls("cfg.shared.title.InvalidConfigValue"));
+            throw new ConfigurationException(message, txt("cfg.shared.title.InvalidConfigValue"));
         }
     }
 
     public static String validateStringValue(@NotNull JTextField inputField, @NotNull String name, boolean required) throws ConfigurationException {
         String value = inputField.getText().trim();
         if (required && value.isEmpty()) {
-            String message = nls("cfg.shared.error.MissingInputValue", name);
-            throw new ConfigurationException(message, nls("cfg.shared.title.InvalidConfigValue"));
+            String message = txt("cfg.shared.error.MissingInputValue", name);
+            throw new ConfigurationException(message, txt("cfg.shared.title.InvalidConfigValue"));
         }
         return value;
     }

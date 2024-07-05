@@ -311,7 +311,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable<DBObjectRef<?
     
 
     public String getQualifiedNameWithType() {
-        return NlsResources.nls("app.object.label.QualifiedNameWithType", objectType.getName(), getPath());
+        return NlsResources.txt("app.object.label.QualifiedNameWithType", objectType.getName(), getPath());
     }
 
     @Nullable
