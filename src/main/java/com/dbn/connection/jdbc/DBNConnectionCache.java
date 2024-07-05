@@ -46,7 +46,7 @@ public class DBNConnectionCache extends ObjectCacheBase<SessionId, DBNConnection
             sendInfoNotification(
                     project,
                     NotificationGroup.SESSION,
-                    nls("ntf.connection.info.ConnectedToDatabase", connectionName));
+                    txt("ntf.connection.info.ConnectedToDatabase", connectionName));
 
             return conn;
         } finally {

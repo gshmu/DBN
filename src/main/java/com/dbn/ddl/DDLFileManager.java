@@ -7,7 +7,6 @@ import com.dbn.common.component.PersistentState;
 import com.dbn.common.component.ProjectComponentBase;
 import com.dbn.common.event.ProjectEvents;
 import com.dbn.common.file.FileTypeService;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.thread.Background;
 import com.dbn.connection.ConnectionHandler;
 import com.dbn.database.interfaces.DatabaseDataDefinitionInterface;
@@ -137,7 +136,7 @@ public class DDLFileManager extends ProjectComponentBase implements PersistentSt
                 }
 
                 if (restoredAssociations.length() > 0) {
-                    sendInfoNotification(DDL, nls("ntf.ddlFiles.info.FileAssociationsRestored",restoredAssociations, getProject().getName()));
+                    sendInfoNotification(DDL, txt("ntf.ddlFiles.info.FileAssociationsRestored",restoredAssociations, getProject().getName()));
                 }
             }
 

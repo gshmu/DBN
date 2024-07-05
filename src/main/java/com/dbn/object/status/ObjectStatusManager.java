@@ -8,7 +8,6 @@ import com.dbn.common.component.PersistentState;
 import com.dbn.common.component.ProjectComponentBase;
 import com.dbn.common.event.ProjectEvents;
 import com.dbn.common.load.ProgressMonitor;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.thread.Background;
 import com.dbn.common.thread.Progress;
 import com.dbn.common.ui.tree.TreeEventType;
@@ -82,7 +81,7 @@ public class ObjectStatusManager extends ProjectComponentBase implements Persist
                         conn -> refreshObjectStatus(conn, schemas));
             } catch (SQLException e) {
                 conditionallyLog(e);
-                sendErrorNotification(BROWSER, nls("ntf.browser.error.FailedToRefreshObjectStatus", e));
+                sendErrorNotification(BROWSER, txt("ntf.browser.error.FailedToRefreshObjectStatus", e));
             }
         });
     }

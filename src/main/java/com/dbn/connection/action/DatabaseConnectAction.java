@@ -28,8 +28,8 @@ public class DatabaseConnectAction extends AbstractConnectionAction {
     protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler target) {
         boolean enabled = target != null && !target.getConnectionStatus().isConnected();
 
-        presentation.setText(nls("app.connection.action.Connect"));
-        presentation.setDescription(target == null ? null : nls("app.connection.action.ConnectTo", target.getName()));
+        presentation.setText(txt("app.connection.action.Connect"));
+        presentation.setDescription(target == null ? null : txt("app.connection.action.ConnectTo", target.getName()));
         presentation.setEnabled(enabled);
     }
 

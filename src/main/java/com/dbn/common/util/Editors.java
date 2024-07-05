@@ -1,6 +1,8 @@
 package com.dbn.common.util;
 
+import com.dbn.common.Reflection;
 import com.dbn.common.color.Colors;
+import com.dbn.common.compatibility.Workaround;
 import com.dbn.common.dispose.Failsafe;
 import com.dbn.common.editor.BasicTextEditor;
 import com.dbn.common.file.util.VirtualFiles;
@@ -571,5 +573,17 @@ public class Editors {
 
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         Dispatch.run(() -> fileEditorManager.setSelectedEditor(file, editorProviderId.getId()));
+    }
+
+    @Workaround
+    public static void updateEditorPresentations(Project project, VirtualFile... files) {
+        if (files == null || files.length == 0) return;
+
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        for (VirtualFile file : files) {
+            //fileEditorManager.updateFilePresentation(virtualFile);
+            Reflection.invokeMethod(fileEditorManager, "updateFilePresentation", file);
+        }
+
     }
 }

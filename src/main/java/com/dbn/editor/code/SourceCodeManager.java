@@ -4,7 +4,6 @@ import com.dbn.DatabaseNavigator;
 import com.dbn.common.component.PersistentState;
 import com.dbn.common.component.ProjectComponentBase;
 import com.dbn.common.component.ProjectManagerListener;
-import com.dbn.common.dispose.Checks;
 import com.dbn.common.dispose.Failsafe;
 import com.dbn.common.editor.BasicTextEditor;
 import com.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
@@ -13,7 +12,6 @@ import com.dbn.common.event.ProjectEvents;
 import com.dbn.common.listener.DBNFileEditorManagerListener;
 import com.dbn.common.load.ProgressMonitor;
 import com.dbn.common.navigation.NavigationInstructions;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.thread.Background;
 import com.dbn.common.thread.Progress;
 import com.dbn.common.thread.Read;
@@ -227,7 +225,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
                 sourceCodeFile.setModified(false);
                 if (notifyError) {
                     String objectDesc = object.getQualifiedNameWithType();
-                    sendErrorNotification(SOURCE_CODE, nls("ntf.sourceCode.error.CannotLoadSourceCode", objectDesc, e));
+                    sendErrorNotification(SOURCE_CODE, txt("ntf.sourceCode.error.CannotLoadSourceCode", objectDesc, e));
                 }
             } finally {
                 sourceCodeFile.set(LOADING, false);
@@ -254,7 +252,7 @@ public class SourceCodeManager extends ProjectComponentBase implements Persisten
 
             DBSchemaObject object = sourceCodeFile.getObject();
             String objectQualifiedName = object.getQualifiedNameWithType();
-            ProgressMonitor.setProgressDetail(nls("prc.codeEditor.message.CheckingThirdPartyChanges", objectQualifiedName));
+            ProgressMonitor.setProgressDetail(txt("prc.codeEditor.message.CheckingThirdPartyChanges", objectQualifiedName));
 
             boolean changedInDatabase = sourceCodeFile.isChangedInDatabase(true);
             if (changedInDatabase && sourceCodeFile.isMergeRequired()) {

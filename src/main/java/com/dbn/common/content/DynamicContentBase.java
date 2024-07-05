@@ -9,7 +9,6 @@ import com.dbn.common.dispose.Disposer;
 import com.dbn.common.dispose.Failsafe;
 import com.dbn.common.filter.FilterDelegate;
 import com.dbn.common.list.FilteredList;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.notification.NotificationSupport;
 import com.dbn.common.property.DisposablePropertyHolder;
 import com.dbn.common.property.PropertyHolderBase;
@@ -292,7 +291,7 @@ public abstract class DynamicContentBase<T extends DynamicContentElement>
             set(DynamicContentProperty.LOADED, true);
             set(DynamicContentProperty.ERROR, true);
             sendWarningNotification(METADATA,
-                    nls("ntf.metadata.error.FailedToLoadContent", getContentDescription(), e));
+                    txt("ntf.metadata.error.FailedToLoadContent", getContentDescription(), e));
 
         } catch (SQLException e) {
             conditionallyLog(e);

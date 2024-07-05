@@ -30,13 +30,13 @@ public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
 
         boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
         String title = enabled ?
-                nls("msg.objects.title.DisablingObject") :
-                nls("msg.objects.title.EnablingObject");
+                txt("msg.objects.title.DisablingObject") :
+                txt("msg.objects.title.EnablingObject");
 
         String qualifiedObjectName = object.getQualifiedNameWithType();
         String text = enabled ?
-                nls("msg.objects.info.DisablingObject", qualifiedObjectName) :
-                nls("msg.objects.info.EnablingObject", qualifiedObjectName);
+                txt("msg.objects.info.DisablingObject", qualifiedObjectName) :
+                txt("msg.objects.info.EnablingObject", qualifiedObjectName);
 
         Progress.prompt(project, object, false,
                 title,
@@ -48,8 +48,8 @@ public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
                     } catch (SQLException e1) {
                         conditionallyLog(e1);
                         String message = enabled ?
-                                nls("msg.objects.error.DisablingObject", qualifiedObjectName) :
-                                nls("msg.objects.error.EnablingObject", qualifiedObjectName);
+                                txt("msg.objects.error.DisablingObject", qualifiedObjectName) :
+                                txt("msg.objects.error.EnablingObject", qualifiedObjectName);
                         Messages.showErrorDialog(project, message, e1);
                     } catch (DBOperationNotSupportedException e1) {
                         conditionallyLog(e1);
@@ -68,8 +68,8 @@ public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
         if (isValid(target)) {
             boolean enabled = target.getStatus().is(DBObjectStatus.ENABLED);
             String text = !enabled ?
-                    nls("app.shared.action.Enable") :
-                    nls("app.shared.action.Disable");
+                    txt("app.shared.action.Enable") :
+                    txt("app.shared.action.Disable");
 
             presentation.setText(text);
             presentation.setVisible(true);

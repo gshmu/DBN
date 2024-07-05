@@ -29,7 +29,7 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
         super(configuration);
         Shortcut[] shortcuts = Keyboard.getShortcuts("DBNavigator.Actions.Navigation.GotoDatabaseObject");
         TitledBorder border = (TitledBorder) mainPanel.getBorder();
-        border.setTitle(nls("cfg.lookup.title.LookupObjects", KeymapUtil.getShortcutsText(shortcuts)));
+        border.setTitle(txt("cfg.lookup.title.LookupObjects", KeymapUtil.getShortcutsText(shortcuts)));
 
         initComboBox(connectionComboBox,
                 ConnectionOption.PROMPT,
@@ -75,8 +75,8 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
     @Getter
     @AllArgsConstructor
     private enum ConnectionOption implements Presentable {
-        PROMPT(NlsResources.nls("cfg.lookup.const.ConnectionOption_PROMPT"), true),
-        RECENT(NlsResources.nls("cfg.lookup.const.ConnectionOption_RECENT"), false);
+        PROMPT(NlsResources.txt("cfg.lookup.const.ConnectionOption_PROMPT"), true),
+        RECENT(NlsResources.txt("cfg.lookup.const.ConnectionOption_RECENT"), false);
 
         private final String name;
         private final Boolean value;
@@ -85,8 +85,8 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
     @Getter
     @AllArgsConstructor
     private enum BehaviorOption implements Presentable {
-        LOOKUP(NlsResources.nls("cfg.lookup.const.BehaviorOption_LOOKUP"), false),
-        LOAD(NlsResources.nls("cfg.lookup.const.BehaviorOption_LOAD"), true);
+        LOOKUP(NlsResources.txt("cfg.lookup.const.BehaviorOption_LOOKUP"), false),
+        LOAD(NlsResources.txt("cfg.lookup.const.BehaviorOption_LOAD"), true);
 
         private final String name;
         private final Boolean value;

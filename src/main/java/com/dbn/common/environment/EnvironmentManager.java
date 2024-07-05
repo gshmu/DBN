@@ -1,6 +1,7 @@
 package com.dbn.common.environment;
 
 import com.dbn.DatabaseNavigator;
+import com.dbn.common.Reflection;
 import com.dbn.common.component.PersistentState;
 import com.dbn.common.component.ProjectComponentBase;
 import com.dbn.common.environment.options.listener.EnvironmentManagerListener;
@@ -45,11 +46,9 @@ public class EnvironmentManager extends ProjectComponentBase implements Persiste
         return new EnvironmentManagerListener() {
             @Override
             public void configurationChanged(Project project) {
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-                for (VirtualFile virtualFile : openFiles) {
-                    fileEditorManager.updateFilePresentation(virtualFile);
-                }
+                Editors.updateEditorPresentations(project, openFiles);
             }
         };
     }

@@ -270,7 +270,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
         if (fileNameProvider != null) {
             FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-            descriptor.setTitle(nls("msg.ddlFiles.title.SelectNewFileLocation"));
+            descriptor.setTitle(txt("msg.ddlFiles.title.SelectNewFileLocation"));
 
             VirtualFile[] selectedDirectories = FileChooser.chooseFiles(descriptor, project, null);
             if (selectedDirectories.length > 0) {
@@ -286,7 +286,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
                 } catch (IOException e) {
                     conditionallyLog(e);
-                    Messages.showErrorDialog(project, nls("msg.ddlFiles.error.FileCreationFailed", parentDirectory + File.separator + fileName), e);
+                    Messages.showErrorDialog(project, txt("msg.ddlFiles.error.FileCreationFailed", parentDirectory + File.separator + fileName), e);
                 }
 
                 reopenEditor(object);
@@ -341,8 +341,8 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         Progress.prompt(
                 getProject(),
                 objectRef, true,
-                nls("msg.ddlFiles.title.AttachingDdlFiles"),
-                nls("msg.ddlFiles.info.AttachingDdlFiles", objectRef.getQualifiedNameWithType()), t -> {
+                txt("msg.ddlFiles.title.AttachingDdlFiles"),
+                txt("msg.ddlFiles.info.AttachingDdlFiles", objectRef.getQualifiedNameWithType()), t -> {
                     DDLFileNameProvider ddlFileNameProvider = getDDLFileNameProvider(objectRef);
                     if (ddlFileNameProvider == null) return;
 
@@ -352,19 +352,19 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
                         StringBuilder message = new StringBuilder();
                         message.append(fileUrls.isEmpty() ?
-                                nls("msg.ddlFiles.info.NoDdlFilesFound") :
+                                txt("msg.ddlFiles.info.NoDdlFilesFound") :
                                 "msg.ddlFiles.info.NoAdditionalDdlFilesFound");
 
                         if (!fileUrls.isEmpty()) {
                             fileUrls = convert(fileUrls, f -> VirtualFiles.ensureFilePath(f));
-                            message.append(nls("msg.ddlFiles.info.AlreadyAttachedFiles",
+                            message.append(txt("msg.ddlFiles.info.AlreadyAttachedFiles",
                                     objectRef.getQualifiedNameWithType(),
                                     String.join("\n", fileUrls)));
                         }
 
-                        String[] options = {nls("app.shared.button.CreateNew"), nls("app.shared.button.Cancel")};
+                        String[] options = {txt("app.shared.button.CreateNew"), txt("app.shared.button.Cancel")};
                         Messages.showInfoDialog(getProject(),
-                                nls("msg.ddlFiles.title.NoDdlFilesFound"),
+                                txt("msg.ddlFiles.title.NoDdlFilesFound"),
                                 message.toString(), options, 0,
                                 option -> when(option == 0, () -> createDDLFile(objectRef)));
                     } else {
@@ -382,8 +382,8 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
         Progress.prompt(
                 getProject(),
                 objectRef, true,
-                nls("msg.ddlFiles.title.DetachingDdlFiles"),
-                nls("msg.ddlFiles.info.DetachingDdlFiles", objectRef.getQualifiedNameWithType()),
+                txt("msg.ddlFiles.title.DetachingDdlFiles"),
+                txt("msg.ddlFiles.info.DetachingDdlFiles", objectRef.getQualifiedNameWithType()),
                 t -> {
                     List<VirtualFile> files = getAttachedDDLFiles(objectRef);
                     if (files == null) return;
@@ -438,7 +438,7 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
 
         SelectionListDialog<DDLFileNameProvider> fileTypeDialog = new SelectionListDialog<>(
                 getProject(),
-                nls("msg.ddlFiles.title.SelectDdlFileType"),
+                txt("msg.ddlFiles.title.SelectDdlFileType"),
                 providers,
                 preferredProvider,
                 object);
@@ -462,9 +462,9 @@ public class DDLFileAttachmentManager extends ProjectComponentBase implements Pe
     public void showMissingFileAssociations(DBObjectRef<DBSchemaObject> objectRef) {
         Messages.showWarningDialog(
                 getProject(),
-                nls("msg.ddlFiles.title.NoDdlFileAssociation"),
-                nls("msg.ddlFiles.question.NoDdlFileAssociation", objectRef.getObjectType().getListName()),
-                options(nls("app.shared.button.OpenSettings"), nls("app.shared.button.Cancel")), 0,
+                txt("msg.ddlFiles.title.NoDdlFileAssociation"),
+                txt("msg.ddlFiles.question.NoDdlFileAssociation", objectRef.getObjectType().getListName()),
+                options(txt("app.shared.button.OpenSettings"), txt("app.shared.button.Cancel")), 0,
                 option -> when(option == 0, () -> {
                     ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
                     settingsManager.openProjectSettings(ConfigId.DDL_FILES);

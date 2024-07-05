@@ -3,7 +3,6 @@ package com.dbn.debugger.jdbc;
 import com.dbn.common.dispose.AlreadyDisposedException;
 import com.dbn.common.dispose.Failsafe;
 import com.dbn.common.load.ProgressMonitor;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.notification.NotificationSupport;
 import com.dbn.common.thread.Progress;
 import com.dbn.common.thread.ThreadMonitor;
@@ -141,27 +140,27 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         ConnectionHandler connection = getConnection();
                         SchemaId schemaId = input.getExecutionContext().getTargetSchema();
 
-                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.InitializingTargetConnection"));
+                        ProgressMonitor.setProgressDetail(txt("prc.debugger.message.InitializingTargetConnection"));
                         targetConnection = connection.getDebugConnection(schemaId);
                         targetConnection.setAutoCommit(false);
                         console.system("Target connection initialized");
 
-                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.InitializingDebuggerConnection"));
+                        ProgressMonitor.setProgressDetail(txt("prc.debugger.message.InitializingDebuggerConnection"));
                         debuggerConnection = connection.getDebuggerConnection();
                         console.system("Debug connection initialized");
 
                         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
 
-                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.InitializingTargetSession"));
+                        ProgressMonitor.setProgressDetail(txt("prc.debugger.message.InitializingTargetSession"));
                         DebuggerSessionInfo sessionInfo = debuggerInterface.initializeSession(targetConnection);
                         console.system("Target session initialized");
 
-                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.EnablingDebuggingOnTargetSession"));
+                        ProgressMonitor.setProgressDetail(txt("prc.debugger.message.EnablingDebuggingOnTargetSession"));
                         debuggerInterface.enableDebugging(targetConnection);
                         console.system("Debug on target session enabled");
 
 
-                        ProgressMonitor.setProgressDetail(nls("prc.debugger.message.AttachingDebuggerSession"));
+                        ProgressMonitor.setProgressDetail(txt("prc.debugger.message.AttachingDebuggerSession"));
                         debuggerInterface.attachSession(debuggerConnection, sessionInfo.getSessionId());
                         console.system("Debug session attached");
 
@@ -439,7 +438,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         if (isTerminated()) {
             int reasonCode = runtimeInfo.getReason();
             String reason = debuggerInterface.getRuntimeEventReason(reasonCode);
-            sendInfoNotification(DEBUGGER, nls("ntf.debugger.info.SessionTerminated", reasonCode, reason));
+            sendInfoNotification(DEBUGGER, txt("ntf.debugger.info.SessionTerminated", reasonCode, reason));
 
             set(PROCESS_STOPPED, true);
             session.stop();
@@ -454,7 +453,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                     if (runtimeInfo.isTerminated()) {
                         int reasonCode = runtimeInfo.getReason();
                         String reason = debuggerInterface.getRuntimeEventReason(reasonCode);
-                        sendInfoNotification(DEBUGGER,nls("ntf.debugger.info.SessionTerminated", reasonCode, reason));
+                        sendInfoNotification(DEBUGGER, txt("ntf.debugger.info.SessionTerminated", reasonCode, reason));
                     }
                     if (!runtimeInfo.isSameLocation(topRuntimeInfo)) {
                         runtimeInfo = topRuntimeInfo;

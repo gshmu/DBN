@@ -39,7 +39,7 @@ public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileS
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.ddlFiles.title.DdlFileExtensionSettings");
+        return txt("cfg.ddlFiles.title.DdlFileExtensionSettings");
     }
 
     public DDLFileType getFileType(DDLFileTypeId fileTypeId) {

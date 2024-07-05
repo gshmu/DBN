@@ -66,7 +66,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         environmentTypesComboBox.addActionListener(e -> notifyPresentationChanges());
 
         // TODO NLS
-        TextContent autoConnectHintText = plain(nls("cfg.connection.hint.DisabledAutoConnect"));
+        TextContent autoConnectHintText = plain(txt("cfg.connection.hint.DisabledAutoConnect"));
         DBNHintForm hintForm = new DBNHintForm(this, autoConnectHintText, MessageType.INFO, false);
         autoConnectHintPanel.add(hintForm.getComponent());
 
@@ -168,11 +168,11 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnableDdlFileBinding(ddlFileBindingCheckBox.isSelected());
         configuration.setEnableDatabaseLogging(databaseLoggingCheckBox.isSelected());
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
-        int connectivityTimeout = ConfigurationEditors.validateIntegerValue(connectivityTimeoutTextField, nls("cfg.connection.field.ConnectivityTimeout"), true, 0, 30, "");
-        int idleTimeToDisconnect = ConfigurationEditors.validateIntegerValue(idleTimeTextField, nls("cfg.connection.field.IdleTimeToDisconnect"), true, 0, 60, "");
-        int idleTimeToDisconnectPool = ConfigurationEditors.validateIntegerValue(idleTimePoolTextField, nls("cfg.connection.field.IdleTimeToDisconnectPool"), true, 1, 60, "");
-        int passwordExpiryTime = ConfigurationEditors.validateIntegerValue(passwordExpiryTextField, nls("cfg.connection.field.IdleTimeToRequestPassword"), true, 0, 60, "");
-        int maxPoolSize = ConfigurationEditors.validateIntegerValue(maxPoolSizeTextField, nls("cfg.connection.field.MaxConnectionPoolSize"), true, 3, 20, "");
+        int connectivityTimeout = ConfigurationEditors.validateIntegerValue(connectivityTimeoutTextField, txt("cfg.connection.field.ConnectivityTimeout"), true, 0, 30, "");
+        int idleTimeToDisconnect = ConfigurationEditors.validateIntegerValue(idleTimeTextField, txt("cfg.connection.field.IdleTimeToDisconnect"), true, 0, 60, "");
+        int idleTimeToDisconnectPool = ConfigurationEditors.validateIntegerValue(idleTimePoolTextField, txt("cfg.connection.field.IdleTimeToDisconnectPool"), true, 1, 60, "");
+        int passwordExpiryTime = ConfigurationEditors.validateIntegerValue(passwordExpiryTextField, txt("cfg.connection.field.IdleTimeToRequestPassword"), true, 0, 60, "");
+        int maxPoolSize = ConfigurationEditors.validateIntegerValue(maxPoolSizeTextField, txt("cfg.connection.field.MaxConnectionPoolSize"), true, 3, 20, "");
         configuration.setConnectivityTimeoutSeconds(connectivityTimeout);
         configuration.setIdleMinutesToDisconnect(idleTimeToDisconnect);
         configuration.setIdleMinutesToDisconnectPool(idleTimeToDisconnectPool);

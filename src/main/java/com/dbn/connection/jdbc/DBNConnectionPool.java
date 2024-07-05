@@ -82,7 +82,7 @@ public class DBNConnectionPool extends ObjectPoolBase<DBNConnection, SQLExceptio
             sendInfoNotification(
                     connection.getProject(),
                     NotificationGroup.SESSION,
-                    nls("ntf.connection.info.ConnectedToDatabase", connectionName));
+                    txt("ntf.connection.info.ConnectedToDatabase", connectionName));
         }
 
         return conn;

@@ -46,7 +46,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.connection.title.DetailSettings");
+        return txt("cfg.connection.title.DetailSettings");
     }
 
     @Override

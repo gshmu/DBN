@@ -32,7 +32,7 @@ public class DDLFileSettings extends CompositeProjectConfiguration<ProjectSettin
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.ddlFiles.title.DdlFiles");
+        return txt("cfg.ddlFiles.title.DdlFiles");
     }
 
     @Override
