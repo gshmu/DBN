@@ -114,7 +114,7 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                 } catch (SQLException e) {
                     conditionallyLog(e);
                     console.error("Error removing breakpoint: " + breakpointDesc + ". " + e.getMessage());
-                    sendErrorNotification(DEBUGGER, nls("ntf.debugger.error.ErrorUnregisteringBreakpoints", e));
+                    sendErrorNotification(DEBUGGER, txt("ntf.debugger.error.ErrorUnregisteringBreakpoints", e));
                 } finally {
                     DBBreakpointUtil.setBreakpointId(breakpoint, null);
                 }

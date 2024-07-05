@@ -16,7 +16,7 @@
         </constraints>
         <properties>
           <labelFor value="c246e"/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.User"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.User"/>
         </properties>
       </component>
       <vspacer id="363e1">
@@ -42,7 +42,7 @@
         </constraints>
         <properties>
           <labelFor value="4ee9a"/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.Password"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.Password"/>
         </properties>
       </component>
       <component id="4ee9a" class="javax.swing.JPasswordField" binding="passwordField">
@@ -62,7 +62,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.Authentication"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.Authentication"/>
         </properties>
       </component>
       <component id="bf2ec" class="com.intellij.openapi.ui.ComboBox" binding="authTypeComboBox">

@@ -55,21 +55,21 @@ public class DeveloperMode implements PersistentStateElement, NlsSupport {
 
         if (enabled) {
             start();
-            sendInfoNotification(null, DIAGNOSTICS, nls("ntf.diagnostics.warning.DeveloperModeActivatedFor", timeout));
+            sendInfoNotification(null, DIAGNOSTICS, txt("ntf.diagnostics.warning.DeveloperModeActivatedFor", timeout));
         } else if (changed) {
-            sendInfoNotification(null, DIAGNOSTICS, nls("ntf.diagnostics.warning.DeveloperModeActivated"));
+            sendInfoNotification(null, DIAGNOSTICS, txt("ntf.diagnostics.warning.DeveloperModeActivated"));
         }
     }
 
     public String getRemainingTime() {
-        if (!enabled) return nls("app.shared.label.OneSecond");
+        if (!enabled) return txt("app.shared.label.OneSecond");
 
         long lapsed = System.currentTimeMillis() - timerStart;
         long lapsedSeconds = TimeUnit.MILLISECONDS.toSeconds(lapsed);
         long remainingSeconds = Math.max(0, TimeUnit.MINUTES.toSeconds(timeout) - lapsedSeconds);
         return remainingSeconds < 60 ?
-                nls("app.shared.label.MoreSeconds", remainingSeconds) :
-                nls("app.shared.label.MoreMinutes", TimeUnit.SECONDS.toMinutes(remainingSeconds));
+                txt("app.shared.label.MoreSeconds", remainingSeconds) :
+                txt("app.shared.label.MoreMinutes", TimeUnit.SECONDS.toMinutes(remainingSeconds));
     }
 
 

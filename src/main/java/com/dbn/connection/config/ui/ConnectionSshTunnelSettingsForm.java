@@ -43,7 +43,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
         registerComponent(mainPanel);
 
         keyFileField.addBrowseFolderListener(
-                nls("cfg.connection.title.SelectPrivateKeyFile"),
+                txt("cfg.connection.title.SelectPrivateKeyFile"),
                 "",
                 null, new FileChooserDescriptor(true, false, false, false, false, false));
     }
@@ -101,14 +101,14 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     public void applyFormChanges(ConnectionSshTunnelSettings configuration) throws ConfigurationException {
         boolean enabled = activeCheckBox.isSelected();
         configuration.setActive(enabled);
-        configuration.setHost(ConfigurationEditors.validateStringValue(hostTextField, nls("cfg.connection.field.Host"), enabled));
-        ConfigurationEditors.validateIntegerValue(portTextField, nls("cfg.connection.field.Port"), enabled, 0, 999999, null);
+        configuration.setHost(ConfigurationEditors.validateStringValue(hostTextField, txt("cfg.connection.field.Host"), enabled));
+        ConfigurationEditors.validateIntegerValue(portTextField, txt("cfg.connection.field.Port"), enabled, 0, 999999, null);
         configuration.setPort(portTextField.getText());
         configuration.setUser(userTextField.getText());
         SshAuthType authType = getSelection(authTypeComboBox);
 
         boolean isKeyPair = authType == SshAuthType.KEY_PAIR;
-        ConfigurationEditors.validateStringValue(keyFileField.getTextField(), nls("cfg.connection.field.KeyFile"), enabled && isKeyPair);
+        ConfigurationEditors.validateStringValue(keyFileField.getTextField(), txt("cfg.connection.field.KeyFile"), enabled && isKeyPair);
         //ConfigurationEditorUtil.validateStringInputValue(keyPassphraseField, "Key passphrase", enabled && isKeyPair);
 
         configuration.setAuthType(authType);

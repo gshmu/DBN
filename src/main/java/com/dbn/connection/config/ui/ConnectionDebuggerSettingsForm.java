@@ -85,7 +85,7 @@ public class ConnectionDebuggerSettingsForm extends ConfigurationEditorForm<Conn
                     Integer.parseInt(tcpPortFromTextField.getText()),
                     Integer.parseInt(tcpPortToTextField.getText())));
         } catch (NumberFormatException e) {
-            throw new ConfigurationException(nls("cfg.debugger.error.NonNumericPortRange"));
+            throw new ConfigurationException(txt("cfg.debugger.error.NonNumericPortRange"));
         }
     }
 

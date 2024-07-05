@@ -2,18 +2,19 @@ package com.dbn.execution.compiler;
 
 import com.dbn.common.icon.Icons;
 import com.dbn.common.option.InteractiveOption;
+import com.dbn.nls.NlsResources;
 import lombok.Getter;
 
 import javax.swing.*;
 
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 public enum CompileType implements InteractiveOption {
-    NORMAL(nls("cfg.compiler.const.CompileType_NORMAL"), Icons.OBJECT_COMPILE, true),
-    DEBUG(nls("cfg.compiler.const.CompileType_DEBUG"), Icons.OBJECT_COMPILE_DEBUG, true),
-    KEEP(nls("cfg.compiler.const.CompileType_KEEP"), null/*Icons.OBEJCT_COMPILE_KEEP*/, true),
-    ASK(nls("cfg.compiler.const.CompileType_ASK"), null/*Icons.OBEJCT_COMPILE_ASK*/, false);
+    NORMAL(txt("cfg.compiler.const.CompileType_NORMAL"), Icons.OBJECT_COMPILE, true),
+    DEBUG(txt("cfg.compiler.const.CompileType_DEBUG"), Icons.OBJECT_COMPILE_DEBUG, true),
+    KEEP(txt("cfg.compiler.const.CompileType_KEEP"), null/*Icons.OBEJCT_COMPILE_KEEP*/, true),
+    ASK(txt("cfg.compiler.const.CompileType_ASK"), null/*Icons.OBEJCT_COMPILE_ASK*/, false);
 
     private final String name;
     private final Icon icon;

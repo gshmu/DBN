@@ -5,6 +5,7 @@ import com.dbn.common.notification.NotificationGroup;
 import com.dbn.connection.ConnectionHandler;
 import com.dbn.connection.Resources;
 import com.dbn.connection.jdbc.DBNConnection;
+import com.dbn.nls.NlsResources;
 import com.intellij.notification.NotificationType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nls;
@@ -16,12 +17,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 public enum TransactionAction implements Serializable, Constant<TransactionAction> {
     COMMIT(
-            nls("app.transactions.action.Commit"),
+            txt("app.transactions.action.Commit"),
             NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "ntf.transactions.info.Commit",
             NotificationType.ERROR, "ntf.transactions.error.Commit",
@@ -29,7 +30,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connection, target) -> Resources.commit(target)),
 
     ROLLBACK(
-            nls("app.transactions.action.Rollback"),
+            txt("app.transactions.action.Rollback"),
             NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "ntf.transactions.info.Rollback",
             NotificationType.ERROR, "ntf.transactions.error.Rollback",
@@ -37,7 +38,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connection, target) -> Resources.rollback(target)),
 
     ROLLBACK_IDLE(
-            nls("app.transactions.action.IdleRollback"),
+            txt("app.transactions.action.IdleRollback"),
             NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "ntf.transactions.info.Rollback",
             NotificationType.ERROR, "ntf.transactions.error.Rollback",
@@ -45,7 +46,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connection, target) -> Resources.rollback(target)),
 
     DISCONNECT(
-            nls("app.transactions.action.Disconnect"),
+            txt("app.transactions.action.Disconnect"),
             NotificationGroup.SESSION,
             NotificationType.INFORMATION, "ntf.transactions.info.Disconnect",
             NotificationType.WARNING, "ntf.transactions.warning.Disconnect",
@@ -53,7 +54,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connection, target) -> connection.closeConnection(target)),
 
     DISCONNECT_IDLE(
-            nls("app.transactions.action.IdleDisconnect"),
+            txt("app.transactions.action.IdleDisconnect"),
             NotificationGroup.SESSION,
             NotificationType.INFORMATION, "ntf.transactions.info.DisconnectIdle",
             NotificationType.WARNING, "ntf.transactions.warning.Disconnect",
@@ -61,7 +62,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connection, target) -> connection.closeConnection(target)),
 
     KEEP_ALIVE(
-            nls("app.transactions.action.KeepAlive"),
+            txt("app.transactions.action.KeepAlive"),
             NotificationGroup.CONNECTION,
             null, null,
             NotificationType.ERROR, "ntf.transactions.error.KeepAlive",
@@ -69,7 +70,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connection, target) -> target.updateLastAccess()),
 
     TURN_AUTO_COMMIT_ON(
-            nls("app.transactions.action.EnableAutoCommit"),
+            txt("app.transactions.action.EnableAutoCommit"),
             NotificationGroup.TRANSACTION,
             NotificationType.WARNING, "ntf.transactions.warning.EnableAutoCommit",
             NotificationType.ERROR, "ntf.transactions.error.EnableAutoCommit",
@@ -77,7 +78,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connection, target) -> target.setAutoCommit(true)),
 
     TURN_AUTO_COMMIT_OFF(
-            nls("app.transactions.action.DisableAutoCommit"),
+            txt("app.transactions.action.DisableAutoCommit"),
             NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "ntf.transactions.info.DisableAutoCommit",
             NotificationType.ERROR, "ntf.transactions.error.DisableAutoCommit",

@@ -10,7 +10,7 @@
     <depends optional="true" config-file="dbn-copyright-support.xml">com.intellij.copyright</depends>
     <vendor email="dancioca@bluewin.ch">Dan Cioca</vendor>
     <idea-version since-build="201.6668.113" until-build="242.*"/>
-    <resource-bundle>nls.NlsResources</resource-bundle>
+    <resource-bundle>messages.DBNResources</resource-bundle>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
             This software solution enhances the capabilities of the IntelliJ IDEA development environment and its associated products by providing comprehensive features for database development and maintenance.
@@ -347,6 +347,7 @@
         <languageBundle locale="en"/>
         <languageBundle locale="de"/>
 -->
+
         <applicationService serviceImplementation="com.dbn.plugin.PluginStatusManager"/>
         <applicationService serviceImplementation="com.dbn.plugin.PluginConflictManager"/>
         <applicationService serviceImplementation="com.dbn.common.file.FileTypeService"/>

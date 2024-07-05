@@ -11,7 +11,6 @@ import com.dbn.common.dispose.Disposer;
 import com.dbn.common.dispose.Failsafe;
 import com.dbn.common.event.ProjectEvents;
 import com.dbn.common.listener.DBNFileEditorManagerListener;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.option.InteractiveOptionBroker;
 import com.dbn.common.thread.Dispatch;
 import com.dbn.common.thread.Progress;
@@ -166,7 +165,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
             });
         } catch (SQLException e) {
             conditionallyLog(e);
-            sendWarningNotification(SESSION_BROWSER, nls("ntf.sessions.error.FailedToLoadCurrentSql", e));
+            sendWarningNotification(SESSION_BROWSER, txt("ntf.sessions.error.FailedToLoadCurrentSql", e));
         }
 
         return EMPTY_CONTENT;
@@ -198,7 +197,7 @@ public class SessionBrowserManager extends ProjectComponentBase implements Persi
 
     private void doInterruptSessions(SessionBrowser sessionBrowser, List<SessionIdentifier> sessionIds, SessionInterruptionType type, SessionInterruptionOption option) {
         Progress.prompt(getProject(), sessionBrowser, true,
-                nls("prc.sessions.title.InterruptingSessions"),
+                txt("prc.sessions.title.InterruptingSessions"),
                 type.taskAction(sessionIds.size()),
                 progress -> {
                     try {

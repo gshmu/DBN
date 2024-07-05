@@ -98,8 +98,8 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements DoN
                 }
 
                 int optionIndex = Messages.showDialog(
-                        nls(message, messageArgs),
-                        Titles.signed(nls(title)),
+                        txt(message, messageArgs),
+                        Titles.signed(txt(title)),
                         toStringOptions(options), lastUsedOptionIndex, Icons.DIALOG_QUESTION, this);
 
                 option = getOption(optionIndex);

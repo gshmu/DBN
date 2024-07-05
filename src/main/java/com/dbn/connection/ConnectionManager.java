@@ -142,8 +142,8 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
     public void testConnection(ConnectionHandler connection, SchemaId schemaId, SessionId sessionId, boolean showSuccessMessage, boolean showErrorMessage) {
         Project project = connection.getProject();
         Progress.prompt(project, connection, true,
-                nls("msg.connection.title.TestingConnection"),
-                nls("msg.connection.info.TestingConnection", connection.getQualifiedName()),
+                txt("msg.connection.title.TestingConnection"),
+                txt("msg.connection.info.TestingConnection", connection.getQualifiedName()),
                 progress -> {
                     ConnectionDatabaseSettings databaseSettings = connection.getSettings().getDatabaseSettings();
                     String connectionName = connection.getName();
@@ -209,8 +209,8 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         String connectionName = databaseSettings.getName();
 
         Progress.modal(project, null, false,
-                nls("msg.connection.title.ConnectingToDatabase"),
-                nls("msg.connection.info.AttemptingConnectionToDatabase", connectionName),
+                txt("msg.connection.title.ConnectingToDatabase"),
+                txt("msg.connection.info.AttemptingConnectionToDatabase", connectionName),
                 progress -> {
             try {
                 DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authentication, SessionId.TEST, false, null);
@@ -238,8 +238,8 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
             databaseSettings.validate();
             ensureAuthenticationProvided(databaseSettings, (authenticationInfo) ->
                     Progress.modal(project, null, false,
-                            nls("msg.connection.title.ConnectingToDatabase"),
-                            nls("msg.connection.info.ConnectingToDatabase", connectionName),
+                            txt("msg.connection.title.ConnectingToDatabase"),
+                            txt("msg.connection.info.ConnectingToDatabase", connectionName),
                             progress -> {
                                 try {
                                     DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
@@ -261,8 +261,8 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
     public void promptMissingConnection() {
         Project project = getProject();
         showInfoDialog(
-                project, nls("msg.connection.title.NoConnectionsAvailable"), nls("msg.connection.info.NoConnectionsAvailable"),
-                options(nls("app.connection.button.SetupConnection"), nls("app.shared.button.Cancel")), 0,
+                project, txt("msg.connection.title.NoConnectionsAvailable"), txt("msg.connection.info.NoConnectionsAvailable"),
+                options(txt("app.connection.button.SetupConnection"), txt("app.shared.button.Cancel")), 0,
                 option -> when(option == 0, () -> {
                     ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
                     settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
@@ -292,7 +292,7 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
             DatabaseFileBundle fileBundle = databaseInfo.getFileBundle();
             Project project = databaseSettings.getProject();
             if (fileBundle == null || fileBundle.isEmpty()) {
-                showErrorDialog(project, nls("msg.connection.title.InvalidDatabaseConfiguration"), nls("msg.connection.error.DatabaseFileNotSpecified"));
+                showErrorDialog(project, txt("msg.connection.title.InvalidDatabaseConfiguration"), txt("msg.connection.error.DatabaseFileNotSpecified"));
             } else {
                 String missingFiles = fileBundle
                         .getFiles()
@@ -304,9 +304,9 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
                 if (!Strings.isEmpty(missingFiles)) {
                     showWarningDialog(
                             project,
-                            nls("msg.connection.title.DatabaseFileNotAvailable"),
-                            nls("msg.connection.info.DatabaseFileNotAvailable", missingFiles),
-                            options(nls("app.shared.button.Create"), nls("app.shared.button.Cancel")), 0,
+                            txt("msg.connection.title.DatabaseFileNotAvailable"),
+                            txt("msg.connection.info.DatabaseFileNotAvailable", missingFiles),
+                            options(txt("app.shared.button.Create"), txt("app.shared.button.Cancel")), 0,
                             callback);
                 }
             }
@@ -317,10 +317,10 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
         String connectionName = connection.getName();
         showInfoDialog(
                 connection.getProject(),
-                nls("msg.connection.title.NotConnectedToDatabase"),
+                txt("msg.connection.title.NotConnectedToDatabase"),
                 actionDesc == null ?
-                        nls("msg.connection.info.NotConnectedToDatabase", connectionName) :
-                        nls("msg.connection.info.NotConnectedToDatabaseWithAction", connectionName, actionDesc),
+                        txt("msg.connection.info.NotConnectedToDatabase", connectionName) :
+                        txt("msg.connection.info.NotConnectedToDatabaseWithAction", connectionName, actionDesc),
                 ConnectionAction.OPTIONS_CONNECT_CANCEL, 0,
                 callback);
     }
@@ -328,23 +328,23 @@ public class ConnectionManager extends ProjectComponentBase implements Persisten
     public void showErrorConnectionMessage(Project project, String connectionName, @Nullable Throwable e) {
         showErrorDialog(
                 project,
-                nls("msg.connection.title.ConnectionError"),
+                txt("msg.connection.title.ConnectionError"),
                 e == null ?
-                    nls("msg.connection.error.ConnectionErrorUnknown", connectionName) :
-                    nls("msg.connection.error.ConnectionError", connectionName, e.getLocalizedMessage()));
+                    txt("msg.connection.error.ConnectionErrorUnknown", connectionName) :
+                    txt("msg.connection.error.ConnectionError", connectionName, e.getLocalizedMessage()));
     }
 
     void showSuccessfulConnectionMessage(Project project, String connectionName) {
         showInfoDialog(
                 project,
-                nls("msg.connection.title.ConnectionSuccessful"),
-                nls("msg.connection.confirmation.ConnectionSuccessful", connectionName));
+                txt("msg.connection.title.ConnectionSuccessful"),
+                txt("msg.connection.confirmation.ConnectionSuccessful", connectionName));
     }
 
     private void showInvalidConfigMessage(Project project, ConfigurationException e) {
         showErrorDialog(
                 project,
-                nls("msg.connection.title.InvalidConfiguration"),
+                txt("msg.connection.title.InvalidConfiguration"),
                 e.getLocalizedMessage());
     }
 

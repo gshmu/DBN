@@ -36,7 +36,7 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<DBLCodeSt
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.codeStyle.title.CaseOptions");
+        return txt("cfg.codeStyle.title.CaseOptions");
     }
 
     public CodeStyleCaseOption getKeywordCaseOption() {

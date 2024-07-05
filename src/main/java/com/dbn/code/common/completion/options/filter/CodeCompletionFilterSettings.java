@@ -49,8 +49,8 @@ public class CodeCompletionFilterSettings
     @Override
     public String getDisplayName() {
         return extended ?
-                nls("cfg.codeCompletion.title.Extended") :
-                nls("cfg.codeCompletion.title.Basic");
+                txt("cfg.codeCompletion.title.Extended") :
+                txt("cfg.codeCompletion.title.Basic");
     }
 
     public boolean acceptReservedWord(TokenTypeCategory tokenTypeCategory) {

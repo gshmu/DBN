@@ -54,8 +54,8 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
     public void rollback(ConnectionHandler connection, @NotNull DBNConnection conn) {
         DatabaseSession session = connection.getSessionBundle().getSession(conn.getSessionId());
         Messages.showQuestionDialog(getProject(),
-                nls("msg.sessions.title.RollbackSession"),
-                nls("msg.sessions.question.RollbackSession", session, connection) ,
+                txt("msg.sessions.title.RollbackSession"),
+                txt("msg.sessions.question.RollbackSession", session, connection) ,
                 Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () ->
                         execute(connection,
@@ -68,8 +68,8 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
     public void commit(ConnectionHandler connection, @NotNull DBNConnection conn) {
         DatabaseSession session = connection.getSessionBundle().getSession(conn.getSessionId());
         Messages.showQuestionDialog(ensureProject(),
-                nls("msg.sessions.title.CommitSession"),
-                nls("msg.sessions.question.CommitSession", session, connection),
+                txt("msg.sessions.title.CommitSession"),
+                txt("msg.sessions.question.CommitSession", session, connection),
                 Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () ->
                         execute(connection,
@@ -100,8 +100,8 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                 String connectionName = connection.getConnectionName(conn);
                 String actionName = actions.get(0).getName();
 
-                String title = nls("prc.transactions.title.TransactionalActivity");
-                String description = nls("prc.transactions.info.TransactionalActivity", actionName, connectionName);
+                String title = txt("prc.transactions.title.TransactionalActivity");
+                String description = txt("prc.transactions.info.TransactionalActivity", actionName, connectionName);
                 ProgressRunnable executor = progress -> executeActions(connection, conn, actions, callback);
 
                 if (background)
@@ -143,21 +143,21 @@ public class DatabaseTransactionManager extends ProjectComponentBase implements 
                     TransactionListener.TOPIC,
                     (listener) -> listener.beforeAction(connection, conn, action));
 
-            ProgressMonitor.setProgressDetail(nls("prc.transactions.info.TransactionalActivity", action.getName(), connectionName));
+            ProgressMonitor.setProgressDetail(txt("prc.transactions.info.TransactionalActivity", action.getName(), connectionName));
 
             action.execute(connection, conn);
             if (action.getNotificationType() != null) {
                 sendNotification(
                         action.getNotificationType(),
                         action.getGroup(),
-                        nls(action.getSuccessNotificationMessage(), connectionName));
+                        txt(action.getSuccessNotificationMessage(), connectionName));
             }
         } catch (SQLException e) {
             conditionallyLog(e);
             sendNotification(
                     action.getFailureNotificationType(),
                     action.getGroup(),
-                    nls(action.getFailureNotificationMessage(), connectionName, e));
+                    txt(action.getFailureNotificationMessage(), connectionName, e));
             success.set(false);
         } finally {
             if (isValid(project)) {

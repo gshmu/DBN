@@ -23,7 +23,7 @@ public class DDLFileGeneralSettings extends BasicProjectConfiguration<DDLFileSet
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.ddlFiles.title.DdlFileGeneralSettings");
+        return txt("cfg.ddlFiles.title.DdlFileGeneralSettings");
     }
 
     public boolean isDdlFilesLookupEnabled() {

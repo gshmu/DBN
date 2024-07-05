@@ -15,7 +15,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.ConfigType"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.ConfigType"/>
         </properties>
       </component>
       <hspacer id="1381a">
@@ -46,7 +46,7 @@
           <background color="-14597858"/>
           <focusCycleRoot value="true"/>
           <labelFor value="8771d"/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.Host"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.Host"/>
         </properties>
       </component>
       <component id="8771d" class="javax.swing.JTextField" binding="hostTextField">
@@ -61,7 +61,7 @@
         </constraints>
         <properties>
           <labelFor value="a622a"/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.Port"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.Port"/>
         </properties>
       </component>
       <component id="a622a" class="javax.swing.JTextField" binding="portTextField">
@@ -79,7 +79,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.TnsFolder"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.TnsFolder"/>
         </properties>
       </component>
       <component id="cbbec" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="tnsFolderTextField">
@@ -96,7 +96,7 @@
         </constraints>
         <properties>
           <labelFor value=""/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.Url"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.Url"/>
         </properties>
       </component>
       <component id="36015" class="com.intellij.ui.components.fields.ExpandableTextField" binding="urlTextField">
@@ -113,7 +113,7 @@
         </constraints>
         <properties>
           <labelFor value=""/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.DatabaseFiles"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.DatabaseFiles"/>
         </properties>
       </component>
       <grid id="eca90" binding="databaseFilesPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -134,7 +134,7 @@
         </constraints>
         <properties>
           <labelFor value="cf336"/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.TnsProfile"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.TnsProfile"/>
         </properties>
       </component>
       <component id="abbbc" class="javax.swing.JLabel" binding="databaseLabel">
@@ -143,7 +143,7 @@
         </constraints>
         <properties>
           <labelFor value="6cce8"/>
-          <text resource-bundle="nls/NlsResources" key="cfg.connection.label.Database"/>
+          <text resource-bundle="messages/DBNResources" key="cfg.connection.label.Database"/>
         </properties>
       </component>
       <component id="6cce8" class="javax.swing.JTextField" binding="databaseTextField">

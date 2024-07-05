@@ -86,15 +86,15 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
                 if (warningsBlock == null) {
                     Messages.showInfoDialog(
                             project,
-                            nls("msg.data.title.DataExported"),
-                            nls("msg.data.info.DataExportedToClipboard"),
-                            new String[]{nls("app.shared.button.OK")}, 0, null);
+                            txt("msg.data.title.DataExported"),
+                            txt("msg.data.info.DataExportedToClipboard"),
+                            new String[]{txt("app.shared.button.OK")}, 0, null);
                 } else {
                     Messages.showWarningDialog(
                             project,
-                            nls("msg.data.title.DataExported"),
-                            nls("msg.data.warning.DataExportedToClipboard", warningsBlock),
-                            new String[]{nls("app.shared.button.OK")}, 0, null);
+                            txt("msg.data.title.DataExported"),
+                            txt("msg.data.warning.DataExportedToClipboard", warningsBlock),
+                            new String[]{txt("app.shared.button.OK")}, 0, null);
 
                 }
 
@@ -108,9 +108,9 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
                     if (warningsBlock == null) {
                         Messages.showInfoDialog(
                                 project,
-                                nls("msg.data.title.DataExported"),
-                                nls("msg.data.info.DataExportedToFile", filePath),
-                                new String[]{nls("app.shared.button.OK"), nls("app.shared.button.OpenFile")}, 0,
+                                txt("msg.data.title.DataExported"),
+                                txt("msg.data.info.DataExportedToFile", filePath),
+                                new String[]{txt("app.shared.button.OK"), txt("app.shared.button.OpenFile")}, 0,
                                 o -> {
                                     successCallback.run();
                                     if (o == 1) openFile(project, file);
@@ -119,9 +119,9 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
                     else {
                         Messages.showWarningDialog(
                                 project,
-                                nls("msg.data.title.DataExported"),
-                                nls("msg.data.warning.DataExportedToFile", filePath, warningsBlock),
-                                new String[]{nls("app.shared.button.OK"), nls("app.shared.button.OpenFile")}, 0,
+                                txt("msg.data.title.DataExported"),
+                                txt("msg.data.warning.DataExportedToFile", filePath, warningsBlock),
+                                new String[]{txt("app.shared.button.OK"), txt("app.shared.button.OpenFile")}, 0,
                                 o -> {
                                     successCallback.run();
                                     if (o == 1) openFile(project, file);
@@ -132,18 +132,18 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
                     if (warningsBlock == null) {
                         sendInfoNotification(
                                 NotificationGroup.DATA,
-                                nls("ntf.data.info.DataExportedToFile", filePath));
+                                txt("ntf.data.info.DataExportedToFile", filePath));
                     } else {
                         sendWarningNotification(
                                 NotificationGroup.DATA,
-                                nls("ntf.data.warning.DataExportedToFile", filePath, warningsBlock));
+                                txt("ntf.data.warning.DataExportedToFile", filePath, warningsBlock));
                     }
                 }
             }
 
         } catch (DataExportException e) {
             conditionallyLog(e);
-            Messages.showErrorDialog(project, nls("msg.data.error.ExportFailure"), e);
+            Messages.showErrorDialog(project, txt("msg.data.error.ExportFailure"), e);
         }
     }
 
@@ -155,8 +155,8 @@ public class DataExportManager extends ProjectComponentBase implements Persisten
             String filePath = file.getPath();
             Messages.showErrorDialog(
                     project,
-                    nls("msg.data.title.OpenFile"),
-                    nls("msg.data.error.FailedToOpenFile", filePath)
+                    txt("msg.data.title.OpenFile"),
+                    txt("msg.data.error.FailedToOpenFile", filePath)
             );
         }
     }

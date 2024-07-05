@@ -85,6 +85,6 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
 
     @Override
     public String getDatabaseLogName() {
-        return nls("app.logging.label.LogName_ORACLE");
+        return txt("app.logging.label.LogName_ORACLE");
     }
 }

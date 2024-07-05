@@ -276,7 +276,7 @@ public final class Resources implements NlsSupport {
             String connectionName = connection.getName();
             SessionId sessionId = connection.getSessionId();
             String errorMessage = e.getMessage();
-            String message = NlsResources.nls(messageKey, connectionName, sessionId, errorMessage);
+            String message = NlsResources.txt(messageKey, connectionName, sessionId, errorMessage);
 
             NotificationSupport.sendWarningNotification(
                     project,

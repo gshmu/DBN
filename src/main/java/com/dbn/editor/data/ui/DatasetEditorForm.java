@@ -99,8 +99,8 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
             conditionallyLog(e);
             Messages.showErrorDialog(
                     getProject(),
-                    nls("msg.dataEditor.title.FailedToOpenEditor"),
-                    nls("msg.dataEditor.error.FailedToOpenEditor", dataset.getQualifiedNameWithType(), e));
+                    txt("msg.dataEditor.title.FailedToOpenEditor"),
+                    txt("msg.dataEditor.error.FailedToOpenEditor", dataset.getQualifiedNameWithType(), e));
         }
 
         if (dataset.isEditable(DBContentType.DATA)) {
@@ -256,7 +256,7 @@ public class DatasetEditorForm extends DBNFormBase implements SearchableDataComp
         @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
-            presentation.setText(nls("app.shared.action.Cancel"));
+            presentation.setText(txt("app.shared.action.Cancel"));
             presentation.setIcon(Icons.DATA_EDITOR_STOP_LOADING);
             presentation.setEnabled(!getEditorTable().getModel().isLoadCancelled());
         }

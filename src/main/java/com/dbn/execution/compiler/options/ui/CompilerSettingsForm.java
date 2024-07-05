@@ -75,8 +75,8 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
     @Getter
     @AllArgsConstructor
     private enum ShowControlOption implements Presentable {
-        ALWAYS(NlsResources.nls("cfg.compiler.const.ShowControlOption_ALWAYS"), true),
-        WHEN_INVALID(NlsResources.nls("cfg.compiler.const.ShowControlOption_WHEN_INVALID"), false);
+        ALWAYS(NlsResources.txt("cfg.compiler.const.ShowControlOption_ALWAYS"), true),
+        WHEN_INVALID(NlsResources.txt("cfg.compiler.const.ShowControlOption_WHEN_INVALID"), false);
 
         private final String name;
         private final Boolean value;

@@ -47,7 +47,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Proje
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.execution.title.ExecutionEngine");
+        return txt("cfg.execution.title.ExecutionEngine");
     }
 
     @Override

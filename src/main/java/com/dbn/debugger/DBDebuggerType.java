@@ -1,18 +1,19 @@
 package com.dbn.debugger;
 
 import com.dbn.common.ui.Presentable;
+import com.dbn.nls.NlsResources;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
-import static com.dbn.nls.NlsResources.nls;
+import static com.dbn.nls.NlsResources.txt;
 
 @Getter
 @AllArgsConstructor
 public enum DBDebuggerType implements Presentable {
-    JDBC(nls("app.debugger.const.DBDebuggerType_JDBC")),
-    JDWP(nls("app.debugger.const.DBDebuggerType_JDWP")),
-    NONE(nls("app.debugger.const.DBDebuggerType_NONE"));
+    JDBC(txt("app.debugger.const.DBDebuggerType_JDBC")),
+    JDWP(txt("app.debugger.const.DBDebuggerType_JDWP")),
+    NONE(txt("app.debugger.const.DBDebuggerType_NONE"));
 
     private final String name;
 

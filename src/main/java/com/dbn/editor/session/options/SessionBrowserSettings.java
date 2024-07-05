@@ -44,7 +44,7 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
 
     @Override
     public String getDisplayName() {
-        return nls("cfg.sessions.title.SessionBrowser");
+        return txt("cfg.sessions.title.SessionBrowser");
     }
 
     @Override

@@ -86,8 +86,8 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
     public void createConsole(ConnectionHandler connection, String name, DBConsoleType type) {
         Project project = connection.getProject();
         Progress.background(project, connection, true,
-                nls("msg.consoles.title.CreatingConsole"),
-                nls("msg.consoles.info.CreatingConsole", type.getName(), name),
+                txt("msg.consoles.title.CreatingConsole"),
+                txt("msg.consoles.info.CreatingConsole", type.getName(), name),
                 indicator -> {
                     DBConsole console = connection.getConsoleBundle().createConsole(name, type);
                     DBConsoleVirtualFile consoleFile = console.getVirtualFile();
@@ -117,8 +117,8 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         Project project = getProject();
         Messages.showQuestionDialog(
                 project,
-                nls("msg.consoles.title.DeleteConsole"),
-                nls("msg.consoles.question.DeleteConsole"),
+                txt("msg.consoles.title.DeleteConsole"),
+                txt("msg.consoles.question.DeleteConsole"),
                 Messages.OPTIONS_YES_NO, 0,
                 option -> when(option == 0, () -> {
                     ConnectionHandler connection = console.getConnection();
@@ -147,8 +147,8 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
         Project project = getProject();
         String consoleName = consoleFile.getName();
         FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
-                Titles.signed(nls("msg.consoles.title.SaveToFile")),
-                nls("msg.consoles.info.SaveToFile", consoleName), "sql");
+                Titles.signed(txt("msg.consoles.title.SaveToFile")),
+                txt("msg.consoles.info.SaveToFile", consoleName), "sql");
 
         FileChooserFactory fileChooserFactory = FileChooserFactory.getInstance();
         FileSaverDialog fileSaverDialog = fileChooserFactory.createSaveFileDialog(fileSaverDescriptor, project);
@@ -169,8 +169,8 @@ public class DatabaseConsoleManager extends ProjectComponentBase implements Pers
                 conditionallyLog(e);
                 String fileName = fileWrapper.getFile().getName();
                 Messages.showErrorDialog(project,
-                        nls("msg.consoles.title.CouldNotSaveToFile"),
-                        nls("msg.consoles.error.CouldNotSaveToFile", fileName), e);
+                        txt("msg.consoles.title.CouldNotSaveToFile"),
+                        txt("msg.consoles.error.CouldNotSaveToFile", fileName), e);
             }
         });
 

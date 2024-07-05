@@ -8,7 +8,6 @@ import com.dbn.common.consumer.ListCollector;
 import com.dbn.common.dispose.Disposer;
 import com.dbn.common.dispose.Failsafe;
 import com.dbn.common.event.ProjectEvents;
-import com.dbn.common.notification.NotificationGroup;
 import com.dbn.common.thread.Dispatch;
 import com.dbn.common.thread.Progress;
 import com.dbn.common.util.*;
@@ -277,7 +276,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
                 conn = connection.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
                 Diagnostics.conditionallyLog(e);
-                sendErrorNotification(EXECUTION,  nls("ntf.execution.error.ExecutionConnectivityError", statementName, e));
+                sendErrorNotification(EXECUTION,  txt("ntf.execution.error.ExecutionConnectivityError", statementName, e));
 
                 StatementExecutionContext context = executionProcessor.getExecutionContext();
                 context.reset();
@@ -290,7 +289,7 @@ public class StatementExecutionManager extends ProjectComponentBase implements P
             Diagnostics.conditionallyLog(e);
         } catch (SQLException e) {
             Diagnostics.conditionallyLog(e);
-            sendErrorNotification(EXECUTION, nls("ntf.execution.error.ExecutionError", statementName, e));
+            sendErrorNotification(EXECUTION, txt("ntf.execution.error.ExecutionError", statementName, e));
         } finally {
             Documents.refreshEditorAnnotations(executionProcessor.getPsiFile());
         }
