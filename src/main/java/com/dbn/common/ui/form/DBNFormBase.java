@@ -1,12 +1,12 @@
 package com.dbn.common.ui.form;
 
 import com.dbn.common.action.DataProviders;
+import com.dbn.common.dispose.ComponentDisposer;
 import com.dbn.common.environment.options.EnvironmentSettings;
 import com.dbn.common.notification.NotificationSupport;
 import com.dbn.common.ui.component.DBNComponentBase;
 import com.dbn.common.ui.misc.DBNButton;
 import com.dbn.common.ui.util.UserInterface;
-import com.dbn.common.dispose.ComponentDisposer;
 import com.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;

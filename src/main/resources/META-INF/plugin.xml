@@ -343,7 +343,10 @@
     </project-components>
 
     <extensions defaultExtensionNs="com.intellij">
+<!--
+        <languageBundle locale="en"/>
         <languageBundle locale="de"/>
+-->
         <applicationService serviceImplementation="com.dbn.plugin.PluginStatusManager"/>
         <applicationService serviceImplementation="com.dbn.plugin.PluginConflictManager"/>
         <applicationService serviceImplementation="com.dbn.common.file.FileTypeService"/>
