@@ -1,7 +1,7 @@
 package com.dbn.common.ui.window;
 
-import com.dbn.common.compatibility.Compatibility;
 import com.dbn.common.event.ProjectEvents;
+import com.dbn.common.icon.IconBundle;
 import com.dbn.common.ui.util.UserInterface;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -14,13 +14,24 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.Objects;
 
+
 public abstract class DBNToolWindowFactory implements ToolWindowFactory, DumbAware {
+    private final IconBundle icons;
+
+    public DBNToolWindowFactory() {
+        icons = createIconBundle();
+    }
+
     @Override
     public final void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         createContent(project, toolWindow);
-        toolWindow.setIcon(getIcon(false));
+        toolWindow.setIcon(icons.getIcon(false, UserInterface.isCompactMode()));
         addSelectionListener(project, toolWindow);
     }
+
+    protected abstract IconBundle createIconBundle();
+
+    protected abstract void createContent(@NotNull Project project, @NotNull ToolWindow toolWindow);
 
     private void addSelectionListener(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         if (!UserInterface.isNewUI()) return;
@@ -33,18 +44,24 @@ public abstract class DBNToolWindowFactory implements ToolWindowFactory, DumbAwa
         return new ToolWindowManagerListener() {
             @Override
             public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
-                // replace icon with color-neutral version if selected
-                String activeWindowId = toolWindowManager.getActiveToolWindowId();
-                String windowId = toolWindow.getId();
-                boolean selected = Objects.equals(windowId, activeWindowId);
-                Icon icon = getIcon(selected);
-
-                toolWindow.setIcon(icon);
+                updateToolWindowIcon(toolWindow);
             }
         };
     }
 
-    protected abstract void createContent(@NotNull Project project, @NotNull ToolWindow toolWindow);
+    private void updateToolWindowIcon(@NotNull ToolWindow toolWindow) {
+        // replace icon with color-neutral version if selected
+        Project project = toolWindow.getProject();
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
 
-    protected abstract Icon getIcon(boolean selected);
+        String activeWindowId = toolWindowManager.getActiveToolWindowId();
+        String windowId = toolWindow.getId();
+
+        boolean selected = Objects.equals(windowId, activeWindowId);
+        Icon icon = icons.getIcon(selected, UserInterface.isCompactMode());
+
+        toolWindow.setIcon(icon);
+    }
+
+
 }
