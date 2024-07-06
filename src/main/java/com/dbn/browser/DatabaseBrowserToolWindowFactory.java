@@ -1,6 +1,7 @@
 package com.dbn.browser;
 
 import com.dbn.browser.ui.BrowserToolWindowForm;
+import com.dbn.common.icon.IconBundle;
 import com.dbn.common.icon.Icons;
 import com.dbn.common.ui.window.DBNToolWindowFactory;
 import com.intellij.openapi.project.Project;
@@ -9,8 +10,6 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class DatabaseBrowserToolWindowFactory extends DBNToolWindowFactory {
 
@@ -29,9 +28,11 @@ public class DatabaseBrowserToolWindowFactory extends DBNToolWindowFactory {
     }
 
     @Override
-    protected Icon getIcon(boolean selected) {
-        return selected ?
-                Icons.WINDOW_DATABASE_BROWSER_SELECTED :
-                Icons.WINDOW_DATABASE_BROWSER;
+    protected IconBundle createIconBundle() {
+        return new IconBundle(
+                Icons.WINDOW_DATABASE_BROWSER,
+                Icons.WINDOW_DATABASE_BROWSER_S,
+                Icons.WINDOW_DATABASE_BROWSER_L,
+                Icons.WINDOW_DATABASE_BROWSER_LS);
     }
 }

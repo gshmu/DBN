@@ -84,14 +84,29 @@ public class Icons {
     public static final Icon DATABASE_MODULE = load("/img/project/DatabaseModule.png");
 
     public static final Icon WINDOW_DATABASE_BROWSER = load("/img/window/DatabaseBrowser.svg");
-    public static final Icon WINDOW_EXECUTION_CONSOLE = load("/img/window/ExecutionConsole.svg");
-    public static final Icon WINDOW_DATABASE_DIAGNOSTICS = load("/img/window/DatabaseDiagnostics.svg");
-    public static final Icon WINDOW_DATABASE_COMPANION = load("/img/window/DatabaseCompanion.svg");
+    public static final Icon WINDOW_DATABASE_BROWSER_S = load("/img/window/DatabaseBrowserSelected.svg");
+    public static final Icon WINDOW_DATABASE_BROWSER_L = load("/img/window/DatabaseBrowserLarge.svg");
+    public static final Icon WINDOW_DATABASE_BROWSER_LS = load("/img/window/DatabaseBrowserLargeSelected.svg");
 
-    public static final Icon WINDOW_DATABASE_BROWSER_SELECTED = load("/img/window/DatabaseBrowserSelected.svg");
-    public static final Icon WINDOW_EXECUTION_CONSOLE_SELECTED = load("/img/window/ExecutionConsoleSelected.svg");
-    public static final Icon WINDOW_DATABASE_DIAGNOSTICS_SELECTED = load("/img/window/DatabaseDiagnosticsSelected.svg");
-    public static final Icon WINDOW_DATABASE_COMPANION_SELECTED = load("/img/window/DatabaseCompanionSelected.svg");
+    public static final Icon WINDOW_EXECUTION_CONSOLE = load("/img/window/ExecutionConsole.svg");
+    public static final Icon WINDOW_EXECUTION_CONSOLE_S = load("/img/window/ExecutionConsoleSelected.svg");
+    public static final Icon WINDOW_EXECUTION_CONSOLE_L = load("/img/window/ExecutionConsoleLarge.svg");
+    public static final Icon WINDOW_EXECUTION_CONSOLE_LS = load("/img/window/ExecutionConsoleLargeSelected.svg");
+
+    public static final Icon WINDOW_DATABASE_DIAGNOSTICS = load("/img/window/DatabaseDiagnostics.svg");
+    public static final Icon WINDOW_DATABASE_DIAGNOSTICS_S = load("/img/window/DatabaseDiagnosticsSelected.svg");
+    public static final Icon WINDOW_DATABASE_DIAGNOSTICS_L = load("/img/window/DatabaseDiagnosticsLarge.svg");
+    public static final Icon WINDOW_DATABASE_DIAGNOSTICS_LS = load("/img/window/DatabaseDiagnosticsLargeSelected.svg");
+
+    public static final Icon WINDOW_DATABASE_COMPANION = load("/img/window/DatabaseCompanion.svg");
+    public static final Icon WINDOW_DATABASE_COMPANION_S = load("/img/window/DatabaseCompanionSelected.svg");
+    public static final Icon WINDOW_DATABASE_COMPANION_L = load("/img/window/DatabaseCompanionLarge.svg");
+    public static final Icon WINDOW_DATABASE_COMPANION_LS = load("/img/window/DatabaseCompanionLargeSelected.svg");
+
+
+
+
+
 
     public static final Icon SQL_CONSOLE = load("/img/tools/SQLConsole.svg");
     public static final Icon SESSION_BROWSER = load("/img/tools/SessionBrowser.svg");

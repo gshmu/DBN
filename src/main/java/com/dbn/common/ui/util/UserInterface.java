@@ -6,6 +6,7 @@ import com.dbn.common.thread.Dispatch;
 import com.dbn.common.util.Environment;
 import com.dbn.common.util.Strings;
 import com.dbn.common.util.Unsafe;
+import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
@@ -15,6 +16,7 @@ import com.intellij.ui.border.IdeaTitledBorder;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import lombok.Getter;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,19 +31,32 @@ import java.awt.event.InputEvent;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+import static com.dbn.common.Reflection.invokeMethod;
 import static com.dbn.common.ui.util.Borderless.isBorderless;
+import static com.dbn.common.util.Commons.nvl;
+import static com.dbn.common.util.Unsafe.silent;
 import static com.dbn.diagnostics.Diagnostics.conditionallyLog;
 
+@UtilityClass
 public class UserInterface {
 
     public static final String NEW_UI_REGISTRY_KEY = "ide.experimental.ui";
     public static final String NEW_UI_RELEASE_VERSION = "2022.3";
 
+    @Getter
     @Compatibility
-    @Getter(lazy = true)
-    private static final boolean newUI = Unsafe.silent(false, () ->
-            Environment.isIdeNewerThan(NEW_UI_RELEASE_VERSION) &&
-            Registry.is(NEW_UI_REGISTRY_KEY));
+    private static final boolean newUI = silent(false, () -> evaluateNewUi());
+
+    @Compatibility
+    public static boolean isCompactMode() {
+        //UISettings.getInstance().getCompactMode();
+        return nvl(invokeMethod(UISettings.getInstance(), "getCompactMode"), true);
+    }
+
+    private static boolean evaluateNewUi() {
+        return Environment.isIdeNewerThan(NEW_UI_RELEASE_VERSION) && Registry.is(NEW_UI_REGISTRY_KEY);
+    }
+
 
     public static void stopTableCellEditing(JComponent root) {
         visitRecursively(root, component -> {
