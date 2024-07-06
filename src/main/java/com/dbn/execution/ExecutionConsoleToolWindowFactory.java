@@ -1,14 +1,11 @@
 package com.dbn.execution;
 
+import com.dbn.common.icon.IconBundle;
 import com.dbn.common.icon.Icons;
 import com.dbn.common.ui.window.DBNToolWindowFactory;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class ExecutionConsoleToolWindowFactory extends DBNToolWindowFactory {
     @Override
@@ -21,10 +18,12 @@ public class ExecutionConsoleToolWindowFactory extends DBNToolWindowFactory {
     }
 
     @Override
-    protected Icon getIcon(boolean selected) {
-        return selected ?
-                Icons.WINDOW_EXECUTION_CONSOLE_SELECTED :
-                Icons.WINDOW_EXECUTION_CONSOLE;
+    protected IconBundle createIconBundle() {
+        return new IconBundle(
+                Icons.WINDOW_EXECUTION_CONSOLE,
+                Icons.WINDOW_EXECUTION_CONSOLE_S,
+                Icons.WINDOW_EXECUTION_CONSOLE_L,
+                Icons.WINDOW_EXECUTION_CONSOLE_LS);
     }
 
     @Override
