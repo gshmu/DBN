@@ -7,7 +7,7 @@ import com.dbn.common.thread.Dispatch;
 import com.dbn.common.ui.form.DBNForm;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.JBTabsImpl;
+import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.util.containers.ContainerUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,12 +19,12 @@ import java.util.Objects;
 
 @Getter
 @Setter
-public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
+public class DBNColoredTabs extends JBEditorTabs implements StatefulDisposable {
     private boolean disposed;
     private final Map<TabInfo, String> tabInfos = ContainerUtil.createConcurrentWeakMap();
 
-    public TabbedPane(@NotNull DBNForm form) {
-        super(form.ensureProject());
+    public DBNColoredTabs(@NotNull DBNForm form) {
+        super(form.ensureProject(), null, form);
         setTabDraggingEnabled(true);
         Disposer.register(form, () -> Dispatch.run(() -> disposeInner()));
     }
@@ -32,7 +32,7 @@ public class TabbedPane extends JBTabsImpl implements StatefulDisposable {
     public void select(JComponent component, boolean requestFocus) {
         TabInfo tabInfo = findInfo(component);
         if (tabInfo != null) {
-            select(tabInfo, requestFocus);
+            selectTab(tabInfo.getText());
         }
     }
 
