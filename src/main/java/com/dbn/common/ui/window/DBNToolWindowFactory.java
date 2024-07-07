@@ -44,24 +44,14 @@ public abstract class DBNToolWindowFactory implements ToolWindowFactory, DumbAwa
         return new ToolWindowManagerListener() {
             @Override
             public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
-                updateToolWindowIcon(toolWindow);
-            }
+                // replace icon with color-neutral version if selected
+                String activeWindowId = toolWindowManager.getActiveToolWindowId();
+                String windowId = toolWindow.getId();
+
+                boolean selected = Objects.equals(windowId, activeWindowId);
+                Icon icon = icons.getIcon(selected, UserInterface.isCompactMode());
+
+                toolWindow.setIcon(icon);            }
         };
     }
-
-    private void updateToolWindowIcon(@NotNull ToolWindow toolWindow) {
-        // replace icon with color-neutral version if selected
-        Project project = toolWindow.getProject();
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-
-        String activeWindowId = toolWindowManager.getActiveToolWindowId();
-        String windowId = toolWindow.getId();
-
-        boolean selected = Objects.equals(windowId, activeWindowId);
-        Icon icon = icons.getIcon(selected, UserInterface.isCompactMode());
-
-        toolWindow.setIcon(icon);
-    }
-
-
 }
