@@ -70,7 +70,7 @@ public class ProjectSettings
         if (settingsEditor == null) {
             return super.getHelpTopic();
         } else {
-            Configuration selectedConfiguration = settingsEditor.getActiveSettings();
+            Configuration selectedConfiguration = settingsEditor.getActiveConfiguration();
             return selectedConfiguration.getHelpTopic();
         }
     }

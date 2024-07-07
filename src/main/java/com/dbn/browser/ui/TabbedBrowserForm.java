@@ -8,7 +8,7 @@ import com.dbn.common.environment.options.EnvironmentSettings;
 import com.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dbn.common.event.ProjectEvents;
-import com.dbn.common.ui.tab.TabbedPane;
+import com.dbn.common.ui.tab.DBNColoredTabs;
 import com.dbn.common.util.Commons;
 import com.dbn.connection.ConnectionBundle;
 import com.dbn.connection.ConnectionHandler;
@@ -29,12 +29,12 @@ import java.util.List;
 import static com.dbn.common.dispose.Failsafe.guarded;
 
 public class TabbedBrowserForm extends DatabaseBrowserForm{
-    private final TabbedPane connectionTabs;
+    private final DBNColoredTabs connectionTabs;
     private JPanel mainPanel;
 
     TabbedBrowserForm(@NotNull BrowserToolWindowForm parent) {
         super(parent);
-        connectionTabs = new TabbedPane(this);
+        connectionTabs = new DBNColoredTabs(this);
         //connectionTabs.setSingleRow(false);
         connectionTabs.setHideTabs(false);
         connectionTabs.setAutoscrolls(true);
@@ -134,7 +134,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @Nullable
     private SimpleBrowserForm removeBrowserForm(ConnectionId connectionId) {
-        TabbedPane connectionTabs = getConnectionTabs();
+        DBNColoredTabs connectionTabs = getConnectionTabs();
         for (TabInfo tabInfo : connectionTabs.getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             ConnectionId tabConnectionId = browserForm.getConnectionId();
@@ -210,7 +210,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     }
 
     @NotNull
-    public TabbedPane getConnectionTabs() {
+    public DBNColoredTabs getConnectionTabs() {
         return Failsafe.nn(connectionTabs);
     }
 
