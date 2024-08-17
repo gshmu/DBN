@@ -157,7 +157,7 @@ public class ScriptExecutionManager extends ProjectComponentBase implements Pers
         executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Initializing script execution", input.isClearOutput()));
 
         try {
-            new CancellableDatabaseCall<Object>(connection, null, timeout, TimeUnit.SECONDS) {
+            new CancellableDatabaseCall<>(connection, null, timeout, TimeUnit.SECONDS) {
                 @Override
                 public Object execute() throws Exception {
                     SchemaId schemaId = input.getSchemaId();
