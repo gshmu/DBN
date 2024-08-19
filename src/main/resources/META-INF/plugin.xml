@@ -732,9 +732,9 @@
 
         <projectConfigurable provider="com.dbn.options.ProjectSettingsProvider" groupId="tools" dynamic="true" id="DBNavigator.Settings" displayName="Database Navigator"/>
 
-        <toolWindow id="DB Browser" icon="com.dbn.common.icon.Icons.WINDOW_DATABASE_BROWSER" anchor="left" factoryClass="com.dbn.browser.DatabaseBrowserToolWindowFactory"/>
-        <toolWindow id="DB Diagnostics" icon="com.dbn.common.icon.Icons.WINDOW_DATABASE_DIAGNOSTICS" anchor="bottom" factoryClass="com.dbn.diagnostics.DiagnosticsToolWindowFactory" canCloseContents="true"/>
-        <toolWindow id="DB Execution Console" icon="com.dbn.common.icon.Icons.WINDOW_EXECUTION_CONSOLE" anchor="bottom" factoryClass="com.dbn.execution.ExecutionConsoleToolWindowFactory" />
+        <toolWindow id="DB Browser" anchor="left" factoryClass="com.dbn.browser.DatabaseBrowserToolWindowFactory"/>
+        <toolWindow id="DB Diagnostics" anchor="bottom" factoryClass="com.dbn.diagnostics.DiagnosticsToolWindowFactory" canCloseContents="true"/>
+        <toolWindow id="DB Execution Console" anchor="bottom" factoryClass="com.dbn.execution.ExecutionConsoleToolWindowFactory" />
 
         <fileType name="DBN-SQL" language="DBN-SQL" implementationClass="com.dbn.language.sql.SQLFileType" fieldName="INSTANCE" extensions="sql;ddl;vw"/>
         <fileType name="DBN-PSQL" language="DBN-PSQL" implementationClass="com.dbn.language.psql.PSQLFileType" fieldName="INSTANCE" extensions="psql;plsql;trg;prc;fnc;pkg;pks;pkb;tpe;tps;tpb"/>
