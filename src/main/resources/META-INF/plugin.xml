@@ -1,7 +1,7 @@
 <idea-plugin url="https://plugins.jetbrains.com/plugin/1800-database-navigator" require-restart="true">
     <name>Database Navigator</name>
     <id>DBN</id>
-    <version>3.4.4422.0</version>
+    <version>3.4.4425.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -32,7 +32,7 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.4.4422</b>
+            <li><b>3.4.4425</b>
             <ul>
                 <li>Script execution engine - support for Oracle TNS_ADMIN / cloud connections
                 <li>New-UI tool window icons rework
