@@ -13,25 +13,25 @@ repositories {
   mavenCentral()
 }
 dependencies {
-  annotationProcessor("org.projectlombok:lombok:1.18.30")
-  testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
+  annotationProcessor("org.projectlombok:lombok:1.18.34")
+  testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
 
-  implementation("org.projectlombok:lombok:1.18.30")
-  implementation("com.github.mwiede:jsch:0.2.17")
+  implementation("org.projectlombok:lombok:1.18.34")
+  implementation("com.github.mwiede:jsch:0.2.20")
   implementation("net.sf.trove4j:trove4j:3.0.3")
 
   // poi libraries (xls export)
-  implementation("org.apache.poi:poi:4.1.2")
-  implementation("org.apache.poi:poi-ooxml:4.1.2")
-  implementation("org.apache.poi:poi-ooxml-schemas:4.1.2")
+  implementation("org.apache.poi:poi:5.3.0")
+  implementation("org.apache.poi:poi-ooxml:5.3.0")
+  implementation("org.apache.poi:poi-ooxml-lite:5.3.0")
 
   // poi library dependencies
-  implementation("org.apache.commons:commons-io:2.15.1")
-  implementation("org.apache.commons:commons-math3:3.6.1")
-  implementation("org.apache.commons:commons-compress:1.26.0")
+  implementation("commons-io:commons-io:2.17.1")
+  implementation("org.apache.commons:commons-compress:1.27.1")
   implementation("org.apache.commons:commons-collections4:4.4")
-  implementation("org.apache.logging.log4j:log4j-api:2.23.0")
-  implementation("org.apache.xmlbeans:xmlbeans:3.1.0")
+  implementation("org.apache.commons:commons-lang3:3.17.0")
+  implementation("org.apache.logging.log4j:log4j-api:2.24.1")
+  implementation("org.apache.xmlbeans:xmlbeans:5.2.1")
 }
 
 sourceSets{
@@ -48,7 +48,8 @@ sourceSets{
               "**/*.svg",
               "**/*.css",
               "**/*.html",
-              "**/*.template")
+              "**/*.template",
+              "**/*.properties")
     }
   }
 }
@@ -96,11 +97,6 @@ withType<KotlinCompile> {
       include("**/*.jar")
       into(layout.buildDirectory.dir("idea-sandbox/plugins/${project.name}/lib/ext"))
     }
-  }
-
-  patchPluginXml {
-    sinceBuild.set("201.6668.113")
-    untilBuild.set("242.*")
   }
 
   signPlugin {
