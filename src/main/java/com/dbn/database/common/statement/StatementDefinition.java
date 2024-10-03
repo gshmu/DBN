@@ -3,12 +3,14 @@ package com.dbn.database.common.statement;
 import com.dbn.common.util.TransientId;
 import com.dbn.connection.jdbc.DBNConnection;
 import com.dbn.connection.jdbc.DBNPreparedStatement;
+import lombok.Getter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+@Getter
 public class StatementDefinition {
     private static final String DBN_PARAM_PLACEHOLDER = "DBN_PARAM_PLACEHOLDER";
     private final String statementText;
@@ -16,10 +18,8 @@ public class StatementDefinition {
 
     private final TransientId id = TransientId.create();
     private final boolean prepared;
-    private final boolean hasFallback;
 
-    StatementDefinition(String statementText, String prefix, boolean prepared, boolean hasFallback) {
-        this.hasFallback = hasFallback;
+    StatementDefinition(String statementText, String prefix, boolean prepared) {
         this.prepared = prepared;
         statementText = statementText.replaceAll("\\s+", " ").trim();
         if (prefix != null) {
@@ -51,16 +51,8 @@ public class StatementDefinition {
         this.placeholderIndexes = placeholders.toArray(new Integer[0]);
     }
 
-    public TransientId getId() {
-        return id;
-    }
-
-    boolean hasFallback() {
-        return hasFallback;
-    }
-
-    DBNPreparedStatement prepareStatement(DBNConnection connection, Object[] arguments) throws SQLException {
-        DBNPreparedStatement preparedStatement = connection.prepareStatementCached(statementText);
+    DBNPreparedStatement<?> prepareStatement(DBNConnection connection, Object[] arguments) throws SQLException {
+        DBNPreparedStatement<?> preparedStatement = connection.prepareStatementCached(statementText);
         for (int i = 0; i < placeholderIndexes.length; i++) {
             Integer argumentIndex = placeholderIndexes[i];
             Object argumentValue = arguments[argumentIndex];
